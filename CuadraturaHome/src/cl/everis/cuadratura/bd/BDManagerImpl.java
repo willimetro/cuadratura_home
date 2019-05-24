@@ -3,14 +3,18 @@ package cl.everis.cuadratura.bd;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
 
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -20,59 +24,72 @@ import cl.everis.cuadratura.util.Constantes;
 
 public class BDManagerImpl implements BDManager {
 
-	static Constantes constantes= new Constantes();
+	private final static String[] CRUCES_TPLAY_KENAN = {
+			"TPLAY_KENAN_TV",
+			"TPLAY_KENAN_TLF",
+			"TPLAY_KENAN_INT"};
+	private final static String PATH_ARCHIVOS = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\CSVs\\";
+	private final static String PATH_CRUCE = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\Cruces\\";
 
 	@Override
-	public void cargaCSV() {
+	public void desacargarCSV(String opcion) {
+
+		// se agrega esta validación para descargar solo aquellos archivos que podemos obtener directamente en BDs
+		if ("INTERNET".equals(opcion)||"TV".equals(opcion)||"TLF".equals(opcion)||"OCTAR".equals(opcion)){
+			System.out.println("Inició proceso de descarga para producto: " + opcion);
+			descargaArchivo(PATH_ARCHIVOS+Constantes.getFile(opcion),
+					Constantes.getQueryDescarga(opcion),
+					Constantes.getCabecera(opcion),
+					opcion);
+			System.out.println("Descargó archivo " + Constantes.getFile(opcion) +" en la ruta: " + PATH_ARCHIVOS );	
+		} else {
+			// aca codigo para seleccionar archivo de forma local
+		}
+	}
+
+	@Override
+	public void actualiza(String producto) {
+		borraDB(producto);
+		cargaCSV(producto);
+	}
+
+	@Override
+	public void cargaCSV(String producto) {
 		Connection conn = null;
 
-		String fileName = "internet_tplay.csv";
-		String sql = "copy internet_3play FROM stdin DELIMITER ';' CSV header";
+		String fileName = "";
+		String sql = "";
 
 		try {
+
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			BaseConnection pgcon = (BaseConnection)conn;
 			CopyManager mgr = new CopyManager(pgcon);
-			Reader in = new BufferedReader(new FileReader(new File(fileName)));
+			fileName = Constantes.getFile(producto);
+			sql = Constantes.getQueryCarga(producto);
+			Reader in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+fileName)));
 			long rowsaffected  = mgr.copyIn(sql, in);
-			System.out.println("Rows copied: " + rowsaffected);
+			System.out.println("Se ejecutó: " + Constantes.getQueryCarga(producto) + " con el archivo: "
+					+Constantes.getFile(producto) + " y se copiaron " + rowsaffected + " registros");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
 	@Override
-	public void borraDB() {
+	public void borraDB(String producto) {
 		Connection conn = null;
 		try {
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			Statement statement = conn.createStatement();
-			statement.executeUpdate("TRUNCATE internet_3play");
-			System.out.println("TRUNCATE internet_3play");
-			statement.executeUpdate("TRUNCATE tvcanales_3play");
-			System.out.println("TRUNCATE tvcanales_3play");
-			statement.executeUpdate("TRUNCATE tlf_3play");
-			System.out.println("TRUNCATE tlf_3play");
-			statement.executeUpdate("TRUNCATE tlf_otcar");
-			System.out.println("TRUNCATE tlf_otcar");
-//			statement.executeUpdate("TRUNCATE canales_kaltura");
-//			System.out.println("TRUNCATE canales_kaltura");
-//			statement.executeUpdate("TRUNCATE facturador_kenan");
-//			System.out.println("TRUNCATE facturador_kenan");
-//			statement.executeUpdate("TRUNCATE facturador_kenan_canal");
-//			System.out.println("TRUNCATE facturador_kenan_canal");
-//			statement.executeUpdate("TRUNCATE internet_aaa");
-//			System.out.println("TRUNCATE internet_aaa");
-//			statement.executeUpdate("TRUNCATE tv_kaltura");
-//			System.out.println("TRUNCATE tv_kaltura");
+			statement.executeUpdate(Constantes.getQueryTruncate(producto));
+			System.out.println("Se ejecutó: " + Constantes.getQueryTruncate(producto));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}  finally {
@@ -82,67 +99,26 @@ public class BDManagerImpl implements BDManager {
 				e.printStackTrace();
 			}
 		}	
-
-
 	}
 
 	@Override
-	public void desacargarCSV() {
-
-		// INTERNET 3PLAY
-		descargaArchivo(constantes.getFileINT(),
-				constantes.getQueryINT(),
-				constantes.getCabeceraINT());
-		System.out.println("Descargó " + constantes.getFileINT());
-		// TV 3PLAY
-		descargaArchivo(constantes.getFileTV(),
-				constantes.getQueryTV(),
-				constantes.getCabeceraTV());
-		System.out.println("Descargó " + constantes.getFileTV());
-		// TLF 3PLAY
-		descargaArchivo(constantes.getFileTLF(),
-				constantes.getQueryTLF(),
-				constantes.getCabeceraTLF());
-		System.out.println("Descargó " + constantes.getFileTLF());
-		// TLF OTCAR
-		descargaArchivo(constantes.getFileOCT(),
-				constantes.getQueryOCT(),
-				constantes.getCabeceraOCT());
-		System.out.println("Descargó " + constantes.getFileOCT());
-	}
-
-	@Override
-	public void descargaArchivo(String filename, String query, String cabecera) {
+	public void descargaArchivo(String filename, String query, String cabecera, String producto) {
 
 		Connection conn = null;
 
 		try {
-			if (filename.indexOf("tv_tplay") >= 0 || filename.indexOf("tlf_tplay") >= 0 || filename.indexOf("internet_tplay") >= 0){
-				conn = ConnectionCuadraturaBD.getConnTPlay();
-			} else if (filename.indexOf("otcar") >= 0){
+			if ("OCTAR".equals(producto)){
 				conn = ConnectionCuadraturaBD.getConnOCTAR();
+			} else {
+				conn = ConnectionCuadraturaBD.getConnTPlay();
 			}
 			FileWriter fw = new FileWriter(filename);
 			fw.append(cabecera);
 			fw.append('\n');
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			if (filename.indexOf("internet_tplay") >= 0){
-				while (rs.next()) {
-					procesaINT(fw, rs);
-				} 
-			}else if (filename.indexOf("tlf_tplay") >= 0){
-				while (rs.next()) {
-					procesaTLF(fw, rs);	
-				}
-			} else if (filename.indexOf("tv_tplay") >= 0){
-				while (rs.next()) {
-					procesaTV(fw, rs);
-				}
-			} else if (filename.indexOf("otcar") >= 0){
-				while (rs.next()) {
-					procesaOctar(fw, rs);
-				}
+			while (rs.next()) {
+				procesar(fw, rs, producto);
 			}
 			fw.flush();
 			fw.close();
@@ -157,44 +133,77 @@ public class BDManagerImpl implements BDManager {
 		}		
 	}
 
-	private static void procesaINT(FileWriter fw, ResultSet rs)  throws IOException, SQLException {
-		fw.append(rs.getString(1)+";");
-		fw.append(rs.getString(2)+";");
-		fw.append(rs.getString(3)+";");
-		fw.append(rs.getString(4)+";");
-		fw.append(rs.getString(5));
-		fw.append('\n');
+	private void procesar(FileWriter fw, ResultSet rs, String producto) throws IOException, SQLException {
+
+		int columnas = rs.getMetaData().getColumnCount();
+
+		if ("INTERNET".equals(producto) && !"".equals(rs.getNString("CODI_TECNICO").trim())){
+			for (int i=1;i<columnas;i++){
+				fw.append(rs.getString(i)+";");
+			}
+			fw.append(rs.getString(columnas));
+			fw.append('\n');
+		} else if ("TLF".equals(producto)){
+			for (int i=1;i<=columnas;i++){
+				fw.append(rs.getString(i)+";");
+			}
+			fw.append(rs.getString(2)+"-"+rs.getString(1));
+			fw.append('\n');
+		} else if ("TV".equals(producto)){
+			fw.append(rs.getString(1)+"-"+rs.getString(2)+"-"+rs.getString(5)+";");
+			for (int i=1;i<columnas;i++){
+				fw.append(rs.getString(i)+";");
+			}
+			fw.append(rs.getString(columnas));
+			fw.append('\n');
+		} else if ("OCTAR".equals(producto)){
+			fw.append(rs.getString(2)+"-"+rs.getString(4)+";");
+			for (int i=1;i<columnas;i++){
+				fw.append(rs.getString(i)+";");
+			}
+			fw.append(rs.getString(columnas));
+			fw.append('\n');
+		}
 	}
 
-	private static void procesaTLF(FileWriter fw, ResultSet rs) throws IOException, SQLException {
-		fw.append(rs.getString(1)+";");
-		fw.append(rs.getString(2)+";");
-		fw.append(rs.getString(3)+";");
-		fw.append(rs.getString(4)+";");
-		fw.append(rs.getString(5)+";");
-		fw.append(rs.getString(2)+"-"+rs.getString(1));
-		fw.append('\n');
-	}
 
-	private static void procesaTV(FileWriter fw, ResultSet rs) throws IOException, SQLException {
-		fw.append(rs.getString(1)+"-"+rs.getString(2)+"-"+rs.getString(5)+";");
-		fw.append(rs.getString(1)+";");
-		fw.append(rs.getString(2)+";");
-		fw.append(rs.getString(3)+";");
-		fw.append(rs.getString(4)+";");
-		fw.append(rs.getString(5)+";");
-		fw.append(rs.getString(6)+";");
-		fw.append(rs.getString(7));
-		fw.append('\n');	
-	}
+	@Override
+	public void obtenerCruces(String producto) {
+		Connection conn = null;
+		FileOutputStream fileOutputStream = null;
+		try {
+			conn = ConnectionCuadraturaBD.getLocalConn();
+			CopyManager copyManager = new CopyManager((BaseConnection) conn);
 
-	private static void procesaOctar(FileWriter fw, ResultSet rs) throws IOException, SQLException {
-		fw.append(rs.getString(2)+"-"+rs.getString(4)+";");
-		fw.append(rs.getString(1)+";");
-		fw.append(rs.getString(2)+";");
-		fw.append(rs.getString(3)+";");
-		fw.append(rs.getString(4));
-		fw.append('\n');	
-	}
 
+			if ("TPLAY_KENAN".equals(producto)){
+				for (String arg1: CRUCES_TPLAY_KENAN){
+					for(int i = 0; i < Constantes.getFileCruce(arg1).length;i++){
+						File file = new File(PATH_CRUCE+Constantes.getFileCruce(arg1)[i]);
+						fileOutputStream = new FileOutputStream(file);
+						copyManager.copyOut("COPY (" + Constantes.getQueryCruce(arg1)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
+						System.out.println("Se ejecutó: " + Constantes.getQueryCruce(arg1)[i] + " y se entrega en archivo " + Constantes.getFileCruce(arg1)[i]);
+					}
+				}
+			} else {
+				for(int i = 0; i < Constantes.getFileCruce(producto).length;i++){
+					File file = new File(PATH_CRUCE+Constantes.getFileCruce(producto)[i]);
+					fileOutputStream = new FileOutputStream(file);
+					copyManager.copyOut("COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
+					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo " + Constantes.getFileCruce(producto)[i]);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}  finally {
+			try {
+				conn.close();
+				fileOutputStream.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}	
+	}
 }
