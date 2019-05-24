@@ -5,29 +5,41 @@ public interface BDManager {
 	
 	/**
 	 * 
-	 * @return
+	 * @param producto
 	 */
-	void cargaCSV();
+	void cargaCSV(String producto);
 
 	/**
 	 * 
-	 * @return
+	 * @param producto
 	 */
-	void borraDB();
+	void borraDB(String producto);
 	
 	/**
 	 * 
-	 * @return
+	 * @param opcion 
 	 */
-	void desacargarCSV();
+	void desacargarCSV(String opcion);
+	
+	/**
+	 * 
+	 * @param producto
+	 */
+	void actualiza(String producto);
 	
 	/**
 	 * 
 	 * @param filename
 	 * @param query
 	 * @param cabecera
+	 * @param producto
 	 */
-	void descargaArchivo(String filename, String query, String cabecera);
-	
+	void descargaArchivo(String filename, String query, String cabecera, String producto);
+
+	/**
+	 * 
+	 * @param producto
+	 */
+	void obtenerCruces(String producto);	
 	
 }
