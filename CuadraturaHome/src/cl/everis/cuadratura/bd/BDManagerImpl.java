@@ -9,12 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.List;
 
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -24,10 +21,6 @@ import cl.everis.cuadratura.util.Constantes;
 
 public class BDManagerImpl implements BDManager {
 
-	private final static String[] CRUCES_TPLAY_KENAN = {
-			"TPLAY_KENAN_TV",
-			"TPLAY_KENAN_TLF",
-			"TPLAY_KENAN_INT"};
 	private final static String PATH_ARCHIVOS = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\CSVs\\";
 	private final static String PATH_CRUCE = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\Cruces\\";
 
@@ -176,22 +169,11 @@ public class BDManagerImpl implements BDManager {
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
 
 
-			if ("TPLAY_KENAN".equals(producto)){
-				for (String arg1: CRUCES_TPLAY_KENAN){
-					for(int i = 0; i < Constantes.getFileCruce(arg1).length;i++){
-						File file = new File(PATH_CRUCE+Constantes.getFileCruce(arg1)[i]);
-						fileOutputStream = new FileOutputStream(file);
-						copyManager.copyOut("COPY (" + Constantes.getQueryCruce(arg1)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
-						System.out.println("Se ejecutó: " + Constantes.getQueryCruce(arg1)[i] + " y se entrega en archivo " + Constantes.getFileCruce(arg1)[i]);
-					}
-				}
-			} else {
-				for(int i = 0; i < Constantes.getFileCruce(producto).length;i++){
-					File file = new File(PATH_CRUCE+Constantes.getFileCruce(producto)[i]);
-					fileOutputStream = new FileOutputStream(file);
-					copyManager.copyOut("COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
-					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo " + Constantes.getFileCruce(producto)[i]);
-				}
+			for(int i = 0; i < Constantes.getFileCruce(producto).length;i++){
+				File file = new File(PATH_CRUCE+Constantes.getFileCruce(producto)[i]);
+				fileOutputStream = new FileOutputStream(file);
+				copyManager.copyOut("COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
+				System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo " + Constantes.getFileCruce(producto)[i]);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
