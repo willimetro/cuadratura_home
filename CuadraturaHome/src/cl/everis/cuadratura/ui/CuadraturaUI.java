@@ -2,6 +2,7 @@ package cl.everis.cuadratura.ui;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -17,13 +18,18 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import cl.everis.cuadratura.bd.BDManager;
+import cl.everis.cuadratura.bd.BDManagerImpl;
+
 public class CuadraturaUI{
 
 	private JFrame mainFrame = null;
+	private JProgressBar statusProcess;
 	//CheckBox
 	JCheckBox chTodos = new JCheckBox("Todos");
 	JCheckBox chTresPlayAAA = new JCheckBox("Internet AAA");
@@ -54,6 +60,8 @@ public class CuadraturaUI{
 	final JFileChooser fileDialogKenan = new JFileChooser();
 	final JFileChooser fileDialogKenanAdi = new JFileChooser();
 	private GridBagConstraints pathConstrains;
+	
+	private BDManager bdManager = new BDManagerImpl();
 	
 	JButton iniciar = new JButton("Iniciar");
 	
@@ -89,6 +97,70 @@ public class CuadraturaUI{
 		showFileChooser3playKenanAdi(panelChooser);
 		iniciar.setEnabled(false);
 		panelChooser.add(iniciar);
+		iniciar.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		            public void run() {
+		                if(!chTodos.isSelected()){
+		                	//Archivo AAA Splunk
+		                	if(chTresPlayAAA.isSelected()){
+		                		bdManager.cargaCSV("AAA");//Splunk
+		                		bdManager.cargaCSV("INTERNET");//BD
+		                		bdManager.actualiza("AAA");
+		                		bdManager.actualiza("INTERNET");//BD
+		                		bdManager.obtenerCruces("TPLAY_AAA");
+		                	} else if(chTresPlayKalturaBase.isSelected()){
+		                		bdManager.cargaCSV("KALTURA");//Splunk
+		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.actualiza("KALTURA");
+		                		bdManager.actualiza("TV");//BD
+		                		bdManager.obtenerCruces("TPLAY_KALTURA");
+		                	} else if(chTresPlayKalturaAdi.isSelected()){
+		                		bdManager.cargaCSV("KALTURA_C");//Splunk
+		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.actualiza("KALTURA_C");
+		                		bdManager.actualiza("TV");//BD
+		                		bdManager.obtenerCruces("TPLAY_KALTURA_C");
+		                	} else if(chTresPlayOTCARTel.isSelected()){
+		                		bdManager.cargaCSV("TLF");//Splunk
+		                		bdManager.cargaCSV("OCTAR");//BD
+		                		bdManager.actualiza("TLF");
+		                		bdManager.actualiza("OCTAR");//BD
+		                		bdManager.obtenerCruces("TPLAY_OCTAR");
+		                	} else if(chTresPlayKenanInter.isSelected()){
+		                		bdManager.cargaCSV("KENAN");//Splunk
+		                		bdManager.cargaCSV("INTERNET");//BD
+		                		bdManager.actualiza("KENAN");
+		                		bdManager.actualiza("INTERNET");//BD
+		                		bdManager.obtenerCruces("TPLAY_KENAN_INT");
+		                	} else if(chTresPlayKenanTVBase.isSelected()){
+		                		bdManager.cargaCSV("KENAN");//Splunk
+		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.actualiza("KENAN");
+		                		bdManager.actualiza("TV");//BD
+		                		bdManager.obtenerCruces("TPLAY_KENAN_TV");
+		                	} else if(chTresPlayKenanTVAdi.isSelected()){
+		                		bdManager.cargaCSV("KENAN_C");//Splunk
+		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.actualiza("KENAN_C");
+		                		bdManager.actualiza("TV");//BD
+		                		bdManager.obtenerCruces("TPLAY_KENAN_C");
+		                	} else if(chTresPlayKenanTel.isSelected()){
+		                		bdManager.cargaCSV("KENAN");//Splunk
+		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.actualiza("KENAN");
+		                		bdManager.actualiza("TV");//BD
+		                		bdManager.obtenerCruces("TPLAY_KENAN_TLF");
+		                	}
+		                } else {
+		                	
+		                }
+		            }
+		        });
+			}
+		});
 		tiposCuad.setBorder(BorderFactory.createTitledBorder("Tipos de Cuadratura 3 play"));
 		tiposCuad.setLayout(new GridLayout(1, 2));
 		panelCheck.setBorder(BorderFactory.createTitledBorder("Seleccione la cuadratura"));
@@ -99,6 +171,15 @@ public class CuadraturaUI{
 		resultadosCuad.setBorder(BorderFactory.createTitledBorder("Resultados Cuadratura 3 play"));
 		panel3Play.setLayout(new GridLayout(2, 1));
 		panel3Play.add(tiposCuad);
+		statusProcess = new JProgressBar();
+	    resultadosCuad.setLayout(new GridBagLayout());
+	    GridBagConstraints c = new GridBagConstraints();
+	    c.fill = GridBagConstraints.HORIZONTAL;
+	    c.gridx = 0;
+	    c.gridy = 0;
+	    c.weightx = 1;
+	    c.ipady = 20;
+	    resultadosCuad.add(statusProcess,c);
 		panel3Play.add(resultadosCuad);
 		return panel3Play;
     }
@@ -133,6 +214,7 @@ public class CuadraturaUI{
 					showFileDialogAdicionalesButton.setEnabled(false);
 					showFileDialogTvPlanesBaseButton.setEnabled(false);
 					showFileDialogInternetButton.setEnabled(false);
+					iniciar.setEnabled(false);
 				} else {
 					chTresPlayAAA.setSelected(true);
 					chTresPlayAAA.setEnabled(false);
@@ -155,6 +237,7 @@ public class CuadraturaUI{
 					showFileDialogAdicionalesButton.setEnabled(true);
 					showFileDialogTvPlanesBaseButton.setEnabled(true);
 					showFileDialogInternetButton.setEnabled(true);
+					iniciar.setEnabled(true);
 				}
 				
 			}
@@ -168,8 +251,10 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				if(!chTresPlayAAA.isSelected()){
 					showFileDialogInternetButton.setEnabled(false);
+					iniciar.setEnabled(false);
 				} else {
 					showFileDialogInternetButton.setEnabled(true);
+					iniciar.setEnabled(true);
 				}
 			}
 		});
@@ -182,8 +267,10 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				if(!chTresPlayKalturaBase.isSelected()){
 					showFileDialogTvPlanesBaseButton.setEnabled(false);
+					iniciar.setEnabled(false);
 				} else {
 					showFileDialogTvPlanesBaseButton.setEnabled(true);
+					iniciar.setEnabled(true);
 				}
 			}
 		});
@@ -196,14 +283,27 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				if(!chTresPlayKalturaAdi.isSelected()){
 					showFileDialogAdicionalesButton.setEnabled(false);
+					iniciar.setEnabled(false);
 				} else {
 					showFileDialogAdicionalesButton.setEnabled(true);
+					iniciar.setEnabled(true);
 				}
 			}
 		});
 		
 		chTresPlayOTCARTel.setMnemonic(KeyEvent.VK_C);
 		chTresPlayOTCARTel.setSelected(false);
+		chTresPlayOTCARTel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!chTresPlayOTCARTel.isSelected()){
+					iniciar.setEnabled(false);
+				} else {
+					iniciar.setEnabled(true);
+				}
+			}
+		});
 		
 		chTresPlayKenanInter.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanInter.setSelected(false);
@@ -213,8 +313,10 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				if(!chTresPlayKenanInter.isSelected()){
 					showFileDialogKenanButton.setEnabled(false);
+					iniciar.setEnabled(false);
 				} else {
 					showFileDialogKenanButton.setEnabled(true);
+					iniciar.setEnabled(true);
 				}
 			}
 		});
@@ -227,8 +329,10 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				if(!chTresPlayKenanTVBase.isSelected()){
 					showFileDialogKenanButton.setEnabled(false);
+					iniciar.setEnabled(false);
 				} else {
 					showFileDialogKenanButton.setEnabled(true);
+					iniciar.setEnabled(true);
 				}
 			}
 		});
@@ -241,8 +345,10 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				if(!chTresPlayKenanTVAdi.isSelected()){
 					showFileDialogKenanAdiButton.setEnabled(false);
+					iniciar.setEnabled(false);
 				} else {
 					showFileDialogKenanAdiButton.setEnabled(true);
+					iniciar.setEnabled(true);
 				}
 			}
 		});
@@ -255,8 +361,10 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				if(!chTresPlayKenanTel.isSelected()){
 					showFileDialogKenanButton.setEnabled(false);
+					iniciar.setEnabled(false);
 				} else {
 					showFileDialogKenanButton.setEnabled(true);
+					iniciar.setEnabled(true);
 				}
 			}
 		});
