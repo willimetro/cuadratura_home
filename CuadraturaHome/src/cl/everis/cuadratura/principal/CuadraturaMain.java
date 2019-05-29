@@ -3,8 +3,6 @@ package cl.everis.cuadratura.principal;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import cl.everis.cuadratura.bd.BDManager;
-import cl.everis.cuadratura.bd.BDManagerImpl;
 import cl.everis.cuadratura.ui.CuadraturaUI;
 
 public class CuadraturaMain {
