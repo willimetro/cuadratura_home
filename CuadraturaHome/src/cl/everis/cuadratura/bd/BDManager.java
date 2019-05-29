@@ -25,16 +25,10 @@ public interface BDManager {
 	
 	/**
 	 * 
-	 * @param opcion
-	 * @param path
-	 */
-	void descargarCSV(String opcion, String path);
-	
-	/**
-	 * 
 	 * @param producto
+	 * @param archivo
 	 */
-	void actualiza(String producto);
+	void actualiza(String producto, String archivo);
 	
 	/**
 	 * 

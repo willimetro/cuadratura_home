@@ -28,21 +28,22 @@ public class BDManagerImpl implements BDManager {
 
 	@Override
 	public void descargarCSV(String opcion) {
-		descargarCSV(opcion, PATH_ARCHIVOS+Constantes.getFile(opcion));
-	}
-	
-	@Override
-	public void descargarCSV(String opcion, String path) {
+
+		// descargar solo aquellos archivos que podemos obtener directamente en BDs
 		System.out.println("Inició proceso de descarga para producto: " + opcion);
-		descargaArchivo(path,Constantes.getQueryDescarga(opcion),
+		descargaArchivo(PATH_ARCHIVOS+Constantes.getFile(opcion),
+				Constantes.getQueryDescarga(opcion),
 				Constantes.getCabecera(opcion),
 				opcion);
-		System.out.println("Descargó archivo: " + path );	
+		System.out.println("Descargó archivo " + Constantes.getFile(opcion) +" en la ruta: " + PATH_ARCHIVOS );	
+	
 	}
 
 	@Override
-	public void actualiza(String producto) {
+	public void actualiza(String producto, String archivo) {
 		borraDB(producto);
+		if(null != archivo)
+			formatear(archivo);
 		cargaCSV(producto);
 	}
 
@@ -126,39 +127,6 @@ public class BDManagerImpl implements BDManager {
 		}		
 	}
 
-	private void procesar(FileWriter fw, ResultSet rs, String producto) throws IOException, SQLException {
-
-		int columnas = rs.getMetaData().getColumnCount();
-
-		if ("INTERNET".equals(producto) && !"".equals(rs.getNString("CODI_TECNICO").trim())){
-			for (int i=1;i<columnas;i++){
-				fw.append(rs.getString(i)+";");
-			}
-			fw.append(rs.getString(columnas));
-			fw.append('\n');
-		} else if ("TLF".equals(producto)){
-			for (int i=1;i<=columnas;i++){
-				fw.append(rs.getString(i)+";");
-			}
-			fw.append(rs.getString(2)+"-"+rs.getString(1));
-			fw.append('\n');
-		} else if ("TV".equals(producto)){
-			fw.append(rs.getString(1)+"-"+rs.getString(2)+"-"+rs.getString(5)+";");
-			for (int i=1;i<columnas;i++){
-				fw.append(rs.getString(i)+";");
-			}
-			fw.append(rs.getString(columnas));
-			fw.append('\n');
-		} else if ("OCTAR".equals(producto)){
-			fw.append(rs.getString(2)+"-"+rs.getString(4)+";");
-			for (int i=1;i<columnas;i++){
-				fw.append(rs.getString(i)+";");
-			}
-			fw.append(rs.getString(columnas));
-			fw.append('\n');
-		}
-	}
-
 	@Override
 	public CountOBJ obtenerCruces(String producto) {
 		Connection conn = null;
@@ -215,5 +183,42 @@ public class BDManagerImpl implements BDManager {
 			}
 		}
 		return contadores;
+	}
+
+	private void formatear(String archivo) {
+		
+	}
+	
+	private void procesar(FileWriter fw, ResultSet rs, String producto) throws IOException, SQLException {
+
+		int columnas = rs.getMetaData().getColumnCount();
+
+		if ("INTERNET".equals(producto) && !"".equals(rs.getNString("CODI_TECNICO").trim())){
+			for (int i=1;i<columnas;i++){
+				fw.append(rs.getString(i)+";");
+			}
+			fw.append(rs.getString(columnas));
+			fw.append('\n');
+		} else if ("TLF".equals(producto)){
+			for (int i=1;i<=columnas;i++){
+				fw.append(rs.getString(i)+";");
+			}
+			fw.append(rs.getString(2)+"-"+rs.getString(1));
+			fw.append('\n');
+		} else if ("TV".equals(producto)){
+			fw.append(rs.getString(1)+"-"+rs.getString(2)+"-"+rs.getString(5)+";");
+			for (int i=1;i<columnas;i++){
+				fw.append(rs.getString(i)+";");
+			}
+			fw.append(rs.getString(columnas));
+			fw.append('\n');
+		} else if ("OCTAR".equals(producto)){
+			fw.append(rs.getString(2)+"-"+rs.getString(4)+";");
+			for (int i=1;i<columnas;i++){
+				fw.append(rs.getString(i)+";");
+			}
+			fw.append(rs.getString(columnas));
+			fw.append('\n');
+		}
 	}
 }

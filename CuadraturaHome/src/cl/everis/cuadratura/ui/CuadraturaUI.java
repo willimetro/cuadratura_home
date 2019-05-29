@@ -130,59 +130,53 @@ public class CuadraturaUI{
 		                if(!chTodos.isSelected()){
 		                	//Archivo AAA Splunk
 		                	if(chTresPlayAAA.isSelected()){
-		                		bdManager.descargarCSV("AAA",pathLabelInternet.getText());//Splunk
 		                		bdManager.descargarCSV("INTERNET");//BD
-		                		bdManager.actualiza("AAA");
-		                		bdManager.actualiza("INTERNET");//BD
+		                		bdManager.actualiza("AAA", pathLabelInternet.getText());
+		                		bdManager.actualiza("INTERNET", null);//BD
 		                		mapResult.put("TPLAY_AAA", bdManager.obtenerCruces("TPLAY_AAA"));
 		                	} else if(chTresPlayKalturaBase.isSelected()){
-		                		bdManager.descargarCSV("KALTURA", pathLabelTvPlanesBase.getText());//Splunk
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KALTURA");
-		                		bdManager.actualiza("TV");//BD
+		                		bdManager.actualiza("KALTURA", pathLabelTvPlanesBase.getText());
+		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KALTURA",bdManager.obtenerCruces("TPLAY_KALTURA"));
 		                	} else if(chTresPlayKalturaAdi.isSelected()){
-		                		bdManager.descargarCSV("KALTURA_C", pathLabelTvAdicionales.getText());//Splunk
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KALTURA_C");
-		                		bdManager.actualiza("TV");//BD
+		                		bdManager.actualiza("KALTURA_C", pathLabelTvAdicionales.getText());
+		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KALTURA_C",bdManager.obtenerCruces("TPLAY_KALTURA_C"));
 		                	} else if(chTresPlayOTCARTel.isSelected()){
 		                		bdManager.descargarCSV("TLF");
 		                		bdManager.descargarCSV("OCTAR");
-		                		bdManager.actualiza("TLF");
-		                		bdManager.actualiza("OCTAR");//BD
+		                		bdManager.actualiza("TLF", null);
+		                		bdManager.actualiza("OCTAR", null);//BD
 		                		mapResult.put("TPLAY_OCTAR",bdManager.obtenerCruces("TPLAY_OCTAR"));
 		                	} else if(chTresPlayKenanInter.isSelected()){
-		                		bdManager.descargarCSV("KENAN", pathLabelKenan.getText());//Splunk
 		                		bdManager.descargarCSV("INTERNET");//BD
-		                		bdManager.actualiza("KENAN");
-		                		bdManager.actualiza("INTERNET");//BD
+		                		bdManager.actualiza("KENAN",  pathLabelKenan.getText());
+		                		bdManager.actualiza("INTERNET", null);//BD
 		                		mapResult.put("TPLAY_KENAN_INT",bdManager.obtenerCruces("TPLAY_KENAN_INT"));
 		                	} else if(chTresPlayKenanTVBase.isSelected()){
-		                		bdManager.descargarCSV("KENAN", pathLabelKenan.getText());//Splunk
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KENAN");
-		                		bdManager.actualiza("TV");//BD
+		                		bdManager.actualiza("KENAN", pathLabelKenan.getText());
+		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KENAN_TV",bdManager.obtenerCruces("TPLAY_KENAN_TV"));
 		                	} else if(chTresPlayKenanTVAdi.isSelected()){
-		                		bdManager.descargarCSV("KENAN_C");//Splunk
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KENAN_C");
-		                		bdManager.actualiza("TV");//BD
+		                		bdManager.actualiza("KENAN_C", pathLabelKenanAdi.getText());
+		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KENAN_C",bdManager.obtenerCruces("TPLAY_KENAN_C"));
 		                	} else if(chTresPlayKenanTel.isSelected()){
-		                		bdManager.descargarCSV("KENAN", pathLabelKenan.getText());//Splunk
+		                		//bdManager.descargarCSV("KENAN", pathLabelKenan.getText());//Splunk
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KENAN");
-		                		bdManager.actualiza("TV");//BD
+		                		bdManager.actualiza("KENAN", pathLabelKenan.getText());
+		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KENAN_TLF",bdManager.obtenerCruces("TPLAY_KENAN_TLF"));
 		                	}       	
 		                	
 		                } else {
 		            		for (String s : PRODUCTOS_TPLAY) {
 		            			bdManager.descargarCSV(s);
-		            			bdManager.actualiza(s);
+		            			//bdManager.actualiza(s);
 		            		}
 		                	for (String s: CRUCES_TPLAY){
 		                		mapResult.put(s,bdManager.obtenerCruces(s));
