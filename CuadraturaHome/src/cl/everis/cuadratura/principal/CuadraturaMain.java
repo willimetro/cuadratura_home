@@ -16,28 +16,6 @@ public class CuadraturaMain {
 	 *  3. EJECUTA LAS QUERYS CORRESPONDIENTES A CRUCES Y ENTREGA DOS ARCHIVOS POR CRUCE (EN 3PLAY Y NO EN CONTRAPARTE, EN CONTRAPARTE Y NO EN 3PLAY)
 	 */
 	
-	static BDManager bdManager = new BDManagerImpl();
-	private final static String[] PRODUCTOS_TPLAY = {
-			"INTERNET",
-			"TV",
-			"TLF",
-			"OCTAR",
-			"KENAN",
-			"KENAN_C",
-			"KALTURA",
-			"KALTURA_C",
-			"AAA"};
-	private final static String[] CRUCES_TPLAY = {
-			"TPLAY_KALTURA",
-			"TPLAY_KALTURA_C",
-			"TPLAY_KENAN_TV",
-			"TPLAY_KENAN_TLF",
-			"TPLAY_KENAN_INT",
-			"TPLAY_KENAN_C",
-			"TPLAY_AAA",
-			"TPLAY_OCTAR"};
-	
-
 	public static void main(String[] args) {
 		/* 
 		 * CODIGO PARA PROBAR TODOS LOS ITEMS DE FORMA AUTOMATICA SOLO EN ACTUALIZACIÓN Y CRUCES, SE PUEDE AGREGAR LA DESCARGA

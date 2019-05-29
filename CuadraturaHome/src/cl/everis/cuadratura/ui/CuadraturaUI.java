@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -25,9 +27,30 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cl.everis.cuadratura.bd.BDManager;
 import cl.everis.cuadratura.bd.BDManagerImpl;
+import cl.everis.cuadratura.obj.CountOBJ;
+import cl.everis.cuadratura.ws.Correo;
 
 public class CuadraturaUI{
 
+	private final static String[] CRUCES_TPLAY = {
+			"TPLAY_KALTURA",
+			"TPLAY_KALTURA_C",
+			"TPLAY_KENAN_TV",
+			"TPLAY_KENAN_TLF",
+			"TPLAY_KENAN_INT",
+			"TPLAY_KENAN_C",
+			"TPLAY_AAA",
+			"TPLAY_OCTAR"};
+	private final static String[] PRODUCTOS_TPLAY = {
+			"INTERNET",
+			"TV",
+			"TLF",
+			"OCTAR",
+			"KENAN",
+			"KENAN_C",
+			"KALTURA",
+			"KALTURA_C",
+			"AAA"};
 	private JFrame mainFrame = null;
 	private JProgressBar statusProcess;
 	//CheckBox
@@ -103,60 +126,69 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				javax.swing.SwingUtilities.invokeLater(new Runnable() {
 		            public void run() {
+		            	Map<String, CountOBJ> mapResult = new HashMap<String, CountOBJ>();
 		                if(!chTodos.isSelected()){
 		                	//Archivo AAA Splunk
 		                	if(chTresPlayAAA.isSelected()){
-		                		bdManager.cargaCSV("AAA");//Splunk
-		                		bdManager.cargaCSV("INTERNET");//BD
+		                		bdManager.descargarCSV("AAA",pathLabelInternet.getText());//Splunk
+		                		bdManager.descargarCSV("INTERNET");//BD
 		                		bdManager.actualiza("AAA");
 		                		bdManager.actualiza("INTERNET");//BD
-		                		bdManager.obtenerCruces("TPLAY_AAA");
+		                		mapResult.put("TPLAY_AAA", bdManager.obtenerCruces("TPLAY_AAA"));
 		                	} else if(chTresPlayKalturaBase.isSelected()){
-		                		bdManager.cargaCSV("KALTURA");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.descargarCSV("KALTURA", pathLabelTvPlanesBase.getText());//Splunk
+		                		bdManager.descargarCSV("TV");//BD
 		                		bdManager.actualiza("KALTURA");
 		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KALTURA");
+		                		mapResult.put("TPLAY_KALTURA",bdManager.obtenerCruces("TPLAY_KALTURA"));
 		                	} else if(chTresPlayKalturaAdi.isSelected()){
-		                		bdManager.cargaCSV("KALTURA_C");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.descargarCSV("KALTURA_C", pathLabelTvAdicionales.getText());//Splunk
+		                		bdManager.descargarCSV("TV");//BD
 		                		bdManager.actualiza("KALTURA_C");
 		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KALTURA_C");
+		                		mapResult.put("TPLAY_KALTURA_C",bdManager.obtenerCruces("TPLAY_KALTURA_C"));
 		                	} else if(chTresPlayOTCARTel.isSelected()){
-		                		bdManager.cargaCSV("TLF");//Splunk
-		                		bdManager.cargaCSV("OCTAR");//BD
+		                		bdManager.descargarCSV("TLF");
+		                		bdManager.descargarCSV("OCTAR");
 		                		bdManager.actualiza("TLF");
 		                		bdManager.actualiza("OCTAR");//BD
-		                		bdManager.obtenerCruces("TPLAY_OCTAR");
+		                		mapResult.put("TPLAY_OCTAR",bdManager.obtenerCruces("TPLAY_OCTAR"));
 		                	} else if(chTresPlayKenanInter.isSelected()){
-		                		bdManager.cargaCSV("KENAN");//Splunk
-		                		bdManager.cargaCSV("INTERNET");//BD
+		                		bdManager.descargarCSV("KENAN", pathLabelKenan.getText());//Splunk
+		                		bdManager.descargarCSV("INTERNET");//BD
 		                		bdManager.actualiza("KENAN");
 		                		bdManager.actualiza("INTERNET");//BD
-		                		bdManager.obtenerCruces("TPLAY_KENAN_INT");
+		                		mapResult.put("TPLAY_KENAN_INT",bdManager.obtenerCruces("TPLAY_KENAN_INT"));
 		                	} else if(chTresPlayKenanTVBase.isSelected()){
-		                		bdManager.cargaCSV("KENAN");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.descargarCSV("KENAN", pathLabelKenan.getText());//Splunk
+		                		bdManager.descargarCSV("TV");//BD
 		                		bdManager.actualiza("KENAN");
 		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KENAN_TV");
+		                		mapResult.put("TPLAY_KENAN_TV",bdManager.obtenerCruces("TPLAY_KENAN_TV"));
 		                	} else if(chTresPlayKenanTVAdi.isSelected()){
-		                		bdManager.cargaCSV("KENAN_C");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.descargarCSV("KENAN_C");//Splunk
+		                		bdManager.descargarCSV("TV");//BD
 		                		bdManager.actualiza("KENAN_C");
 		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KENAN_C");
+		                		mapResult.put("TPLAY_KENAN_C",bdManager.obtenerCruces("TPLAY_KENAN_C"));
 		                	} else if(chTresPlayKenanTel.isSelected()){
-		                		bdManager.cargaCSV("KENAN");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
+		                		bdManager.descargarCSV("KENAN", pathLabelKenan.getText());//Splunk
+		                		bdManager.descargarCSV("TV");//BD
 		                		bdManager.actualiza("KENAN");
 		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KENAN_TLF");
-		                	}
-		                } else {
+		                		mapResult.put("TPLAY_KENAN_TLF",bdManager.obtenerCruces("TPLAY_KENAN_TLF"));
+		                	}       	
 		                	
+		                } else {
+		            		for (String s : PRODUCTOS_TPLAY) {
+		            			bdManager.descargarCSV(s);
+		            			bdManager.actualiza(s);
+		            		}
+		                	for (String s: CRUCES_TPLAY){
+		                		mapResult.put(s,bdManager.obtenerCruces(s));
+		                	}
 		                }
+		                (new Correo()).enviarCorreo(mapResult);
 		            }
 		        });
 			}
@@ -427,7 +459,6 @@ public class CuadraturaUI{
 		panelChooser.add(showFileDialogInternetButton,showFileDialogConstrains);
 		
 	}
-
 	
 	private void showFileChooser3playTvPlanesBase(JPanel panelChooser){
 		

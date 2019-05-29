@@ -1,5 +1,7 @@
 package cl.everis.cuadratura.bd;
 
+import cl.everis.cuadratura.obj.CountOBJ;
+
 public interface BDManager {
 
 	
@@ -19,7 +21,14 @@ public interface BDManager {
 	 * 
 	 * @param opcion 
 	 */
-	void desacargarCSV(String opcion);
+	void descargarCSV(String opcion);
+	
+	/**
+	 * 
+	 * @param opcion
+	 * @param path
+	 */
+	void descargarCSV(String opcion, String path);
 	
 	/**
 	 * 
@@ -40,6 +49,6 @@ public interface BDManager {
 	 * 
 	 * @param producto
 	 */
-	void obtenerCruces(String producto);	
+	CountOBJ obtenerCruces(String producto);	
 	
 }

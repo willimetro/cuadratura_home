@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,6 +18,7 @@ import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
 import cl.everis.cuadratura.bd.conn.ConnectionCuadraturaBD;
+import cl.everis.cuadratura.obj.CountOBJ;
 import cl.everis.cuadratura.util.Constantes;
 
 public class BDManagerImpl implements BDManager {
@@ -25,19 +27,17 @@ public class BDManagerImpl implements BDManager {
 	private final static String PATH_CRUCE = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\Cruces\\";
 
 	@Override
-	public void desacargarCSV(String opcion) {
-
-		// se agrega esta validación para descargar solo aquellos archivos que podemos obtener directamente en BDs
-		if ("INTERNET".equals(opcion)||"TV".equals(opcion)||"TLF".equals(opcion)||"OCTAR".equals(opcion)){
-			System.out.println("Inició proceso de descarga para producto: " + opcion);
-			descargaArchivo(PATH_ARCHIVOS+Constantes.getFile(opcion),
-					Constantes.getQueryDescarga(opcion),
-					Constantes.getCabecera(opcion),
-					opcion);
-			System.out.println("Descargó archivo " + Constantes.getFile(opcion) +" en la ruta: " + PATH_ARCHIVOS );	
-		} else {
-			// aca codigo para seleccionar archivo de forma local
-		}
+	public void descargarCSV(String opcion) {
+		descargarCSV(opcion, PATH_ARCHIVOS+Constantes.getFile(opcion));
+	}
+	
+	@Override
+	public void descargarCSV(String opcion, String path) {
+		System.out.println("Inició proceso de descarga para producto: " + opcion);
+		descargaArchivo(path,Constantes.getQueryDescarga(opcion),
+				Constantes.getCabecera(opcion),
+				opcion);
+		System.out.println("Descargó archivo: " + path );	
 	}
 
 	@Override
@@ -159,17 +159,17 @@ public class BDManagerImpl implements BDManager {
 		}
 	}
 
-
 	@Override
-	public void obtenerCruces(String producto) {
+	public CountOBJ obtenerCruces(String producto) {
 		Connection conn = null;
 		FileOutputStream fileOutputStream = null;
+		CountOBJ contadores = new CountOBJ();
+		PreparedStatement pstmt =  null;
+		ResultSet rs = null;
 		try {
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
-
-
-			for(int i = 0; i < Constantes.getFileCruce(producto).length;i++){
+			for(int i = 0; i < 2;i++){
 				File file = new File(PATH_CRUCE+Constantes.getFileCruce(producto)[i]);
 				fileOutputStream = new FileOutputStream(file);
 				copyManager.copyOut("COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
@@ -186,6 +186,34 @@ public class BDManagerImpl implements BDManager {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-		}	
+		}
+
+		try {
+			conn = ConnectionCuadraturaBD.getLocalConn();
+			for (int i = 2; i < 5; i++) {
+				pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
+				rs = pstmt.executeQuery();
+				if(rs.next()){
+					if(i==2)
+						contadores.setTotalTplay(rs.getInt(1));
+					else if(i==3)
+						contadores.setTotalRed(rs.getInt(1));
+					else
+						contadores.setRedNoTplay(rs.getInt(1));
+				}
+			}
+		} catch(Exception e){
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				pstmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return contadores;
 	}
 }
