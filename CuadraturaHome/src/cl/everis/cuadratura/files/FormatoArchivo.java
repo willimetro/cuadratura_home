@@ -21,6 +21,8 @@ import cl.everis.cuadratura.obj.FileTvBaseKalturaOutOBJ;
 
 public class FormatoArchivo {
 
+	private final static String PATH_ARCHIVOS = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\CSVs\\";
+	
 	public void formatFileKenan(String pathArchivo) {
 		File kenanIn = null;
 		FileReader fr = null;
@@ -34,7 +36,7 @@ public class FormatoArchivo {
 			fr = new FileReader(kenanIn);
 			br = new BufferedReader(fr);
 
-			kenanOut = new FileWriter("C:\\Users\\wugaldeq\\Desktop\\29052019\\" + "base_kenan.csv");
+			kenanOut = new FileWriter(PATH_ARCHIVOS + "base_kenan.csv");
 			pw = new PrintWriter(kenanOut);
 
 			String linea;
@@ -76,7 +78,7 @@ public class FormatoArchivo {
 			fr = new FileReader(canalesKalturaIn);
 			br = new BufferedReader(fr);
 
-			canalesKalturaOut = new FileWriter("C:\\Users\\wugaldeq\\Desktop\\29052019\\" + "canales_kaltura.csv");
+			canalesKalturaOut = new FileWriter(PATH_ARCHIVOS + "canales_kaltura.csv");
 			pw = new PrintWriter(canalesKalturaOut);
 
 			String linea;
@@ -119,7 +121,7 @@ public class FormatoArchivo {
 			fr = new FileReader(canalesKenanIn);
 			br = new BufferedReader(fr);
 
-			canalesKenanOut = new FileWriter("C:\\Users\\wugaldeq\\Desktop\\29052019\\" + "canales_kenan.csv");
+			canalesKenanOut = new FileWriter(PATH_ARCHIVOS + "canales_kenan.csv");
 			pw = new PrintWriter(canalesKenanOut);
 
 			String linea;
@@ -162,7 +164,7 @@ public class FormatoArchivo {
 			fr = new FileReader(internetAAAIn);
 			br = new BufferedReader(fr);
 
-			internetAAAOut = new FileWriter("C:\\Users\\wugaldeq\\Desktop\\29052019\\" + "internet_aaa.csv");
+			internetAAAOut = new FileWriter(PATH_ARCHIVOS + "internet_aaa.csv");
 			pw = new PrintWriter(internetAAAOut);
 
 			String linea;
@@ -208,7 +210,7 @@ public class FormatoArchivo {
 			fr = new FileReader(tvBaseKalturaIn);
 			br = new BufferedReader(fr);
 
-			tvBaseKalturaOut = new FileWriter("C:\\Users\\wugaldeq\\Desktop\\29052019\\" + "tv_base_kaltura.csv");
+			tvBaseKalturaOut = new FileWriter(PATH_ARCHIVOS+ "tv_base_kaltura.csv");
 			pw = new PrintWriter(tvBaseKalturaOut);
 
 			String linea;

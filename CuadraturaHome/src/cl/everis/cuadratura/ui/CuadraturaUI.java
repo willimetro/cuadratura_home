@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,17 +130,17 @@ public class CuadraturaUI{
 		                	//Archivo AAA Splunk
 		                	if(chTresPlayAAA.isSelected()){
 		                		bdManager.descargarCSV("INTERNET");//BD
-		                		bdManager.actualiza("AAA", pathLabelInternet.getText());
+		                		bdManager.actualiza("AAA", fileDialogInternet.getSelectedFile().getAbsolutePath());
 		                		bdManager.actualiza("INTERNET", null);//BD
 		                		mapResult.put("TPLAY_AAA", bdManager.obtenerCruces("TPLAY_AAA"));
 		                	} else if(chTresPlayKalturaBase.isSelected()){
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KALTURA", pathLabelTvPlanesBase.getText());
+		                		bdManager.actualiza("KALTURA", fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath());
 		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KALTURA",bdManager.obtenerCruces("TPLAY_KALTURA"));
 		                	} else if(chTresPlayKalturaAdi.isSelected()){
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KALTURA_C", pathLabelTvAdicionales.getText());
+		                		bdManager.actualiza("KALTURA_C", fileDialogTvAdicionales.getSelectedFile().getAbsolutePath());
 		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KALTURA_C",bdManager.obtenerCruces("TPLAY_KALTURA_C"));
 		                	} else if(chTresPlayOTCARTel.isSelected()){
@@ -152,23 +151,22 @@ public class CuadraturaUI{
 		                		mapResult.put("TPLAY_OTCAR",bdManager.obtenerCruces("TPLAY_OTCAR"));
 		                	} else if(chTresPlayKenanInter.isSelected()){
 		                		bdManager.descargarCSV("INTERNET");//BD
-		                		bdManager.actualiza("KENAN",  pathLabelKenan.getText());
+		                		bdManager.actualiza("KENAN",  fileDialogKenan.getSelectedFile().getAbsolutePath());
 		                		bdManager.actualiza("INTERNET", null);//BD
 		                		mapResult.put("TPLAY_KENAN_INT",bdManager.obtenerCruces("TPLAY_KENAN_INT"));
 		                	} else if(chTresPlayKenanTVBase.isSelected()){
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KENAN", pathLabelKenan.getText());
+		                		bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath());
 		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KENAN_TV",bdManager.obtenerCruces("TPLAY_KENAN_TV"));
 		                	} else if(chTresPlayKenanTVAdi.isSelected()){
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KENAN_C", pathLabelKenanAdi.getText());
+		                		bdManager.actualiza("KENAN_C", fileDialogKenanAdi.getSelectedFile().getAbsolutePath());
 		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KENAN_C",bdManager.obtenerCruces("TPLAY_KENAN_C"));
 		                	} else if(chTresPlayKenanTel.isSelected()){
-		                		//bdManager.descargarCSV("KENAN", pathLabelKenan.getText());//Splunk
 		                		bdManager.descargarCSV("TV");//BD
-		                		bdManager.actualiza("KENAN", pathLabelKenan.getText());
+		                		bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath());
 		                		bdManager.actualiza("TV", null);//BD
 		                		mapResult.put("TPLAY_KENAN_TLF",bdManager.obtenerCruces("TPLAY_KENAN_TLF"));
 		                	}       	
@@ -177,19 +175,19 @@ public class CuadraturaUI{
 		            		for (String s : PRODUCTOS_TPLAY) {
 		            			
 		            			if ("KENAN".equals(s)){
-		            				bdManager.actualiza(s, pathLabelKenan.getText());
+		            				bdManager.actualiza(s, fileDialogKenan.getSelectedFile().getAbsolutePath());
 		            			}
 		            			else if ("KENAN_C".equals(s)){
-		            				bdManager.actualiza(s, pathLabelKenanAdi.getText());
+		            				bdManager.actualiza(s, fileDialogKenanAdi.getSelectedFile().getAbsolutePath());
 		            			}
 		            			else if ("KALTURA".equals(s)){
-		            				bdManager.actualiza(s, pathLabelTvPlanesBase.getText());
+		            				bdManager.actualiza(s, fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath());
 		            			}
 		            			else if ("KALTURA_C".equals(s)){
-		            				bdManager.actualiza(s, pathLabelTvAdicionales.getText());
+		            				bdManager.actualiza(s, fileDialogTvAdicionales.getSelectedFile().getAbsolutePath());
 		            			}
 		            			else if ("AAA".equals(s)){
-		            				bdManager.actualiza(s, pathLabelInternet.getText());
+		            				bdManager.actualiza(s, fileDialogInternet.getSelectedFile().getAbsolutePath());
 		            			}
 		            			else{
 		            				bdManager.descargarCSV(s);
@@ -453,13 +451,12 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogInternet.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogInternet.getSelectedFile();
-					pathLabelInternet.setText(file.getAbsolutePath());
+					pathLabelInternet.setText("El archivo ha sido seleccionado                             ");
 				}
 			}
 		});
 		
-		pathLabelInternet = new JLabel("Seleccione archivo Internet AAA               (Splunk)", SwingConstants.LEFT); 
+		pathLabelInternet = new JLabel("Seleccione archivo Internet AAA               (Splunk)", SwingConstants.LEFT);
 		pathLabelInternet.setEnabled(false);
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
@@ -489,8 +486,7 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogTvPlanesBase.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogTvPlanesBase.getSelectedFile();
-					pathLabelTvPlanesBase.setText(file.getAbsolutePath());
+					pathLabelTvPlanesBase.setText("El archivo ha sido seleccionado                             ");
 				}
 			}
 		});
@@ -524,8 +520,7 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogTvAdicionales.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogTvAdicionales.getSelectedFile();
-					pathLabelTvAdicionales.setText(file.getAbsolutePath());
+					pathLabelTvAdicionales.setText("El archivo ha sido seleccionado                             ");
 				}
 			}
 		});
@@ -559,8 +554,7 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogKenan.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogKenan.getSelectedFile();
-					pathLabelKenan.setText(file.getAbsolutePath());
+					pathLabelKenan.setText("El archivo ha sido seleccionado                             ");
 				}
 			}
 		});
@@ -594,8 +588,7 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogKenanAdi.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogKenanAdi.getSelectedFile();
-					pathLabelKenanAdi.setText(file.getAbsolutePath());
+					pathLabelKenanAdi.setText("El archivo ha sido seleccionado                             ");
 				}
 			}
 		});

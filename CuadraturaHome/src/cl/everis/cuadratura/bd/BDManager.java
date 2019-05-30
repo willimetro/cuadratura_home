@@ -32,6 +32,13 @@ public interface BDManager {
 	
 	/**
 	 * 
+	 * @param producto
+	 * @param archivo
+	 */
+	void formatear(String archivo, String producto);
+	
+	/**
+	 * 
 	 * @param filename
 	 * @param query
 	 * @param cabecera

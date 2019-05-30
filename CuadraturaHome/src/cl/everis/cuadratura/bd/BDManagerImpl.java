@@ -18,6 +18,7 @@ import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
 import cl.everis.cuadratura.bd.conn.ConnectionCuadraturaBD;
+import cl.everis.cuadratura.files.FormatoArchivo;
 import cl.everis.cuadratura.obj.CountOBJ;
 import cl.everis.cuadratura.util.Constantes;
 
@@ -43,7 +44,7 @@ public class BDManagerImpl implements BDManager {
 	public void actualiza(String producto, String archivo) {
 		borraDB(producto);
 		if(null != archivo)
-			formatear(archivo);
+			formatear(archivo, producto);
 		cargaCSV(producto);
 	}
 
@@ -184,7 +185,26 @@ public class BDManagerImpl implements BDManager {
 		return contadores;
 	}
 
-	private void formatear(String archivo) {
+	@Override
+	public void formatear(String archivo, String producto) {
+		
+		FormatoArchivo formatoArchivo = new FormatoArchivo();
+		
+		if ("KENAN".equals(producto)){
+			formatoArchivo.formatFileKenan(archivo);
+		}
+		else if ("KENAN_C".equals(producto)){
+			formatoArchivo.formatFileCanalesKenan(archivo);
+		}
+		else if ("KALTURA".equals(producto)){
+			formatoArchivo.formatFileTvBaseKaltura(archivo);
+		}
+		else if ("KALTURA_C".equals(producto)){
+			formatoArchivo.formatFileCanalesKaltura(archivo);
+		}
+		else if ("AAA".equals(producto)){
+			formatoArchivo.formatFileInternetAAA(archivo);
+		}
 		
 	}
 	
