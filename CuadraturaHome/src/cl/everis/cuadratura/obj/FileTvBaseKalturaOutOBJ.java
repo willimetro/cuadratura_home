@@ -18,7 +18,7 @@ public class FileTvBaseKalturaOutOBJ extends FileOutOBJ {
 		if (keyRutSinDv.equalsIgnoreCase("KEY_RUT_SIN_DV")) {
 			this.keyRutSinDv = keyRutSinDv;
 		} else {
-			this.keyRutSinDv = keyRutSinDv.split("-")[0];
+			this.keyRutSinDv = keyRutSinDv.split("-")[0].trim().replaceFirst ("^0*", "");
 		}
 	}
 

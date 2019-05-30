@@ -329,14 +329,4 @@ public class FormatoArchivo {
 		return fileIn;
 	}
 
-	public static void main(String[] args) {
-		FormatoArchivo formatoArchivo = new FormatoArchivo();
-		formatoArchivo.formatFileKenan("C:\\Users\\wugaldeq\\Desktop\\29052019\\sinformato\\base_kenan.csv");
-		formatoArchivo
-				.formatFileCanalesKaltura("C:\\Users\\wugaldeq\\Desktop\\29052019\\sinformato\\canales_kaltura.csv");
-		formatoArchivo.formatFileCanalesKenan("C:\\Users\\wugaldeq\\Desktop\\29052019\\sinformato\\canales_kenan.csv");
-		formatoArchivo.formatFileInternetAAA("C:\\Users\\wugaldeq\\Desktop\\29052019\\sinformato\\internet_aaa.csv");
-		formatoArchivo.formatFileTvBaseKaltura("C:\\Users\\wugaldeq\\Desktop\\29052019\\sinformato\\tv_base_kaltura.csv");
-	}
-
 }
