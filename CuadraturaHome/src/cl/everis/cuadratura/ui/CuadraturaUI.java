@@ -40,12 +40,12 @@ public class CuadraturaUI{
 			"TPLAY_KENAN_INT",
 			"TPLAY_KENAN_C",
 			"TPLAY_AAA",
-			"TPLAY_OCTAR"};
+			"TPLAY_OTCAR"};
 	private final static String[] PRODUCTOS_TPLAY = {
 			"INTERNET",
 			"TV",
 			"TLF",
-			"OCTAR",
+			"OTCAR",
 			"KENAN",
 			"KENAN_C",
 			"KALTURA",
@@ -146,10 +146,10 @@ public class CuadraturaUI{
 		                		mapResult.put("TPLAY_KALTURA_C",bdManager.obtenerCruces("TPLAY_KALTURA_C"));
 		                	} else if(chTresPlayOTCARTel.isSelected()){
 		                		bdManager.descargarCSV("TLF");
-		                		bdManager.descargarCSV("OCTAR");
+		                		bdManager.descargarCSV("OTCAR");
 		                		bdManager.actualiza("TLF", null);
-		                		bdManager.actualiza("OCTAR", null);//BD
-		                		mapResult.put("TPLAY_OCTAR",bdManager.obtenerCruces("TPLAY_OCTAR"));
+		                		bdManager.actualiza("OTCAR", null);//BD
+		                		mapResult.put("TPLAY_OTCAR",bdManager.obtenerCruces("TPLAY_OTCAR"));
 		                	} else if(chTresPlayKenanInter.isSelected()){
 		                		bdManager.descargarCSV("INTERNET");//BD
 		                		bdManager.actualiza("KENAN",  pathLabelKenan.getText());
@@ -175,8 +175,26 @@ public class CuadraturaUI{
 		                	
 		                } else {
 		            		for (String s : PRODUCTOS_TPLAY) {
-		            			bdManager.descargarCSV(s);
-		            			//bdManager.actualiza(s);
+		            			
+		            			if ("KENAN".equals(s)){
+		            				bdManager.actualiza(s, pathLabelKenan.getText());
+		            			}
+		            			else if ("KENAN_C".equals(s)){
+		            				bdManager.actualiza(s, pathLabelKenanAdi.getText());
+		            			}
+		            			else if ("KALTURA".equals(s)){
+		            				bdManager.actualiza(s, pathLabelTvPlanesBase.getText());
+		            			}
+		            			else if ("KALTURA_C".equals(s)){
+		            				bdManager.actualiza(s, pathLabelTvAdicionales.getText());
+		            			}
+		            			else if ("AAA".equals(s)){
+		            				bdManager.actualiza(s, pathLabelInternet.getText());
+		            			}
+		            			else{
+		            				bdManager.descargarCSV(s);
+		            				bdManager.actualiza(s, null);
+		            			}
 		            		}
 		                	for (String s: CRUCES_TPLAY){
 		                		mapResult.put(s,bdManager.obtenerCruces(s));

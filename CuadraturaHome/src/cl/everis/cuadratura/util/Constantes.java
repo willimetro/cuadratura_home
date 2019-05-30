@@ -302,7 +302,7 @@ public class Constantes {
 			toReturn = QUERY_TLF;
 		} else if ("TV".equals(arg)){
 			toReturn = QUERY_TV_CANALES;
-		} else if ("OCTAR".equals(arg)){
+		} else if ("OTCAR".equals(arg)){
 			toReturn = QUERY_OCTAR;
 		} /*else if ("KALTURA".equals(arg)){
 			toReturn = QUERY_INT;
@@ -326,7 +326,7 @@ public class Constantes {
 			toReturn = FILE_TLF;
 		} else if ("TV".equals(arg)){
 			toReturn = FILE_TV_CANALES;
-		} else if ("OCTAR".equals(arg)){
+		} else if ("OTCAR".equals(arg)){
 			toReturn = FILE_OCTAR;
 		} else if ("KALTURA".equals(arg)){
 			toReturn = FILE_KALTURA;
@@ -350,7 +350,7 @@ public class Constantes {
 			toReturn = CABECERA_TLF;
 		} else if ("TV".equals(arg)){
 			toReturn = CABECERA_TV_CANALES;
-		} else if ("OCTAR".equals(arg)){
+		} else if ("OTCAR".equals(arg)){
 			toReturn = CABECERA_OCTAR;
 		} /*else if ("KALTURA".equals(arg)){
 			toReturn = CABECERA_KALTURA;
@@ -374,7 +374,7 @@ public class Constantes {
 			toReturn = CARGA_TLF;
 		} else if ("TV".equals(arg)){
 			toReturn = CARGA_TV_CANALES;
-		} else if ("OCTAR".equals(arg)){
+		} else if ("OTCAR".equals(arg)){
 			toReturn = CARGA_OCTAR;
 		} else if ("KALTURA".equals(arg)){
 			toReturn = CARGA_KALTURA;
@@ -398,7 +398,7 @@ public class Constantes {
 			toReturn = TRUNCATE_TLF;
 		} else if ("TV".equals(arg)){
 			toReturn = TRUNCATE_TV_CANALES;
-		} else if ("OCTAR".equals(arg)){
+		} else if ("OTCAR".equals(arg)){
 			toReturn = TRUNCATE_OCTAR;
 		} else if ("KALTURA".equals(arg)){
 			toReturn = TRUNCATE_KALTURA;
@@ -431,7 +431,7 @@ public class Constantes {
 			toReturn = QUERYS_CANALES_3P_KENAN;
 		} else if ("TPLAY_AAA".equals(arg)){
 			toReturn = QUERYS_INTERNET_3P_AAA;
-		} else if ("TPLAY_OCTAR".equals(arg)){
+		} else if ("TPLAY_OTCAR".equals(arg)){
 			toReturn = QUERYS_TLF_3P_OTCAR;
 		}
 		return toReturn;
@@ -453,7 +453,7 @@ public class Constantes {
 			toReturn = FILES_CANALES_3P_KENAN;
 		} else if ("TPLAY_AAA".equals(arg)){
 			toReturn = FILES_INTERNET_3P_AAA;
-		} else if ("TPLAY_OCTAR".equals(arg)){
+		} else if ("TPLAY_OTCAR".equals(arg)){
 			toReturn = FILES_TLF_3P_OTCAR;
 		}
 		return toReturn;

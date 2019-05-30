@@ -101,7 +101,7 @@ public class BDManagerImpl implements BDManager {
 		Connection conn = null;
 
 		try {
-			if ("OCTAR".equals(producto)){
+			if ("OTCAR".equals(producto)){
 				conn = ConnectionCuadraturaBD.getConnOCTAR();
 			} else {
 				conn = ConnectionCuadraturaBD.getConnTPlay();
@@ -211,7 +211,7 @@ public class BDManagerImpl implements BDManager {
 			}
 			fw.append(rs.getString(columnas));
 			fw.append('\n');
-		} else if ("OCTAR".equals(producto)){
+		} else if ("OTCAR".equals(producto)){
 			fw.append(rs.getString(2)+"-"+rs.getString(4)+";");
 			for (int i=1;i<columnas;i++){
 				fw.append(rs.getString(i)+";");
