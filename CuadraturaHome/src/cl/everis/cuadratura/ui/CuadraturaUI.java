@@ -54,18 +54,23 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	JButton showFileDialogAdicionalesButton = new JButton("Buscar");
 	JButton showFileDialogTvPlanesBaseButton = new JButton("Buscar");
 	JButton showFileDialogInternetButton = new JButton("Buscar");
+	
+	JButton showFileDialogCorteCanalesAdiButton = new JButton("Buscar");
 
 	private JLabel pathLabelTvPlanesBase;
 	private JLabel pathLabelInternet;
 	private JLabel pathLabelTvAdicionales;
 	private JLabel pathLabelKenan;
 	private JLabel pathLabelKenanAdi;
+	private JLabel pathLabelCorteCanales;
 	private GridBagConstraints showFileDialogConstrains;
 	final JFileChooser fileDialogTvPlanesBase = new JFileChooser();
 	final JFileChooser fileDialogInternet = new JFileChooser();
 	final JFileChooser fileDialogTvAdicionales = new JFileChooser();
 	final JFileChooser fileDialogKenan = new JFileChooser();
 	final JFileChooser fileDialogKenanAdi = new JFileChooser();
+	
+	final JFileChooser fileDialogCorteCanalesAdi = new JFileChooser();
 	private GridBagConstraints pathConstrains;
 
 	private BDManager bdManager = new BDManagerImpl();
@@ -345,15 +350,50 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	protected JComponent makeTextPanelCorteBloqueo(String text) {
-		JPanel panelIna = new JPanel(false);
+		JPanel panelCB = new JPanel(false);
 		JPanel cargaArchivo = new JPanel();
-		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Tipos de Cuadratura Inalámbrica"));
+		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Configuración del Corte o Bloqueo"));
+		showFileChooserCorteCanales(cargaArchivo);
 		JPanel consolePanel = new JPanel();
-		consolePanel.setBorder(BorderFactory.createTitledBorder("Resultados Cuadratura Inalámbrica"));
-		panelIna.setLayout(new GridLayout(2, 1));
-		panelIna.add(cargaArchivo);
-		panelIna.add(consolePanel);
-		return panelIna;
+		consolePanel.setBorder(BorderFactory.createTitledBorder("Consola de Corte o bloqueo"));
+		panelCB.setLayout(new GridLayout(2, 1));
+		panelCB.add(cargaArchivo);
+		panelCB.add(consolePanel);
+		return panelCB;
+	}
+	
+	private void showFileChooserCorteCanales(JPanel panelChooser) {
+		showFileDialogConstrains = new GridBagConstraints();
+		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
+		showFileDialogConstrains.gridx = 3;
+		showFileDialogConstrains.gridy = 0;
+		showFileDialogConstrains.gridwidth = 2;
+		showFileDialogConstrains.gridheight = 1;
+
+		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
+		fileDialogCorteCanalesAdi.setFileFilter(filtro);
+		showFileDialogCorteCanalesAdiButton.setEnabled(true);
+		showFileDialogCorteCanalesAdiButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int returnVal = fileDialogCorteCanalesAdi.showOpenDialog(mainFrame);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					pathLabelCorteCanales.setText("El archivo ha sido seleccionado                             ");
+				}
+			}
+		});
+
+		pathLabelCorteCanales = new JLabel("Seleccione archivo Internet AAA               (Splunk)", SwingConstants.LEFT);
+		pathLabelCorteCanales.setEnabled(false);
+		pathConstrains = new GridBagConstraints();
+		pathConstrains.insets = new Insets(0, 0, 0, 5);
+		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
+		pathConstrains.gridwidth = 2;
+		pathConstrains.gridx = 0;
+		pathConstrains.gridy = 0;
+		panelChooser.add(pathLabelCorteCanales, pathConstrains);
+		panelChooser.add(showFileDialogCorteCanalesAdiButton, showFileDialogConstrains);
+
 	}
 
 	private void showFileChooser3playIntenet(JPanel panelChooser) {
