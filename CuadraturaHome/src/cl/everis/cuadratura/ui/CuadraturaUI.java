@@ -29,31 +29,15 @@ import cl.everis.cuadratura.bd.BDManagerImpl;
 import cl.everis.cuadratura.obj.CountOBJ;
 import cl.everis.cuadratura.ws.Correo;
 
-public class CuadraturaUI implements Runnable, ActionListener{
+public class CuadraturaUI implements Runnable, ActionListener {
 
-	private final static String[] CRUCES_TPLAY = {
-			"TPLAY_KALTURA",
-			"TPLAY_KALTURA_C",
-			"TPLAY_KENAN_TV",
-			"TPLAY_KENAN_TLF",
-			"TPLAY_KENAN_INT",
-			"TPLAY_KENAN_C",
-			"TPLAY_AAA",
-			"TPLAY_OTCAR"};
-	private final static String[] PRODUCTOS_TPLAY = {
-			"INTERNET",
-			"TV",
-			"TLF",
-			"OTCAR",
-			"KENAN",
-			"KENAN_C",
-			"KENAN_62",
-			"KALTURA",
-			"KALTURA_C",
-			"AAA"};
+	private final static String[] CRUCES_TPLAY = { "TPLAY_KALTURA", "TPLAY_KALTURA_C", "TPLAY_KENAN_TV",
+			"TPLAY_KENAN_TLF", "TPLAY_KENAN_INT", "TPLAY_KENAN_C", "TPLAY_AAA", "TPLAY_OTCAR" };
+	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_C", "KALTURA",
+			"KALTURA_C", "AAA" };
 	private JFrame mainFrame = null;
 	private JProgressBar statusProcess;
-	//CheckBox
+	// CheckBox
 	JCheckBox chTodos = new JCheckBox("Todos");
 	JCheckBox chTresPlayAAA = new JCheckBox("Internet AAA");
 	JCheckBox chTresPlayKalturaBase = new JCheckBox("TV Planes Base");
@@ -63,14 +47,14 @@ public class CuadraturaUI implements Runnable, ActionListener{
 	JCheckBox chTresPlayKenanTVBase = new JCheckBox("Kenan TV BASE");
 	JCheckBox chTresPlayKenanTVAdi = new JCheckBox("Kenan TV Adicionales");
 	JCheckBox chTresPlayKenanTel = new JCheckBox("Kenan Telefonía");
-	
-	//Botones para buscar los archivos (FileChooser)
+
+	// Botones para buscar los archivos (FileChooser)
 	JButton showFileDialogKenanAdiButton = new JButton("Buscar");
 	JButton showFileDialogKenanButton = new JButton("Buscar");
 	JButton showFileDialogAdicionalesButton = new JButton("Buscar");
 	JButton showFileDialogTvPlanesBaseButton = new JButton("Buscar");
 	JButton showFileDialogInternetButton = new JButton("Buscar");
-	
+
 	private JLabel pathLabelTvPlanesBase;
 	private JLabel pathLabelInternet;
 	private JLabel pathLabelTvAdicionales;
@@ -83,32 +67,37 @@ public class CuadraturaUI implements Runnable, ActionListener{
 	final JFileChooser fileDialogKenan = new JFileChooser();
 	final JFileChooser fileDialogKenanAdi = new JFileChooser();
 	private GridBagConstraints pathConstrains;
-	
+
 	private BDManager bdManager = new BDManagerImpl();
-	
+
 	private Thread hilo;
-	
+
 	JButton iniciar = new JButton("Iniciar");
-	
+
 	public CuadraturaUI() {
 		mainFrame = new JFrame("Cuadratura Home");
-		JTabbedPane jTabbedPane =  new JTabbedPane();
+		JTabbedPane jTabbedPane = new JTabbedPane();
 		JComponent tresPlay = makeTextPanel3Play("Panel #1");
-		jTabbedPane.addTab("3 Play",tresPlay);
+		jTabbedPane.addTab("3 Play", tresPlay);
 		jTabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 		JComponent inalambrico = makeTextPanelInalambrico("Panel #2");
-		
+
 		jTabbedPane.addTab("Inalámbrica", inalambrico);
 		jTabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		
+
+		JComponent corteBloqueo = makeTextPanelCorteBloqueo("Panel #3");
+
+		jTabbedPane.addTab("Corte y Bloqueo", corteBloqueo);
+		jTabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+
 		mainFrame.add(jTabbedPane, BorderLayout.CENTER);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setSize(800,600);
+		mainFrame.setSize(800, 600);
 		mainFrame.setVisible(true);
 		mainFrame.setResizable(false);
 	}
-	
+
 	protected JComponent makeTextPanel3Play(String text) {
 		JPanel panel3Play = new JPanel(false);
 		JPanel tiposCuad = new JPanel();
@@ -134,27 +123,27 @@ public class CuadraturaUI implements Runnable, ActionListener{
 		panel3Play.setLayout(new GridLayout(2, 1));
 		panel3Play.add(tiposCuad);
 		statusProcess = new JProgressBar();
-	    resultadosCuad.setLayout(new GridBagLayout());
-	    GridBagConstraints c = new GridBagConstraints();
-	    c.fill = GridBagConstraints.HORIZONTAL;
-	    c.gridx = 0;
-	    c.gridy = 0;
-	    c.weightx = 1;
-	    c.ipady = 20;
-	    resultadosCuad.add(statusProcess,c);
+		resultadosCuad.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 1;
+		c.ipady = 20;
+		resultadosCuad.add(statusProcess, c);
 		panel3Play.add(resultadosCuad);
 		return panel3Play;
-    }
-	
+	}
+
 	private void createMenuCheckFor3Play(JPanel panelCheck) {
-		
+
 		chTodos.setMnemonic(KeyEvent.VK_C);
 		chTodos.setSelected(false);
 		chTodos.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTodos.isSelected()) {
+				if (!chTodos.isSelected()) {
 					chTresPlayAAA.setSelected(false);
 					chTresPlayAAA.setEnabled(true);
 					chTresPlayKalturaBase.setSelected(false);
@@ -201,17 +190,17 @@ public class CuadraturaUI implements Runnable, ActionListener{
 					showFileDialogInternetButton.setEnabled(true);
 					iniciar.setEnabled(true);
 				}
-				
+
 			}
 		});
-		
+
 		chTresPlayAAA.setMnemonic(KeyEvent.VK_C);
 		chTresPlayAAA.setSelected(false);
 		chTresPlayAAA.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayAAA.isSelected()){
+				if (!chTresPlayAAA.isSelected()) {
 					showFileDialogInternetButton.setEnabled(false);
 					iniciar.setEnabled(false);
 				} else {
@@ -220,14 +209,14 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
+
 		chTresPlayKalturaBase.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKalturaBase.setSelected(false);
 		chTresPlayKalturaBase.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKalturaBase.isSelected()){
+				if (!chTresPlayKalturaBase.isSelected()) {
 					showFileDialogTvPlanesBaseButton.setEnabled(false);
 					iniciar.setEnabled(false);
 				} else {
@@ -236,14 +225,14 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
+
 		chTresPlayKalturaAdi.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKalturaAdi.setSelected(false);
 		chTresPlayKalturaAdi.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKalturaAdi.isSelected()){
+				if (!chTresPlayKalturaAdi.isSelected()) {
 					showFileDialogAdicionalesButton.setEnabled(false);
 					iniciar.setEnabled(false);
 				} else {
@@ -252,28 +241,28 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
+
 		chTresPlayOTCARTel.setMnemonic(KeyEvent.VK_C);
 		chTresPlayOTCARTel.setSelected(false);
 		chTresPlayOTCARTel.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayOTCARTel.isSelected()){
+				if (!chTresPlayOTCARTel.isSelected()) {
 					iniciar.setEnabled(false);
 				} else {
 					iniciar.setEnabled(true);
 				}
 			}
 		});
-		
+
 		chTresPlayKenanInter.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanInter.setSelected(false);
 		chTresPlayKenanInter.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKenanInter.isSelected()){
+				if (!chTresPlayKenanInter.isSelected()) {
 					showFileDialogKenanButton.setEnabled(false);
 					iniciar.setEnabled(false);
 				} else {
@@ -282,14 +271,14 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
+
 		chTresPlayKenanTVBase.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanTVBase.setSelected(false);
 		chTresPlayKenanTVBase.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKenanTVBase.isSelected()){
+				if (!chTresPlayKenanTVBase.isSelected()) {
 					showFileDialogKenanButton.setEnabled(false);
 					iniciar.setEnabled(false);
 				} else {
@@ -298,14 +287,14 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
+
 		chTresPlayKenanTVAdi.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanTVAdi.setSelected(false);
 		chTresPlayKenanTVAdi.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKenanTVAdi.isSelected()){
+				if (!chTresPlayKenanTVAdi.isSelected()) {
 					showFileDialogKenanAdiButton.setEnabled(false);
 					iniciar.setEnabled(false);
 				} else {
@@ -314,14 +303,14 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
+
 		chTresPlayKenanTel.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanTel.setSelected(false);
 		chTresPlayKenanTel.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKenanTel.isSelected()){
+				if (!chTresPlayKenanTel.isSelected()) {
 					showFileDialogKenanButton.setEnabled(false);
 					iniciar.setEnabled(false);
 				} else {
@@ -330,7 +319,7 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
+
 		panelCheck.setLayout(new GridLayout(0, 2));
 		panelCheck.add(chTodos);
 		panelCheck.add(chTresPlayAAA);
@@ -344,7 +333,7 @@ public class CuadraturaUI implements Runnable, ActionListener{
 	}
 
 	protected JComponent makeTextPanelInalambrico(String text) {
-		JPanel panelIna = new JPanel(false);
+		JPanel panelIna = new JPanel(false); 	
 		JPanel tiposCuad = new JPanel();
 		tiposCuad.setBorder(BorderFactory.createTitledBorder("Tipos de Cuadratura Inalámbrica"));
 		JPanel resultadosCuad = new JPanel();
@@ -353,8 +342,20 @@ public class CuadraturaUI implements Runnable, ActionListener{
 		panelIna.add(tiposCuad);
 		panelIna.add(resultadosCuad);
 		return panelIna;
-    }
-	
+	}
+
+	protected JComponent makeTextPanelCorteBloqueo(String text) {
+		JPanel panelIna = new JPanel(false);
+		JPanel cargaArchivo = new JPanel();
+		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Tipos de Cuadratura Inalámbrica"));
+		JPanel consolePanel = new JPanel();
+		consolePanel.setBorder(BorderFactory.createTitledBorder("Resultados Cuadratura Inalámbrica"));
+		panelIna.setLayout(new GridLayout(2, 1));
+		panelIna.add(cargaArchivo);
+		panelIna.add(consolePanel);
+		return panelIna;
+	}
+
 	private void showFileChooser3playIntenet(JPanel panelChooser) {
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
@@ -362,7 +363,7 @@ public class CuadraturaUI implements Runnable, ActionListener{
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		fileDialogInternet.setFileFilter(filtro);
 		showFileDialogInternetButton.setEnabled(false);
@@ -375,7 +376,7 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
+
 		pathLabelInternet = new JLabel("Seleccione archivo Internet AAA               (Splunk)", SwingConstants.LEFT);
 		pathLabelInternet.setEnabled(false);
 		pathConstrains = new GridBagConstraints();
@@ -384,20 +385,20 @@ public class CuadraturaUI implements Runnable, ActionListener{
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelInternet,pathConstrains);		
-		panelChooser.add(showFileDialogInternetButton,showFileDialogConstrains);
-		
+		panelChooser.add(pathLabelInternet, pathConstrains);
+		panelChooser.add(showFileDialogInternetButton, showFileDialogConstrains);
+
 	}
-	
-	private void showFileChooser3playTvPlanesBase(JPanel panelChooser){
-		
+
+	private void showFileChooser3playTvPlanesBase(JPanel panelChooser) {
+
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogTvPlanesBaseButton.setEnabled(false);
 		fileDialogTvPlanesBase.setFileFilter(filtro);
@@ -410,8 +411,8 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
-		pathLabelTvPlanesBase = new JLabel("Seleccione archivo Planes Base             (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelTvPlanesBase = new JLabel("Seleccione archivo Planes Base             (Splunk)", SwingConstants.LEFT);
 		pathLabelTvPlanesBase.setEnabled(false);
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
@@ -419,19 +420,19 @@ public class CuadraturaUI implements Runnable, ActionListener{
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelTvPlanesBase,pathConstrains);
-		panelChooser.add(showFileDialogTvPlanesBaseButton,showFileDialogConstrains);
+		panelChooser.add(pathLabelTvPlanesBase, pathConstrains);
+		panelChooser.add(showFileDialogTvPlanesBaseButton, showFileDialogConstrains);
 	}
-	
-	private void showFileChooser3playTvAdicionales(JPanel panelChooser){
-		
+
+	private void showFileChooser3playTvAdicionales(JPanel panelChooser) {
+
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogAdicionalesButton.setEnabled(false);
 		fileDialogTvAdicionales.setFileFilter(filtro);
@@ -444,8 +445,8 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
-		pathLabelTvAdicionales = new JLabel("Seleccione archivo Planes Adicionales (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelTvAdicionales = new JLabel("Seleccione archivo Planes Adicionales (Splunk)", SwingConstants.LEFT);
 		pathLabelTvAdicionales.setEnabled(false);
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
@@ -453,19 +454,19 @@ public class CuadraturaUI implements Runnable, ActionListener{
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelTvAdicionales,pathConstrains);
-		panelChooser.add(showFileDialogAdicionalesButton,showFileDialogConstrains);
+		panelChooser.add(pathLabelTvAdicionales, pathConstrains);
+		panelChooser.add(showFileDialogAdicionalesButton, showFileDialogConstrains);
 	}
-	
-	private void showFileChooser3playKenan(JPanel panelChooser){
-		
+
+	private void showFileChooser3playKenan(JPanel panelChooser) {
+
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogKenanButton.setEnabled(false);
 		fileDialogKenan.setFileFilter(filtro);
@@ -478,8 +479,8 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
-		pathLabelKenan = new JLabel("Seleccione archivo Kenan                         (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelKenan = new JLabel("Seleccione archivo Kenan                         (Splunk)", SwingConstants.LEFT);
 		pathLabelKenan.setEnabled(false);
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
@@ -487,19 +488,19 @@ public class CuadraturaUI implements Runnable, ActionListener{
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelKenan,pathConstrains);
-		panelChooser.add(showFileDialogKenanButton,showFileDialogConstrains);
+		panelChooser.add(pathLabelKenan, pathConstrains);
+		panelChooser.add(showFileDialogKenanButton, showFileDialogConstrains);
 	}
-	
-	private void showFileChooser3playKenanAdi(JPanel panelChooser){
-		
+
+	private void showFileChooser3playKenanAdi(JPanel panelChooser) {
+
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogKenanAdiButton.setEnabled(false);
 		fileDialogKenanAdi.setFileFilter(filtro);
@@ -512,8 +513,8 @@ public class CuadraturaUI implements Runnable, ActionListener{
 				}
 			}
 		});
-		
-		pathLabelKenanAdi = new JLabel("Seleccione archivo Kenan Adicionales   (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelKenanAdi = new JLabel("Seleccione archivo Kenan Adicionales   (Splunk)", SwingConstants.LEFT);
 		pathLabelKenanAdi.setEnabled(false);
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
@@ -521,13 +522,13 @@ public class CuadraturaUI implements Runnable, ActionListener{
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelKenanAdi,pathConstrains);
-		panelChooser.add(showFileDialogKenanAdiButton,showFileDialogConstrains);
+		panelChooser.add(pathLabelKenanAdi, pathConstrains);
+		panelChooser.add(showFileDialogKenanAdiButton, showFileDialogConstrains);
 	}
 
 	@Override
 	public void run() {
-		
+
 		Map<String, CountOBJ> mapResult = new HashMap<String, CountOBJ>();
         if(!chTodos.isSelected()){
 /* INTERNET AAA */
@@ -623,14 +624,14 @@ public class CuadraturaUI implements Runnable, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
-        if( o instanceof JButton ) {
-            JButton btn = (JButton)o;
-            if( btn.getText().equals("Iniciar")) {
-            	hilo = new Thread(this);
-            	hilo.start();
-            	btn.setEnabled(false);
-            } 
-        }
-		
-	}	
+		if (o instanceof JButton) {
+			JButton btn = (JButton) o;
+			if (btn.getText().equals("Iniciar")) {
+				hilo = new Thread(this);
+				hilo.start();
+				btn.setEnabled(false);
+			}
+		}
+
+	}
 }
