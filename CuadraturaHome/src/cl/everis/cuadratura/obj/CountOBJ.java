@@ -4,7 +4,7 @@ public class CountOBJ {
 	
 	private int totalRed;
 	private int totalTplay;
-	private int redNoTplay;
+	private int dif;
 	
 	public int getTotalRed() {
 		return totalRed;
@@ -18,11 +18,11 @@ public class CountOBJ {
 	public void setTotalTplay(int totalTplay) {
 		this.totalTplay = totalTplay;
 	}
-	public int getRedNoTplay() {
-		return redNoTplay;
+	public int getDiferencia() {
+		return dif;
 	}
-	public void setRedNoTplay(int redNoTplay) {
-		this.redNoTplay = redNoTplay;
+	public void setDiferencia(int redNoTplay) {
+		this.dif = redNoTplay;
 	}
 
 }

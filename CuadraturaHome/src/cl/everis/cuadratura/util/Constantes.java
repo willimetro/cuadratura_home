@@ -55,7 +55,13 @@ public class Constantes {
 			+ "ON  tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
 			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" "
 			+ "WHERE kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') "
-			+ "AND tv_3p.\"RUT\" IS NULL"};
+			+ "AND tv_3p.\"RUT\" IS NULL",
+			// BORRA TABLA 3PLAY PARA CICLO 62
+			"TRUNCATE canales_3play_62",
+			// CARGA DATOS SEGUNDA PASADA
+			"INSERT INTO canales_3play_62 (SELECT tv_3p.* FROM tvcanales_3play tv_3p LEFT OUTER JOIN facturador_kenan_canal kenan "
+			+ "ON tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
+			+ "WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' AND kenan.\"KEY_CANAL\" IS NULL)"};
 	private final static String[] QUERYS_INTERNET_3P_AAA ={
 			// 3PLAY_NO_RED
 			"SELECT tplay.* FROM internet_3play tplay LEFT OUTER JOIN internet_aaa aaa "
@@ -97,7 +103,13 @@ public class Constantes {
 			+ "FROM facturador_kenan kenan LEFT OUTER JOIN internet_3play tplay "
 			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
 			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND kenan.\"ESTADO\" IN ('Facturado','Nuevo') "
-			+ "AND tplay.\"NRUT_CLIENTE\" IS NULL"};
+			+ "AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			// BORRA TABLA 3PLAY PARA CICLO 62
+			"TRUNCATE internet_3play_62",
+			// CARGA DATOS SEGUNDA PASADA
+			"INSERT INTO internet_3play_62 (SELECT tplay.* FROM internet_3play tplay LEFT OUTER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL)"};
 	private final static String[] QUERYS_TLF_3P_KENAN ={
 			// 3PLAY_NO_RED
 			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\","
@@ -121,7 +133,13 @@ public class Constantes {
 			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay "
 			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
 			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND kenan.\"ESTADO\" IN ('Facturado','Nuevo') "
-			+ "AND tplay.\"NRUT_CLIENTE\" IS NULL"};
+			+ "AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			// BORRA TABLA 3PLAY PARA CICLO 62			
+			"TRUNCATE tlf_3play_62",
+			// CARGA DATOS SEGUNDA PASADA
+			"INSERT INTO tlf_3play_62 (SELECT tplay.* FROM tlf_3play tplay LEFT OUTER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL)"};
 	private final static String[] QUERYS_TLF_3P_OTCAR ={
 			// 3PLAY_NO_RED
 			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\",otcar.\"KEY_ANI\" "
@@ -180,59 +198,78 @@ public class Constantes {
 			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" "
 			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND kenan.\"ESTADO\" IN ('Facturado','Nuevo') "
-			+ "AND tv_3p.\"RUT\" IS NULL"};
-	private final static String[] QUERYS_TV_3P_KENAN_62 ={
+			+ "AND tv_3p.\"RUT\" IS NULL",
+			// BORRA TABLA 3PLAY PARA CICLO 62
+			"TRUNCATE tv_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
 			"INSERT INTO tv_3play_62 (SELECT tv.* FROM tvcanales_3play tv LEFT OUTER JOIN facturador_kenan kn "
 			+ "ON tv.\"RUT\" = kn.\"KEY_RUT_SIN_DV\" AND kn.\"PLAN\" = 'PLAN TELEVISION' "
-			+ "WHERE tv.\"CODI_PRODUCTO\" IN ('128','129') AND kn.\"KEY_RUT_SIN_DV\" IS NULL)",
+			+ "WHERE tv.\"CODI_PRODUCTO\" IN ('128','129') AND kn.\"KEY_RUT_SIN_DV\" IS NULL)"};
+	private final static String[] QUERYS_TV_3P_KENAN_62 ={
+			// 3PLAY SEGUNDA PASADA QUE ESTA EN KENAN CICLO 62
+			"SELECT tv_62.\"RUT\", tv_62.\"DV\", tv_62.\"PRODUCTO\", tv_62.\"CODI_PRODUCTO\", tv_62.\"TRYBUY\", tv_62.\"ESTADO\", "
+			+ "kn_62.\"NEGOCIO\", kn_62.\"FECHA_VCTO\", kn_62.\"NRO_FOLIO\", kn_62.\"OBSERVACION\", kn_62.\"SALDO\" "
+			+ "FROM tv_3play_62 tv_62 INNER JOIN facturador_kenan_62 kn_62 "
+			+ "ON tv_62.\"RUT\" = kn_62.\"RUT_SIN_DV\"",
+			// 3PLAY SEGUNDA PASADA QUE NO ESTA EN KENAN CICLO 62
+			"SELECT tv_62.* FROM tv_3play_62 tv_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
+			+ "ON tv_62.\"RUT\" = kn_62.\"RUT_SIN_DV\" WHERE kn_62.\"RUT_SIN_DV\" IS NULL",
 			// COUNT 3PLAY NO KENAN CICLO 61
 			"SELECT COUNT(1) FROM tv_3play_62",
 			// COUNT TOTAL BASE KENAN CICLO 62
 			"SELECT COUNT(1) FROM facturador_kenan_62",
-			// 3PLAY SEGUNDA PASADA QUE NO ESTA EN KENAN CICLO 62
-			"",
-			// COUNT 3PLAY QUE NO ESTAN EN CICLO 61 NI 62
-			""};
+			// COUNT 3PLAY NO KENAN 62
+			"SELECT COUNT(1) FROM tv_3play_62 tv_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
+			+ "ON tv_62.\"RUT\" = kn_62.\"RUT_SIN_DV\" WHERE kn_62.\"RUT_SIN_DV\" IS NULL"};
 	private final static String[] QUERYS_CANALES_3P_KENAN_62 ={
-			// CARGA DATOS SEGUNDA PASADA
-			"INSERT INTO canales_3play_62 (SELECT tv_3p.* FROM tvcanales_3play tv_3p LEFT OUTER JOIN facturador_kenan_canal kenan "
-			+ "ON tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
-			+ "WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' AND kenan.\"KEY_CANAL\" IS NULL)",
+			// 3PLAY SEGUNDA PASADA QUE ESTA EN KENAN CICLO 62
+			"SELECT canal_62.*, kn_62.\"NEGOCIO\", kn_62.\"FECHA_VCTO\", kn_62.\"NRO_FOLIO\", kn_62.\"OBSERVACION\", kn_62.\"SALDO\" "
+			+ "FROM canales_3play_62 canal_62 INNER JOIN facturador_kenan_62 kn_62 "
+			+ "ON canal_62.\"RUT\" = kn_62.\"RUT_SIN_DV\"",
+			// 3PLAY SEGUNDA PASADA QUE NO ESTA EN KENAN CICLO 62
+			"SELECT canal_62.* FROM canales_3play_62 canal_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
+			+ "ON canal_62.\"RUT\" = kn_62.\"RUT_SIN_DV\" WHERE kn_62.\"RUT_SIN_DV\" IS NULL",
 			// COUNT 3PLAY NO KENAN CICLO 61
 			"SELECT COUNT(1) FROM canales_3play_62",
 			// COUNT TOTAL BASE KENAN CICLO 62
 			"SELECT COUNT(1) FROM facturador_kenan_62",
-			// 3PLAY SEGUNDA PASADA QUE NO ESTA EN KENAN CICLO 62
-			"",
-			// COUNT 3PLAY QUE NO ESTAN EN CICLO 61 NI 62
-			""};
+			// COUNT 3PLAY NO KENAN 62
+			"SELECT COUNT(1) FROM canales_3play_62 canal_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
+			+ "ON canal_62.\"RUT\" = kn_62.\"RUT_SIN_DV\" WHERE kn_62.\"RUT_SIN_DV\" IS NULL"};
 	private final static String[] QUERYS_INTERNET_3P_KENAN_62 ={
-			// CARGA DATOS SEGUNDA PASADA
-			"INSERT INTO internet_3play_62 (SELECT tplay.* FROM internet_3play tplay LEFT OUTER JOIN facturador_kenan kenan "
-			+ "ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
-			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL)",
+			// 3PLAY SEGUNDA PASADA QUE ESTA EN KENAN CICLO 62
+			"SELECT int_62.\"NRUT_CLIENTE\", int_62.\"DRUT_CLIENTE\", int_62.\"CODI_TECNICO\", int_62.\"DESC_GLOSAPROD\", "
+			+ "kn_62.\"NEGOCIO\", kn_62.\"FECHA_VCTO\", kn_62.\"NRO_FOLIO\", kn_62.\"OBSERVACION\", kn_62.\"SALDO\" "
+			+ "FROM internet_3play_62 int_62 INNER JOIN facturador_kenan_62 kn_62 "
+			+ "ON int_62.\"NRUT_CLIENTE\" = kn_62.\"RUT_SIN_DV\"",
+			// 3PLAY SEGUNDA PASADA QUE NO ESTA EN KENAN CICLO 62
+			"SELECT int_62.* FROM internet_3play_62 int_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
+			+ "ON int_62.\"NRUT_CLIENTE\" = kn_62.\"RUT_SIN_DV\" "
+			+ "WHERE kn_62.\"RUT_SIN_DV\" IS NULL",
 			// COUNT 3PLAY NO KENAN CICLO 61
 			"SELECT COUNT(1) FROM internet_3play_62",
 			// COUNT TOTAL BASE KENAN CICLO 62
 			"SELECT COUNT(1) FROM facturador_kenan_62",
-			// 3PLAY SEGUNDA PASADA QUE NO ESTA EN KENAN CICLO 62
-			"",
-			// COUNT 3PLAY QUE NO ESTAN EN CICLO 61 NI 62
-			""};
+			// COUNT 3PLAY NO KENAN 62
+			"SELECT COUNT(1) FROM internet_3play_62 int_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
+			+ "ON int_62.\"NRUT_CLIENTE\" = kn_62.\"RUT_SIN_DV\" "
+			+ "WHERE kn_62.\"RUT_SIN_DV\" IS NULL"};
 	private final static String[] QUERYS_TLF_3P_KENAN_62 ={
-			// CARGA DATOS SEGUNDA PASADA
-			"INSERT INTO tlf_3play_62 (SELECT tplay.* FROM tlf_3play tplay LEFT OUTER JOIN facturador_kenan kenan "
-			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
-			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL)",
+			// 3PLAY SEGUNDA PASADA QUE ESTA EN KENAN CICLO 62
+			"SELECT tlf_62.\"NRUT_CLIENTE\", tlf_62.\"DRUT_CLIENTE\", tlf_62.\"CODI_TECNICO\", tlf_62.\"DESC_GLOSAPROD\", "
+			+ "kn_62.\"NEGOCIO\", kn_62.\"FECHA_VCTO\", kn_62.\"NRO_FOLIO\", kn_62.\"OBSERVACION\", kn_62.\"SALDO\" "
+			+ "FROM tlf_3play_62 tlf_62 INNER JOIN facturador_kenan_62 kn_62 "
+			+ "ON tLF_62.\"NRUT_CLIENTE\" = kn_62.\"RUT_SIN_DV\"",
+			// 3PLAY SEGUNDA PASADA QUE NO ESTA EN KENAN CICLO 62
+			"SELECT tlf_62.* FROM tlf_3play_62 tlf_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
+			+ "ON tLF_62.\"NRUT_CLIENTE\" = kn_62.\"RUT_SIN_DV\" WHERE kn_62.\"RUT_SIN_DV\" IS NULL",
 			// COUNT 3PLAY NO KENAN CICLO 61
 			"SELECT COUNT(1) FROM tlf_3play_62",
 			// COUNT TOTAL BASE KENAN CICLO 62
 			"SELECT COUNT(1) FROM facturador_kenan_62",
-			// 3PLAY SEGUNDA PASADA QUE NO ESTA EN KENAN CICLO 62
-			"",
-			// COUNT 3PLAY QUE NO ESTAN EN CICLO 61 NI 62
-			""};
+			// COUNT 3PLAY NO KENAN 62
+			"SELECT COUNT(1) FROM tlf_3play_62 tlf_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
+			+ "ON tLF_62.\"NRUT_CLIENTE\" = kn_62.\"RUT_SIN_DV\" WHERE kn_62.\"RUT_SIN_DV\" IS NULL"};
 	
 	private final static String[] FILES_CANALES_3P_KALTURA ={"canales_tplay_no_kaltura.csv","canales_kaltura_no_tplay.csv"};
 	private final static String[] FILES_CANALES_3P_KENAN ={"canales_tplay_no_kenan.csv","canales_kenan_no_tplay.csv"};
@@ -242,6 +279,10 @@ public class Constantes {
 	private final static String[] FILES_TLF_3P_OTCAR ={"tlf_tplay_no_octar.csv","tlf_octar_no_tplay.csv"};
 	private final static String[] FILES_TV_3P_KALTURA ={"tv_tplay_no_kaltura.csv","tv_kaltura_no_tplay.csv"};
 	private final static String[] FILES_TV_3P_KENAN ={"tv_tplay_no_kenan.csv","tv_kenan_no_tplay.csv"};
+	private final static String[] FILES_TV_3P_KENAN_62 ={"tv_tplay_and_kenan_62.csv","tv_tplay_no_kenan_62.csv"};
+	private final static String[] FILES_CANALES_3P_KENAN_62 ={"canales_tplay_and_kenan_62.csv","canales_tplay_no_kenan_62.csv"};
+	private final static String[] FILES_INTERNET_3P_KENAN_62 ={"internet_tplay_no_kenan_62.csv","internet_tplay_no_kenan_62.csv"};
+	private final static String[] FILES_TLF_3P_KENAN_62 ={"tlf_tplay_and_kenan_62.csv","tlf_tplay_no_kenan_62.csv"};
 	
 	private final static String CARGA_TLF ="copy tlf_3play FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_INT ="copy internet_3play FROM stdin DELIMITER ';' CSV header";
@@ -250,6 +291,7 @@ public class Constantes {
 	private final static String CARGA_KALTURA ="copy tv_kaltura FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_KALTURA_C ="copy canales_kaltura FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_KENAN ="copy facturador_kenan FROM stdin DELIMITER ';' CSV header";
+	private final static String CARGA_KENAN_62 ="copy facturador_kenan_62 FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_KENAN_C ="copy facturador_kenan_canal FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_AAA ="copy internet_aaa FROM stdin DELIMITER ';' CSV header";
 	
@@ -260,6 +302,7 @@ public class Constantes {
 	private final static String TRUNCATE_KALTURA ="TRUNCATE tv_kaltura";
 	private final static String TRUNCATE_KALTURA_C ="TRUNCATE canales_kaltura";
 	private final static String TRUNCATE_KENAN ="TRUNCATE facturador_kenan";
+	private final static String TRUNCATE_KENAN_62 ="TRUNCATE facturador_kenan_62";
 	private final static String TRUNCATE_KENAN_C ="TRUNCATE facturador_kenan_canal";
 	private final static String TRUNCATE_AAA ="TRUNCATE internet_aaa";
 	
@@ -275,6 +318,7 @@ public class Constantes {
 	private final static String FILE_KALTURA ="tv_base_kaltura.csv";
 	private final static String FILE_KALTURA_C ="canales_kaltura.csv";
 	private final static String FILE_KENAN ="base_kenan.csv";
+	private final static String FILE_KENAN_62 ="base_kenan_62.csv";
 	private final static String FILE_KENAN_C ="canales_kenan.csv";
 	private final static String FILE_AAA ="internet_aaa.csv";
 	
@@ -411,7 +455,9 @@ public class Constantes {
 			toReturn = FILE_KALTURA_C;
 		} else if ("KENAN".equals(arg)){
 			toReturn = FILE_KENAN;
-		} else if ("KENAN_C".equals(arg)){
+		}  else if ("KENAN_62".equals(arg)){
+			toReturn = FILE_KENAN_62;
+		}else if ("KENAN_C".equals(arg)){
 			toReturn = FILE_KENAN_C;
 		} else if ("AAA".equals(arg)){
 			toReturn = FILE_AAA;
@@ -435,6 +481,8 @@ public class Constantes {
 			toReturn = CARGA_KALTURA_C;
 		} else if ("KENAN".equals(arg)){
 			toReturn = CARGA_KENAN;
+		} else if ("KENAN_62".equals(arg)){
+			toReturn = CARGA_KENAN_62;
 		} else if ("KENAN_C".equals(arg)){
 			toReturn = CARGA_KENAN_C;
 		} else if ("AAA".equals(arg)){
@@ -459,6 +507,8 @@ public class Constantes {
 			toReturn = TRUNCATE_KALTURA_C;
 		} else if ("KENAN".equals(arg)){
 			toReturn = TRUNCATE_KENAN;
+		}  else if ("KENAN_62".equals(arg)){
+			toReturn = TRUNCATE_KENAN_62;
 		} else if ("KENAN_C".equals(arg)){
 			toReturn = TRUNCATE_KENAN_C;
 		} else if ("AAA".equals(arg)){
@@ -486,6 +536,14 @@ public class Constantes {
 			toReturn = QUERYS_INTERNET_3P_AAA;
 		} else if ("TPLAY_OTCAR".equals(arg)){
 			toReturn = QUERYS_TLF_3P_OTCAR;
+		} else if ("TPLAY_KENAN_INT_62".equals(arg)){
+			toReturn = QUERYS_INTERNET_3P_KENAN_62;
+		} else if ("TPLAY_KENAN_C_62".equals(arg)){
+			toReturn = QUERYS_CANALES_3P_KENAN_62;
+		} else if ("TPLAY_KENAN_TV_62".equals(arg)){
+			toReturn = QUERYS_TV_3P_KENAN_62;
+		} else if ("TPLAY_KENAN_TLF_62".equals(arg)){
+			toReturn = QUERYS_TLF_3P_KENAN_62;
 		}
 		return toReturn;
 	}
@@ -508,6 +566,14 @@ public class Constantes {
 			toReturn = FILES_INTERNET_3P_AAA;
 		} else if ("TPLAY_OTCAR".equals(arg)){
 			toReturn = FILES_TLF_3P_OTCAR;
+		} else if ("TPLAY_KENAN_INT_62".equals(arg)){
+			toReturn = FILES_INTERNET_3P_KENAN_62;
+		} else if ("TPLAY_KENAN_C_62".equals(arg)){
+			toReturn = FILES_CANALES_3P_KENAN_62;
+		} else if ("TPLAY_KENAN_TV_62".equals(arg)){
+			toReturn = FILES_TV_3P_KENAN_62;
+		} else if ("TPLAY_KENAN_TLF_62".equals(arg)){
+			toReturn = FILES_TLF_3P_KENAN_62;
 		}
 		return toReturn;
 	}
