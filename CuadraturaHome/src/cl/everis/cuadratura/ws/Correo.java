@@ -67,10 +67,10 @@ public class Correo {
 											"</tr>"+
 											"<tr>"+
 												"<td>RED - NO EN 3PLAY</td>"+
-												((null != c.get("TPLAY_KALTURA")) ? "<td>"+c.get("TPLAY_KALTURA").getRedNoTplay()+"</td>" : "")+
-												((null != c.get("TPLAY_KALTURA_C")) ? "<td>"+c.get("TPLAY_KALTURA_C").getRedNoTplay()+"</td>" : "")+
-												((null != c.get("TPLAY_OTCAR")) ? "<td>"+c.get("TPLAY_OTCAR").getRedNoTplay()+"</td>" : "")+
-												((null != c.get("TPLAY_AAA")) ? "<td>"+c.get("TPLAY_AAA").getRedNoTplay()+"</td>" : "")+
+												((null != c.get("TPLAY_KALTURA")) ? "<td>"+c.get("TPLAY_KALTURA").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_KALTURA_C")) ? "<td>"+c.get("TPLAY_KALTURA_C").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_OTCAR")) ? "<td>"+c.get("TPLAY_OTCAR").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_AAA")) ? "<td>"+c.get("TPLAY_AAA").getDiferencia()+"</td>" : "")+
 											"</tr>"+
 										"</table>": "")+				
 										((null != c.get("TPLAY_KENAN_TV")||null != c.get("TPLAY_KENAN_C")||null != c.get("TPLAY_KENAN_TLF")||null != c.get("TPLAY_KENAN_INT")) ? 
@@ -78,10 +78,10 @@ public class Correo {
 										"<table>"+
 											"<tr>"+
 												"<th></th>"+
-												((null != c.get("TPLAY_KENAN_TV")) ? "<th>TV(KENAN)</th>": "")+
-												((null != c.get("TPLAY_KENAN_C")) ? "<th>CANALES(KENAN)</th>" : "")+
-												((null != c.get("TPLAY_KENAN_TLF")) ? "<th>TELEFONIA(KENAN)</th>" : "")+
-												((null != c.get("TPLAY_KENAN_INT")) ? "<th>INTERNET(KENAN)</th>" : "")+
+												((null != c.get("TPLAY_KENAN_TV")) ? "<th>TV</th>": "")+
+												((null != c.get("TPLAY_KENAN_C")) ? "<th>CANALES</th>" : "")+
+												((null != c.get("TPLAY_KENAN_TLF")) ? "<th>TELEFONIA</th>" : "")+
+												((null != c.get("TPLAY_KENAN_INT")) ? "<th>INTERNET</th>" : "")+
 											"<tr/>"+
 											"<tr>"+
 												"<td>TOTAL 3PLAY</td>"+
@@ -99,15 +99,45 @@ public class Correo {
 											"</tr>"+
 											"<tr>"+
 												"<td>KENAN - NO EN 3PLAY</td>"+
-												((null != c.get("TPLAY_KENAN_TV")) ? "<td>"+c.get("TPLAY_KENAN_TV").getRedNoTplay()+"</td>" : "")+
-												((null != c.get("TPLAY_KENAN_C")) ? "<td>"+c.get("TPLAY_KENAN_C").getRedNoTplay()+"</td>" : "")+
-												((null != c.get("TPLAY_KENAN_TLF")) ? "<td>"+c.get("TPLAY_KENAN_TLF").getRedNoTplay()+"</td>" : "")+
-												((null != c.get("TPLAY_KENAN_INT")) ? "<td>"+c.get("TPLAY_KENAN_INT").getRedNoTplay()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_TV")) ? "<td>"+c.get("TPLAY_KENAN_TV").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_C")) ? "<td>"+c.get("TPLAY_KENAN_C").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_TLF")) ? "<td>"+c.get("TPLAY_KENAN_TLF").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_INT")) ? "<td>"+c.get("TPLAY_KENAN_INT").getDiferencia()+"</td>" : "")+
 											"</tr>"+
 										"</table>"+
+										"<br>"+
+										"<table>"+
+											"<tr>"+
+												"<th></th>"+
+												((null != c.get("TPLAY_KENAN_TV_62")) ? "<th>TV</th>": "")+
+												((null != c.get("TPLAY_KENAN_C_62")) ? "<th>CANALES</th>" : "")+
+												((null != c.get("TPLAY_KENAN_TLF_62")) ? "<th>TELEFONIA</th>" : "")+
+												((null != c.get("TPLAY_KENAN_INT_62")) ? "<th>INTERNET</th>" : "")+
+											"<tr/>"+
+											"<tr>"+
+												"<td>TOTAL 3PLAY NO FACTURADOS</td>"+
+												((null != c.get("TPLAY_KENAN_TV_62")) ? "<td>"+c.get("TPLAY_KENAN_TV_62").getTotalTplay()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_C_62")) ? "<td>"+c.get("TPLAY_KENAN_C_62").getTotalTplay()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_TLF_62")) ? "<td>"+c.get("TPLAY_KENAN_TLF_62").getTotalTplay()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_INT_62")) ? "<td>"+c.get("TPLAY_KENAN_INT_62").getTotalTplay()+"</td>" : "")+
+											"</tr>"+
+											"<tr>"+
+												"<td>TOTAL BASE KENAN NO FACTURADOS</td>"+
+												((null != c.get("TPLAY_KENAN_TV_62")) ? "<td>"+c.get("TPLAY_KENAN_TV_62").getTotalRed()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_C_62")) ? "<td>"+c.get("TPLAY_KENAN_C_62").getTotalRed()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_TLF_62")) ? "<td>"+c.get("TPLAY_KENAN_TLF_62").getTotalRed()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_INT_62")) ? "<td>"+c.get("TPLAY_KENAN_INT_62").getTotalRed()+"</td>" : "")+
+											"</tr>"+
+											"<tr>"+
+												"<td>TOTAL 3PLAY NINGUN CICLO</td>"+
+												((null != c.get("TPLAY_KENAN_TV_62")) ? "<td>"+c.get("TPLAY_KENAN_TV_62").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_C_62")) ? "<td>"+c.get("TPLAY_KENAN_C_62").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_TLF_62")) ? "<td>"+c.get("TPLAY_KENAN_TLF_62").getDiferencia()+"</td>" : "")+
+												((null != c.get("TPLAY_KENAN_INT_62")) ? "<td>"+c.get("TPLAY_KENAN_INT_62").getDiferencia()+"</td>" : "")+
+											"</tr>"+
+										"</table>": "")+
 									"</body>"+
-								"</html>"
-								: "");
+								"</html>";
 		return toReturn;
 	}
 }

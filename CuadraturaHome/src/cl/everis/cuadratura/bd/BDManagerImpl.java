@@ -37,7 +37,7 @@ public class BDManagerImpl implements BDManager {
 				Constantes.getCabecera(opcion),
 				opcion);
 		System.out.println("Descargó archivo " + Constantes.getFile(opcion) +" en la ruta: " + PATH_ARCHIVOS );	
-	
+
 	}
 
 	@Override
@@ -51,6 +51,8 @@ public class BDManagerImpl implements BDManager {
 	@Override
 	public void cargaCSV(String producto) {
 		Connection conn = null;
+		BaseConnection pgcon = null;
+		Reader in = null;
 
 		String fileName = "";
 		String sql = "";
@@ -58,11 +60,11 @@ public class BDManagerImpl implements BDManager {
 		try {
 
 			conn = ConnectionCuadraturaBD.getLocalConn();
-			BaseConnection pgcon = (BaseConnection)conn;
+			pgcon = (BaseConnection)conn;
 			CopyManager mgr = new CopyManager(pgcon);
 			fileName = Constantes.getFile(producto);
 			sql = Constantes.getQueryCarga(producto);
-			Reader in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+fileName)));
+			in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+fileName)));
 			long rowsaffected  = mgr.copyIn(sql, in);
 			System.out.println("Se ejecutó: " + Constantes.getQueryCarga(producto) + " con el archivo: "
 					+Constantes.getFile(producto) + " y se copiaron " + rowsaffected + " registros");
@@ -73,6 +75,18 @@ public class BDManagerImpl implements BDManager {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				in.close();
+				pgcon.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
 	}
@@ -135,6 +149,7 @@ public class BDManagerImpl implements BDManager {
 		CountOBJ contadores = new CountOBJ();
 		PreparedStatement pstmt =  null;
 		ResultSet rs = null;
+		Statement statement = null;
 		try {
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
@@ -168,7 +183,7 @@ public class BDManagerImpl implements BDManager {
 					else if(i==3)
 						contadores.setTotalRed(rs.getInt(1));
 					else
-						contadores.setRedNoTplay(rs.getInt(1));
+						contadores.setDiferencia(rs.getInt(1));
 				}
 			}
 		} catch(Exception e){
@@ -182,14 +197,33 @@ public class BDManagerImpl implements BDManager {
 				e.printStackTrace();
 			}
 		}
+		if (producto.indexOf("KENAN")>=0 && producto.indexOf("62")<0){
+			try {
+				conn = ConnectionCuadraturaBD.getLocalConn();
+				for (int i = 5; i < Constantes.getQueryCruce(producto).length; i++) {
+					statement = conn.createStatement();
+					statement.executeUpdate(Constantes.getQueryCruce(producto)[i]);
+					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
+				}
+			}catch (Exception e){
+				e.printStackTrace();
+			} finally {
+				try {
+					conn.close();
+					statement.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		return contadores;
 	}
 
 	@Override
 	public void formatear(String archivo, String producto) {
-		
+
 		FormatoArchivo formatoArchivo = new FormatoArchivo();
-		
+
 		if ("KENAN".equals(producto)){
 			formatoArchivo.formatFileKenan(archivo);
 		}
@@ -205,9 +239,9 @@ public class BDManagerImpl implements BDManager {
 		else if ("AAA".equals(producto)){
 			formatoArchivo.formatFileInternetAAA(archivo);
 		}
-		
+
 	}
-	
+
 	private void procesar(FileWriter fw, ResultSet rs, String producto) throws IOException, SQLException {
 
 		int columnas = rs.getMetaData().getColumnCount();
