@@ -33,7 +33,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 	private final static String[] CRUCES_TPLAY = { "TPLAY_KALTURA", "TPLAY_KALTURA_C", "TPLAY_KENAN_TV",
 			"TPLAY_KENAN_TLF", "TPLAY_KENAN_INT", "TPLAY_KENAN_C", "TPLAY_AAA", "TPLAY_OTCAR" };
-	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_C", "KALTURA",
+	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_62", "KENAN_C", "KALTURA",
 			"KALTURA_C", "AAA" };
 	private JFrame mainFrame = null;
 	private JProgressBar statusProcess;
