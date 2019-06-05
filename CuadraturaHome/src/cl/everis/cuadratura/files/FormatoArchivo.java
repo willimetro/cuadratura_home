@@ -22,7 +22,7 @@ import cl.everis.cuadratura.obj.FileTvBaseKalturaOutOBJ;
 public class FormatoArchivo {
 
 	private final static String PATH_ARCHIVOS = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\CSVs\\";
-	
+
 	public void formatFileKenan(String pathArchivo) {
 		File kenanIn = null;
 		FileReader fr = null;
@@ -210,7 +210,7 @@ public class FormatoArchivo {
 			fr = new FileReader(tvBaseKalturaIn);
 			br = new BufferedReader(fr);
 
-			tvBaseKalturaOut = new FileWriter(PATH_ARCHIVOS+ "tv_base_kaltura.csv");
+			tvBaseKalturaOut = new FileWriter(PATH_ARCHIVOS + "tv_base_kaltura.csv");
 			pw = new PrintWriter(tvBaseKalturaOut);
 
 			String linea;

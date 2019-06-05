@@ -1,6 +1,7 @@
 package cl.everis.cuadratura.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -9,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -20,15 +23,22 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cl.everis.cuadratura.bd.BDManager;
 import cl.everis.cuadratura.bd.BDManagerImpl;
+import cl.everis.cuadratura.files.ArchivoUtil;
 import cl.everis.cuadratura.obj.CountOBJ;
+import cl.everis.cuadratura.obj.FileCorteCanales;
+import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 import cl.everis.cuadratura.ws.Correo;
 
 public class CuadraturaUI implements Runnable, ActionListener {
@@ -78,13 +88,18 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private BDManager bdManager = new BDManagerImpl();
 
 	private Thread hilo;
-	
+
 	private String flagAction = "";
 
 	JButton iniciarBtn = new JButton("Iniciar");
 	JButton cargarDatosBtn = new JButton("Cargar Datos");
-	
+	JButton cortarBtn = new JButton("Cortar");
+	private JLabel labelInfoCanales;
+	private JTextArea jTextAreaStatusProcess;
+
 	private JComboBox<String> comboCanales = null;
+	Map<String, Integer> mapCanales = null;
+	List<FileCorteCanalesRow> fileCorteCanalesRows = null;
 
 	public CuadraturaUI() {
 		mainFrame = new JFrame("Cuadratura Home");
@@ -362,21 +377,71 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Configuración del Corte o Bloqueo"));
 		cargaArchivo.setLayout(new BoxLayout(cargaArchivo, BoxLayout.Y_AXIS));
 		JPanel panelChooser = new JPanel();
+		panelChooser.setBorder(BorderFactory.createTitledBorder("Paso 1 - Busque archivo y carguelo"));
 		showFileChooserCorteCanales(panelChooser);
 		cargarDatosBtn.setEnabled(false);
 		cargarDatosBtn.addActionListener(this);
 		panelChooser.add(cargarDatosBtn);
 		JPanel panelFileCargado = new JPanel();
+		panelFileCargado.setLayout(new BoxLayout(panelFileCargado, BoxLayout.Y_AXIS));
 		comboCanales = new JComboBox<String>();
 		comboCanales.addItem("Seleccione...");
 		comboCanales.setEnabled(false);
-		panelFileCargado.add(comboCanales);
+		comboCanales.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String itemSeleccionado = (String) comboCanales.getSelectedItem();
+				int cantidad = mapCanales.get(itemSeleccionado);
+				labelInfoCanales
+						.setText("Se intentará dar de baja " + cantidad + " clientes con canal " + itemSeleccionado);
+				cortarBtn.setEnabled(true);
+			}
+		});
+		panelFileCargado
+				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione el canal que quiere dar de baja"));
+		JPanel comboPanel = new JPanel();
+		comboPanel.add(comboCanales);
+		cortarBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Object[] options = { "Aceptar", "Cancelar" };
+				int n = JOptionPane.showOptionDialog(panelCB,
+						"Recuerde que " + labelInfoCanales.getText() + " Desea seguir con el proceso?",
+						"Seguro que desea seguir", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, null);
+				if (n == 0) {
+					flagAction = "Cortar Canales";
+					hilo = new Thread(CuadraturaUI.this);
+					hilo.start();
+					cortarBtn.setEnabled(false);
+				}
+			}
+		});
+		comboPanel.add(cortarBtn);
+		cortarBtn.setEnabled(false);
+		panelFileCargado.add(comboPanel);
+		labelInfoCanales = new JLabel(" ");
+		JPanel panelAlertCanales = new JPanel();
+		panelAlertCanales.add(labelInfoCanales);
+		panelFileCargado.add(panelAlertCanales);
 		cargaArchivo.add(panelChooser);
 		cargaArchivo.add(panelFileCargado);
 		JPanel consolePanel = new JPanel();
 		consolePanel.setBorder(BorderFactory.createTitledBorder("Consola de Corte o bloqueo"));
 		panelCB.setLayout(new GridLayout(2, 1));
 		panelCB.add(cargaArchivo);
+		statusProcess = new JProgressBar();
+		consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.Y_AXIS));
+		JPanel panelStatusProgress = new JPanel();
+		statusProcess = new JProgressBar();
+		panelStatusProgress.add(statusProcess);
+		consolePanel.add(panelStatusProgress);
+		jTextAreaStatusProcess = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcess, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		consolePanel.add(scrollPane);
 		panelCB.add(consolePanel);
 		return panelCB;
 	}
@@ -590,7 +655,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	@Override
 	public void run() {
 
-		if(flagAction.equalsIgnoreCase("Iniciar")){
+		if (flagAction.equalsIgnoreCase("Iniciar")) {
 			Map<String, CountOBJ> mapResult = new HashMap<String, CountOBJ>();
 			if (!chTodos.isSelected()) {
 				/* INTERNET AAA */
@@ -680,10 +745,31 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				}
 			}
 			(new Correo()).enviarCorreo(mapResult);
-		} else if(flagAction.equalsIgnoreCase("Cargar Datos")){
-			System.out.println("Presiono la parte que no quiero que funcione");
+		} else if (flagAction.equalsIgnoreCase("Cargar Datos")) {
+			ArchivoUtil archivoUtil = new ArchivoUtil();
+			FileCorteCanales fileCorteCanales = archivoUtil
+					.getCanales(fileDialogCorteCanalesAdi.getSelectedFile().getAbsolutePath());
+			mapCanales = fileCorteCanales.getMapCanales();
+			fileCorteCanalesRows = fileCorteCanales.getCorteCanalesRows();
+			for (Iterator<String> iterator = mapCanales.keySet().iterator(); iterator.hasNext();) {
+				String nomCanal = (String) iterator.next();
+				comboCanales.addItem(nomCanal);
+			}
+			comboCanales.setEnabled(true);
+		} else if (flagAction.equalsIgnoreCase("Cortar Canales")) {
+			int contador = 0;
+			statusProcess.setValue(0);
+			for (Iterator<FileCorteCanalesRow> iterator = fileCorteCanalesRows.iterator(); iterator.hasNext();) {
+				FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator.next();
+				if(contador == 0){
+					jTextAreaStatusProcess.setText(fileCorteCanalesRow.getRutConDv());
+				} else {
+					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"\n"+fileCorteCanalesRow.getRutConDv());
+				}				
+				statusProcess.setStringPainted(true);
+				statusProcess.setValue(calculoDeAvance(fileCorteCanalesRows.size(),++contador));
+			}
 		}
-		
 
 	}
 
@@ -697,7 +783,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				hilo = new Thread(this);
 				hilo.start();
 				btn.setEnabled(false);
-			} else if(btn.getText().equals("Cargar Datos")){
+			} else if (btn.getText().equals("Cargar Datos")) {
 				flagAction = "Cargar Datos";
 				hilo = new Thread(this);
 				hilo.start();
@@ -705,5 +791,12 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		}
 
+	}
+	
+	private int calculoDeAvance(int size, int i) {
+		double indice = i;
+		double total = size;
+		int porcentaje = (int) ((indice/total)*100); 
+		return porcentaje;
 	}
 }
