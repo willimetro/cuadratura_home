@@ -114,6 +114,7 @@ public class BDManagerImpl implements BDManager {
 	public void descargaArchivo(String filename, String query, String cabecera, String producto) {
 
 		Connection conn = null;
+		FileWriter fw = null;
 
 		try {
 			if ("OTCAR".equals(producto)){
@@ -121,22 +122,25 @@ public class BDManagerImpl implements BDManager {
 			} else {
 				conn = ConnectionCuadraturaBD.getConnTPlay();
 			}
-			FileWriter fw = new FileWriter(filename);
+			fw = new FileWriter(filename);
 			fw.append(cabecera);
 			fw.append('\n');
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
+				fw.flush();
 				procesar(fw, rs, producto);
 			}
 			fw.flush();
-			fw.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}  finally {
 			try {
 				conn.close();
+				fw.close();
 			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}		
