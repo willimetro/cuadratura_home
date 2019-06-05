@@ -83,7 +83,6 @@ public class BDManagerImpl implements BDManager {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
