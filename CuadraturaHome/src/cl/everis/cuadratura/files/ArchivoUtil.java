@@ -17,7 +17,7 @@ public class ArchivoUtil {
 		File canales = null;
 		FileReader fr = null;
 		BufferedReader br = null;
-		
+
 		FileCorteCanales fileCorteCanales = new FileCorteCanales();
 		List<FileCorteCanalesRow> canalesRows = new ArrayList<FileCorteCanalesRow>();
 
@@ -29,9 +29,9 @@ public class ArchivoUtil {
 			String linea;
 			int cont = 0;
 			FileCorteCanalesRow fileCorteCanalesRow = null;
-			Map<String, Integer> mapCanales = new HashMap<String,Integer>();
+			Map<String, Integer> mapCanales = new HashMap<String, Integer>();
 			while ((linea = br.readLine()) != null) {
-				if(cont==0){
+				if (cont == 0) {
 					cont++;
 				} else {
 					String[] lineaArray = linea.split(",");
@@ -40,13 +40,13 @@ public class ArchivoUtil {
 					fileCorteCanalesRow.setRutSinDV(lineaArray[1]);
 					fileCorteCanalesRow.setCodCanal(lineaArray[2]);
 					canalesRows.add(fileCorteCanalesRow);
-					if(!mapCanales.containsKey(lineaArray[3])){
+					if (!mapCanales.containsKey(lineaArray[3])) {
 						mapCanales.put(lineaArray[3], 1);
 					} else {
 						int cant = mapCanales.get(lineaArray[3]);
 						mapCanales.put(lineaArray[3], ++cant);
 					}
-					
+
 				}
 			}
 			fileCorteCanales.setCorteCanalesRows(canalesRows);

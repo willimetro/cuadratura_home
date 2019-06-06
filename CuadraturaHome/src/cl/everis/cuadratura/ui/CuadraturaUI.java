@@ -37,9 +37,11 @@ import cl.everis.cuadratura.bd.BDManager;
 import cl.everis.cuadratura.bd.BDManagerImpl;
 import cl.everis.cuadratura.files.ArchivoUtil;
 import cl.everis.cuadratura.obj.CountOBJ;
+import cl.everis.cuadratura.obj.DesactivarCanalesResponseOBJ;
 import cl.everis.cuadratura.obj.FileCorteCanales;
 import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 import cl.everis.cuadratura.ws.Correo;
+import cl.everis.cuadratura.ws.DesactivarCanales;
 
 public class CuadraturaUI implements Runnable, ActionListener {
 
@@ -759,15 +761,25 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		} else if (flagAction.equalsIgnoreCase("Cortar Canales")) {
 			int contador = 0;
 			statusProcess.setValue(0);
+			DesactivarCanales desactivarCanales = new DesactivarCanales();
 			for (Iterator<FileCorteCanalesRow> iterator = fileCorteCanalesRows.iterator(); iterator.hasNext();) {
 				FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator.next();
-				if(contador == 0){
-					jTextAreaStatusProcess.setText(fileCorteCanalesRow.getRutConDv());
+				fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
+				DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
+						.desactivarCanalPremium(fileCorteCanalesRow);
+				if (contador == 0) {
+					jTextAreaStatusProcess.setText(
+							"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+									+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+									+ canalesResponseOBJ.getDescripcion());
 				} else {
-					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"\n"+fileCorteCanalesRow.getRutConDv());
-				}				
+					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "INFO;"
+							+ fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+							+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+							+ canalesResponseOBJ.getDescripcion());
+				}
 				statusProcess.setStringPainted(true);
-				statusProcess.setValue(calculoDeAvance(fileCorteCanalesRows.size(),++contador));
+				statusProcess.setValue(calculoDeAvance(fileCorteCanalesRows.size(), ++contador));
 			}
 		}
 
@@ -792,11 +804,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		}
 
 	}
-	
+
 	private int calculoDeAvance(int size, int i) {
 		double indice = i;
 		double total = size;
-		int porcentaje = (int) ((indice/total)*100); 
+		int porcentaje = (int) ((indice / total) * 100);
 		return porcentaje;
 	}
 }

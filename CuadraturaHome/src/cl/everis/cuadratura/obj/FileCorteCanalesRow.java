@@ -5,6 +5,7 @@ public class FileCorteCanalesRow {
 	private String rutSinDV;
 	private String codCanal;
 	private String rutConDv;
+	private String codiServicio;
 
 	public String getRutSinDV() {
 		return rutSinDV;
@@ -30,4 +31,13 @@ public class FileCorteCanalesRow {
 	public void setRutConDv(String rutConDv) {
 		this.rutConDv = rutConDv;
 	}
+
+	public String getCodiServicio() {
+		return codiServicio;
+	}
+
+	public void setCodiServicio(String codiServicio) {
+		this.codiServicio = codiServicio;
+	}
+	
 }
