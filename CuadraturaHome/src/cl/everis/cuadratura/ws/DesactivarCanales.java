@@ -16,6 +16,7 @@ import com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.
 import cl.everis.cuadratura.bd.conn.ConnectionCuadraturaBD;
 import cl.everis.cuadratura.obj.DesactivarCanalesResponseOBJ;
 import cl.everis.cuadratura.obj.FileCorteCanalesRow;
+import cl.everis.cuadratura.util.LogEliminacion;
 
 public class DesactivarCanales {
 	
@@ -27,7 +28,7 @@ public class DesactivarCanales {
 			+ "and c.desc_tiposerv = 'TELEVISION' "
 			+ "and desc_catego = 'PLAN BASE' "
 			+ "and NRUT_CLIENTE = ?";
-
+	
 	public DesactivarCanalesResponseOBJ desactivarCanalPremium(FileCorteCanalesRow fileCorteCanalesRow){
 		DesactivarVasYCanalPremiumPortType dcprocy = new DesactivarVasYCanalPremiumPortTypeProxy();
 		DesactivarVasYCanalPremiumRequestType type = new DesactivarVasYCanalPremiumRequestType();
@@ -44,6 +45,8 @@ public class DesactivarCanales {
 			desactivarCanalesResponseOBJ = new DesactivarCanalesResponseOBJ();
 			desactivarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			desactivarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
+			LogEliminacion.escribirTraza("INFO;"+fileCorteCanalesRow.getRutConDv()+ ";"+fileCorteCanalesRow.getCodCanal()+";CODIGO_RESPONSE: "
+					+resp.getResponse().getHeaderOut().getCodigo()+";DESCRIPCION: "+resp.getResponse().getHeaderOut().getDescripcion());
 		} catch (DesactivarVasYCanalPremiumFaultType e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {
@@ -64,6 +67,8 @@ public class DesactivarCanales {
 			rs = pstmt.executeQuery();
 			if(rs.next()){
 				fileCorteCanalesRow.setCodiServicio(rs.getNString("CODI_SERVICIO"));
+			} else {
+				fileCorteCanalesRow.setCodiServicio("");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
