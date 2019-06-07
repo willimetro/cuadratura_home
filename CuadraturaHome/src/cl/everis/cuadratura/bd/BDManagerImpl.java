@@ -25,6 +25,11 @@ import cl.everis.cuadratura.files.FormatoArchivo;
 import cl.everis.cuadratura.obj.CountOBJ;
 import cl.everis.cuadratura.util.Constantes;
 
+/**
+ * 
+ * @author jarenass
+ *
+ */
 public class BDManagerImpl implements BDManager {
 
 	private final static String PATH_ARCHIVOS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs\\";

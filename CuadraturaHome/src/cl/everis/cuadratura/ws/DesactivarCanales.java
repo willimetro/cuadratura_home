@@ -18,6 +18,11 @@ import cl.everis.cuadratura.obj.DesactivarCanalesResponseOBJ;
 import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 import cl.everis.cuadratura.util.LogEliminacion;
 
+/**
+ * 
+ * @author wugaldeq
+ *
+ */
 public class DesactivarCanales {
 	
 	private final static String QUERY = "select d.codi_servicio "
@@ -29,6 +34,11 @@ public class DesactivarCanales {
 			+ "and desc_catego = 'PLAN BASE' "
 			+ "and NRUT_CLIENTE = ?";
 	
+	/**
+	 * 
+	 * @param fileCorteCanalesRow
+	 * @return
+	 */
 	public DesactivarCanalesResponseOBJ desactivarCanalPremium(FileCorteCanalesRow fileCorteCanalesRow){
 		DesactivarVasYCanalPremiumPortType dcprocy = new DesactivarVasYCanalPremiumPortTypeProxy();
 		DesactivarVasYCanalPremiumRequestType type = new DesactivarVasYCanalPremiumRequestType();
@@ -55,6 +65,11 @@ public class DesactivarCanales {
 		return desactivarCanalesResponseOBJ;
 	}
 	
+	/**
+	 * 
+	 * @param fileCorteCanalesRow
+	 * @return
+	 */
 	public FileCorteCanalesRow getCodServicioCanalesPremium(FileCorteCanalesRow fileCorteCanalesRow){
 		Connection conn = null;
 		PreparedStatement pstmt =  null;

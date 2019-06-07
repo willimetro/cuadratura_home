@@ -2,6 +2,11 @@ package cl.everis.cuadratura.bd;
 
 import cl.everis.cuadratura.obj.CountOBJ;
 
+/**
+ * 
+ * @author jarenass
+ *
+ */
 public interface BDManager {
 
 	
