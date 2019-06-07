@@ -21,13 +21,21 @@ import cl.everis.cuadratura.obj.FileKenanOutOBJ;
 import cl.everis.cuadratura.obj.FileOutOBJ;
 import cl.everis.cuadratura.obj.FileTvBaseKalturaInOBJ;
 import cl.everis.cuadratura.obj.FileTvBaseKalturaOutOBJ;
-import cl.everis.cuadratura.util.Constantes;
 
+/**
+ * 
+ * @author wugaldeq
+ *
+ */
 public class FormatoArchivo {
 
 	private final static String PATH_ARCHIVOS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs\\";
 	private final static File DIR_CARGA_ARCHIVOS=new File(System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs");
 
+	/**
+	 * 
+	 * @param pathArchivo
+	 */
 	public void formatFileKenan(String pathArchivo) {
 		File kenanIn = null;
 		FileReader fr = null;
@@ -78,6 +86,10 @@ public class FormatoArchivo {
 		}
 	}
 
+	/**
+	 * 
+	 * @param pathArchivo
+	 */
 	public void formatFileCanalesKaltura(String pathArchivo) {
 		File canalesKalturaIn = null;
 		FileReader fr = null;
@@ -129,6 +141,10 @@ public class FormatoArchivo {
 		}
 	}
 
+	/**
+	 * 
+	 * @param pathArchivo
+	 */
 	public void formatFileCanalesKenan(String pathArchivo) {
 		File canalesKenanIn = null;
 		FileReader fr = null;
@@ -180,6 +196,10 @@ public class FormatoArchivo {
 		}
 	}
 
+	/**
+	 * 
+	 * @param pathArchivo
+	 */
 	public void formatFileInternetAAA(String pathArchivo) {
 		File internetAAAIn = null;
 		FileReader fr = null;
@@ -234,6 +254,10 @@ public class FormatoArchivo {
 		}
 	}
 
+	/**
+	 * 
+	 * @param pathArchivo
+	 */
 	public void formatFileTvBaseKaltura(String pathArchivo) {
 		File tvBaseKalturaIn = null;
 		FileReader fr = null;
@@ -286,6 +310,13 @@ public class FormatoArchivo {
 		}
 	}
 
+	/**
+	 * 
+	 * @param fileIn
+	 * @param cont
+	 * @param objectName
+	 * @return
+	 */
 	private FileOutOBJ getLineFileOut(FileInOBJ fileIn, int cont, String objectName) {
 		FileOutOBJ fileOutOBJ = null;
 		if (objectName.equalsIgnoreCase("FileKenanInOBJ")) {
@@ -357,6 +388,12 @@ public class FormatoArchivo {
 		return fileOutOBJ;
 	}
 
+	/**
+	 * 
+	 * @param linea
+	 * @param nameObject
+	 * @return
+	 */
 	private FileInOBJ getFileInObj(String linea, String nameObject) {
 		String[] lineaArray = linea.split(",");
 		FileInOBJ fileIn = null;

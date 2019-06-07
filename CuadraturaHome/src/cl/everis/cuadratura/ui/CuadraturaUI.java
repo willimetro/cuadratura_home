@@ -42,6 +42,11 @@ import cl.everis.cuadratura.util.LogEliminacion;
 import cl.everis.cuadratura.ws.Correo;
 import cl.everis.cuadratura.ws.DesactivarCanales;
 
+/**
+ * 
+ * @author wugaldeq
+ *
+ */
 public class CuadraturaUI implements Runnable, ActionListener {
 
 	private final static String[] CRUCES_TPLAY = { "TPLAY_KALTURA", "TPLAY_KALTURA_C", "TPLAY_KENAN_TV",
@@ -102,6 +107,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	Map<String, FileCorteCanales> mapCanales = null;
 	List<FileCorteCanalesRow> fileCorteCanalesRows = null;
 
+	/**
+	 * Constructor
+	 */
 	public CuadraturaUI() {
 		mainFrame = new JFrame("Cuadratura Home");
 		JTabbedPane jTabbedPane = new JTabbedPane();
@@ -126,6 +134,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		mainFrame.setResizable(false);
 	}
 
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
 	protected JComponent makeTextPanel3Play(String text) {
 		JPanel panel3Play = new JPanel(false);
 		JPanel tiposCuad = new JPanel();
@@ -163,6 +176,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		return panel3Play;
 	}
 
+	/**
+	 * 
+	 * @param panelCheck
+	 */
 	private void createMenuCheckFor3Play(JPanel panelCheck) {
 
 		chTodos.setMnemonic(KeyEvent.VK_C);
@@ -360,6 +377,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelCheck.add(chTresPlayKenanTel);
 	}
 
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
 	protected JComponent makeTextPanelInalambrico(String text) {
 		JPanel panelIna = new JPanel(false);
 		JPanel tiposCuad = new JPanel();
@@ -372,6 +394,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		return panelIna;
 	}
 
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
 	protected JComponent makeTextPanelCorteBloqueo(String text) {
 		JPanel panelCB = new JPanel(false);
 		JPanel cargaArchivo = new JPanel();
@@ -448,6 +475,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		return panelCB;
 	}
 
+	/**
+	 * 
+	 * @param panelChooser
+	 */
 	private void showFileChooserCorteCanales(JPanel panelChooser) {
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
@@ -484,6 +515,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 	}
 
+	/**
+	 * 
+	 * @param panelChooser
+	 */
 	private void showFileChooser3playIntenet(JPanel panelChooser) {
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
@@ -518,6 +553,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 	}
 
+	/**
+	 * 
+	 * @param panelChooser
+	 */
 	private void showFileChooser3playTvPlanesBase(JPanel panelChooser) {
 
 		showFileDialogConstrains = new GridBagConstraints();
@@ -552,6 +591,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelChooser.add(showFileDialogTvPlanesBaseButton, showFileDialogConstrains);
 	}
 
+	/**
+	 * 
+	 * @param panelChooser
+	 */
 	private void showFileChooser3playTvAdicionales(JPanel panelChooser) {
 
 		showFileDialogConstrains = new GridBagConstraints();
@@ -586,6 +629,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelChooser.add(showFileDialogAdicionalesButton, showFileDialogConstrains);
 	}
 
+	/**
+	 * 
+	 * @param panelChooser
+	 */
 	private void showFileChooser3playKenan(JPanel panelChooser) {
 
 		showFileDialogConstrains = new GridBagConstraints();
@@ -620,6 +667,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelChooser.add(showFileDialogKenanButton, showFileDialogConstrains);
 	}
 
+	/**
+	 * 
+	 * @param panelChooser
+	 */
 	private void showFileChooser3playKenanAdi(JPanel panelChooser) {
 
 		showFileDialogConstrains = new GridBagConstraints();
@@ -805,6 +856,12 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 	}
 
+	/**
+	 * 
+	 * @param size
+	 * @param i
+	 * @return
+	 */
 	private int calculoDeAvance(int size, int i) {
 		double indice = i;
 		double total = size;
