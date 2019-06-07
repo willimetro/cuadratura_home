@@ -1,27 +1,26 @@
 package cl.everis.cuadratura.obj;
 
 import java.util.List;
-import java.util.Map;
 
 public class FileCorteCanales {
 
-	private List<FileCorteCanalesRow> corteCanalesRows;
-	private Map<String, Integer> mapCanales;
+	private Integer countCanales;
+	private List<FileCorteCanalesRow> listaClientesCorte;
 
-	public List<FileCorteCanalesRow> getCorteCanalesRows() {
-		return corteCanalesRows;
+	public Integer getCountCanales() {
+		return countCanales;
 	}
 
-	public void setCorteCanalesRows(List<FileCorteCanalesRow> corteCanalesRows) {
-		this.corteCanalesRows = corteCanalesRows;
+	public void setCountCanales(Integer countCanales) {
+		this.countCanales = countCanales;
 	}
 
-	public Map<String, Integer> getMapCanales() {
-		return mapCanales;
+	public List<FileCorteCanalesRow> getListaClientesCorte() {
+		return listaClientesCorte;
 	}
 
-	public void setMapCanales(Map<String, Integer> mapCanales) {
-		this.mapCanales = mapCanales;
+	public void setListaClientesCorte(List<FileCorteCanalesRow> listaClientesCorte) {
+		this.listaClientesCorte = listaClientesCorte;
 	}
 
 }

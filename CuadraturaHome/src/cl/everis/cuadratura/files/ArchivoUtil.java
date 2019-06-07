@@ -13,14 +13,13 @@ import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 
 public class ArchivoUtil {
 
-	public FileCorteCanales getCanales(String archivo) {
+	public Map<String, FileCorteCanales> getCanales(String archivo) {
 		File canales = null;
 		FileReader fr = null;
 		BufferedReader br = null;
 
-		FileCorteCanales fileCorteCanales = new FileCorteCanales();
-		List<FileCorteCanalesRow> canalesRows = new ArrayList<FileCorteCanalesRow>();
-
+		List<FileCorteCanalesRow> canalesRows = null;
+		Map<String, FileCorteCanales> mapCanales = new HashMap<String, FileCorteCanales>();
 		try {
 			canales = new File(archivo);
 			fr = new FileReader(canales);
@@ -29,7 +28,7 @@ public class ArchivoUtil {
 			String linea;
 			int cont = 0;
 			FileCorteCanalesRow fileCorteCanalesRow = null;
-			Map<String, Integer> mapCanales = new HashMap<String, Integer>();
+			FileCorteCanales fileCorteCanales = null;
 			while ((linea = br.readLine()) != null) {
 				if (cont == 0) {
 					cont++;
@@ -39,18 +38,23 @@ public class ArchivoUtil {
 					fileCorteCanalesRow.setRutConDv(lineaArray[1]);
 					fileCorteCanalesRow.setRutSinDV(lineaArray[1]);
 					fileCorteCanalesRow.setCodCanal(lineaArray[2]);
-					canalesRows.add(fileCorteCanalesRow);
 					if (!mapCanales.containsKey(lineaArray[3])) {
-						mapCanales.put(lineaArray[3], 1);
+						canalesRows = new ArrayList<FileCorteCanalesRow>();
+						canalesRows.add(fileCorteCanalesRow);
+						fileCorteCanales = new FileCorteCanales();
+						fileCorteCanales.setCountCanales(1);
+						fileCorteCanales.setListaClientesCorte(canalesRows);
+						mapCanales.put(lineaArray[3], fileCorteCanales);
 					} else {
-						int cant = mapCanales.get(lineaArray[3]);
-						mapCanales.put(lineaArray[3], ++cant);
+						fileCorteCanales = mapCanales.get(lineaArray[3]);
+						int cant = fileCorteCanales.getCountCanales();
+						fileCorteCanales.setCountCanales(++cant);
+						fileCorteCanales.getListaClientesCorte().add(fileCorteCanalesRow);
+						mapCanales.put(lineaArray[3], fileCorteCanales);
 					}
 
 				}
 			}
-			fileCorteCanales.setCorteCanalesRows(canalesRows);
-			fileCorteCanales.setMapCanales(mapCanales);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -62,6 +66,6 @@ public class ArchivoUtil {
 				e2.printStackTrace();
 			}
 		}
-		return fileCorteCanales;
+		return mapCanales;
 	}
 }

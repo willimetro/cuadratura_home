@@ -99,7 +99,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private JTextArea jTextAreaStatusProcess;
 
 	private JComboBox<String> comboCanales = null;
-	Map<String, Integer> mapCanales = null;
+	Map<String, FileCorteCanales> mapCanales = null;
 	List<FileCorteCanalesRow> fileCorteCanalesRows = null;
 
 	public CuadraturaUI() {
@@ -393,7 +393,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String itemSeleccionado = (String) comboCanales.getSelectedItem();
-				int cantidad = mapCanales.get(itemSeleccionado);
+				int cantidad = mapCanales.get(itemSeleccionado).getCountCanales();
+				fileCorteCanalesRows = mapCanales.get(itemSeleccionado).getListaClientesCorte();
 				labelInfoCanales
 						.setText("Se intentará dar de baja " + cantidad + " clientes con canal " + itemSeleccionado);
 				cortarBtn.setEnabled(true);
@@ -748,10 +749,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			(new Correo()).enviarCorreo(mapResult);
 		} else if (flagAction.equalsIgnoreCase("Cargar Datos")) {
 			ArchivoUtil archivoUtil = new ArchivoUtil();
-			FileCorteCanales fileCorteCanales = archivoUtil
+			mapCanales = archivoUtil
 					.getCanales(fileDialogCorteCanalesAdi.getSelectedFile().getAbsolutePath());
-			mapCanales = fileCorteCanales.getMapCanales();
-			fileCorteCanalesRows = fileCorteCanales.getCorteCanalesRows();
 			for (Iterator<String> iterator = mapCanales.keySet().iterator(); iterator.hasNext();) {
 				String nomCanal = (String) iterator.next();
 				comboCanales.addItem(nomCanal);
