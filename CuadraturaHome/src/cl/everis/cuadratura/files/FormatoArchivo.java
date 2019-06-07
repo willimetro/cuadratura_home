@@ -53,6 +53,9 @@ public class FormatoArchivo {
 			e.printStackTrace();
 		} finally {
 			try {
+				if (null != br) {
+					br.close();
+				}
 				if (null != fr) {
 					fr.close();
 				}
@@ -96,6 +99,9 @@ public class FormatoArchivo {
 			e.printStackTrace();
 		} finally {
 			try {
+				if (null != br) {
+					br.close();
+				}
 				if (null != fr) {
 					fr.close();
 				}
@@ -139,6 +145,9 @@ public class FormatoArchivo {
 			e.printStackTrace();
 		} finally {
 			try {
+				if (null != br) {
+					br.close();
+				}
 				if (null != fr) {
 					fr.close();
 				}
@@ -185,6 +194,9 @@ public class FormatoArchivo {
 			e.printStackTrace();
 		} finally {
 			try {
+				if (null != br) {
+					br.close();
+				}
 				if (null != fr) {
 					fr.close();
 				}
@@ -229,6 +241,9 @@ public class FormatoArchivo {
 			e.printStackTrace();
 		} finally {
 			try {
+				if (null != br) {
+					br.close();
+				}
 				if (null != fr) {
 					fr.close();
 				}

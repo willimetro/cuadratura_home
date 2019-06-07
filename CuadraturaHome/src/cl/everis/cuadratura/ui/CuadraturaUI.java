@@ -38,6 +38,7 @@ import cl.everis.cuadratura.obj.CountOBJ;
 import cl.everis.cuadratura.obj.DesactivarCanalesResponseOBJ;
 import cl.everis.cuadratura.obj.FileCorteCanales;
 import cl.everis.cuadratura.obj.FileCorteCanalesRow;
+import cl.everis.cuadratura.util.LogEliminacion;
 import cl.everis.cuadratura.ws.Correo;
 import cl.everis.cuadratura.ws.DesactivarCanales;
 
@@ -760,6 +761,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			int contador = 0;
 			statusProcess.setValue(0);
 			DesactivarCanales desactivarCanales = new DesactivarCanales();
+			LogEliminacion.iniciarFicheros();
 			for (Iterator<FileCorteCanalesRow> iterator = fileCorteCanalesRows.iterator(); iterator.hasNext();) {
 				FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator.next();
 				fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
@@ -779,6 +781,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				statusProcess.setStringPainted(true);
 				statusProcess.setValue(calculoDeAvance(fileCorteCanalesRows.size(), ++contador));
 			}
+			LogEliminacion.cerrarFicheros();
 		}
 
 	}
