@@ -1,7 +1,6 @@
 package cl.everis.cuadratura.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -30,7 +29,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cl.everis.cuadratura.bd.BDManager;
