@@ -25,7 +25,8 @@ import cl.everis.cuadratura.util.Constantes;
 
 public class FormatoArchivo {
 
-	private final static String PATH_ARCHIVOS = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\CSVs\\";
+	private final static String PATH_ARCHIVOS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs\\";
+	private final static File DIR_CARGA_ARCHIVOS=new File(System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs");
 
 	public void formatFileKenan(String pathArchivo) {
 		File kenanIn = null;
@@ -36,6 +37,11 @@ public class FormatoArchivo {
 		PrintWriter pw = null;
 
 		try {
+			
+			if(!DIR_CARGA_ARCHIVOS.exists()){
+				DIR_CARGA_ARCHIVOS.mkdirs();
+			}
+			
 			kenanIn = new File(pathArchivo);
 			fr = new FileReader(kenanIn);
 			br = new BufferedReader(fr);
@@ -81,6 +87,11 @@ public class FormatoArchivo {
 		PrintWriter pw = null;
 
 		try {
+			
+			if(!DIR_CARGA_ARCHIVOS.exists()){
+				DIR_CARGA_ARCHIVOS.mkdirs();
+			}
+			
 			canalesKalturaIn = new File(pathArchivo);
 			fr = new FileReader(canalesKalturaIn);
 			br = new BufferedReader(fr);
@@ -127,6 +138,11 @@ public class FormatoArchivo {
 		PrintWriter pw = null;
 
 		try {
+			
+			if(!DIR_CARGA_ARCHIVOS.exists()){
+				DIR_CARGA_ARCHIVOS.mkdirs();
+			}
+			
 			canalesKenanIn = new File(pathArchivo);
 			fr = new FileReader(canalesKenanIn);
 			br = new BufferedReader(fr);
@@ -173,6 +189,11 @@ public class FormatoArchivo {
 		PrintWriter pw = null;
 
 		try {
+			
+			if(!DIR_CARGA_ARCHIVOS.exists()){
+				DIR_CARGA_ARCHIVOS.mkdirs();
+			}
+			
 			internetAAAIn = new File(pathArchivo);
 			fr = new FileReader(internetAAAIn);
 			br = new BufferedReader(fr);
@@ -222,6 +243,11 @@ public class FormatoArchivo {
 		PrintWriter pw = null;
 
 		try {
+			
+			if(!DIR_CARGA_ARCHIVOS.exists()){
+				DIR_CARGA_ARCHIVOS.mkdirs();
+			}
+			
 			tvBaseKalturaIn = new File(pathArchivo);
 			fr = new FileReader(tvBaseKalturaIn);
 			br = new BufferedReader(fr);

@@ -27,8 +27,10 @@ import cl.everis.cuadratura.util.Constantes;
 
 public class BDManagerImpl implements BDManager {
 
-	private final static String PATH_ARCHIVOS = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\CSVs\\";
-	private final static String PATH_CRUCE = "C:\\Users\\Administrador\\Desktop\\Documentos\\EntelProyectoFijo\\cuadratura\\Cruces\\";
+	private final static String PATH_ARCHIVOS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs\\";
+	private final static String PATH_CRUCE = System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces\\";
+	private final static File DIR_CARGA_ARCHIVOS=new File(System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs");
+	private final static File DIR_DESC_ARCHIVOS=new File(System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces");
 
 	@Override
 	public void descargarCSV(String opcion) {
@@ -63,7 +65,9 @@ public class BDManagerImpl implements BDManager {
 		String sql = "";
 
 		try {
-
+			if(!DIR_CARGA_ARCHIVOS.exists()){
+				DIR_CARGA_ARCHIVOS.mkdirs();
+			}
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			pgcon = (BaseConnection)conn;
 			CopyManager mgr = new CopyManager(pgcon);
@@ -71,7 +75,7 @@ public class BDManagerImpl implements BDManager {
 			sql = Constantes.getQueryCarga(producto);
 			if (producto != "KENAN_62"){
 				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+
-						MessageFormat.format(Constantes.getFile(fileName), LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))))));
+						MessageFormat.format(fileName, LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))))));
 			} else {
 				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+fileName)));
 			}
@@ -126,6 +130,9 @@ public class BDManagerImpl implements BDManager {
 		FileWriter fw = null;
 
 		try {
+			if(!DIR_CARGA_ARCHIVOS.exists()){
+				DIR_CARGA_ARCHIVOS.mkdirs();
+			}
 			if ("OTCAR".equals(producto)){
 				conn = ConnectionCuadraturaBD.getConnOCTAR();
 			} else {
@@ -163,7 +170,10 @@ public class BDManagerImpl implements BDManager {
 		PreparedStatement pstmt =  null;
 		ResultSet rs = null;
 		Statement statement = null;
-		try {
+		try {		
+			if(!DIR_DESC_ARCHIVOS.exists()){
+				DIR_DESC_ARCHIVOS.mkdirs();
+			}
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
 			for(int i = 0; i < 2;i++){
@@ -172,7 +182,7 @@ public class BDManagerImpl implements BDManager {
 				fileOutputStream = new FileOutputStream(file);
 				copyManager.copyOut("COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
 				System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo " + 
-				MessageFormat.format(Constantes.getFileCruce(producto)[i], LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+						MessageFormat.format(Constantes.getFileCruce(producto)[i], LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
