@@ -27,15 +27,6 @@ public class Correo {
 	}
 
 	private String getHtmlCorreo(Map<String, CountOBJ> c) {
-
-		// "TPLAY_KALTURA",
-		// "TPLAY_KALTURA_C",
-		// "TPLAY_KENAN_TV",
-		// "TPLAY_KENAN_TLF",
-		// "TPLAY_KENAN_INT",
-		// "TPLAY_KENAN_C",
-		// "TPLAY_AAA",
-		// "TPLAY_OTCAR"
 		String toReturn = "<!DOCTYPE html>" + "<html>" + "<head>" + "<style>" + "table, th, td {"
 				+ "border: 1px solid black;" + "}" + "</style>" + "</head>" + "<body>"
 				+ ((null != c.get("TPLAY_KALTURA") || null != c.get("TPLAY_KALTURA_C") || null != c.get("TPLAY_OTCAR")

@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import cl.everis.cuadratura.obj.FileCanalesKalturaInOBJ;
 import cl.everis.cuadratura.obj.FileCanalesKalturaOutOBJ;
@@ -18,6 +21,7 @@ import cl.everis.cuadratura.obj.FileKenanOutOBJ;
 import cl.everis.cuadratura.obj.FileOutOBJ;
 import cl.everis.cuadratura.obj.FileTvBaseKalturaInOBJ;
 import cl.everis.cuadratura.obj.FileTvBaseKalturaOutOBJ;
+import cl.everis.cuadratura.util.Constantes;
 
 public class FormatoArchivo {
 
@@ -36,7 +40,7 @@ public class FormatoArchivo {
 			fr = new FileReader(kenanIn);
 			br = new BufferedReader(fr);
 
-			kenanOut = new FileWriter(PATH_ARCHIVOS + "base_kenan.csv");
+			kenanOut = new FileWriter(PATH_ARCHIVOS + MessageFormat.format("base_kenan_{0}.csv", LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 			pw = new PrintWriter(kenanOut);
 
 			String linea;
@@ -81,7 +85,7 @@ public class FormatoArchivo {
 			fr = new FileReader(canalesKalturaIn);
 			br = new BufferedReader(fr);
 
-			canalesKalturaOut = new FileWriter(PATH_ARCHIVOS + "canales_kaltura.csv");
+			canalesKalturaOut = new FileWriter(PATH_ARCHIVOS +  MessageFormat.format("canales_kaltura_{0}.csv", LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 			pw = new PrintWriter(canalesKalturaOut);
 
 			String linea;
@@ -127,7 +131,7 @@ public class FormatoArchivo {
 			fr = new FileReader(canalesKenanIn);
 			br = new BufferedReader(fr);
 
-			canalesKenanOut = new FileWriter(PATH_ARCHIVOS + "canales_kenan.csv");
+			canalesKenanOut = new FileWriter(PATH_ARCHIVOS + MessageFormat.format("canales_kenan_{0}.csv", LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 			pw = new PrintWriter(canalesKenanOut);
 
 			String linea;
@@ -173,7 +177,7 @@ public class FormatoArchivo {
 			fr = new FileReader(internetAAAIn);
 			br = new BufferedReader(fr);
 
-			internetAAAOut = new FileWriter(PATH_ARCHIVOS + "internet_aaa.csv");
+			internetAAAOut = new FileWriter(PATH_ARCHIVOS + MessageFormat.format("internet_aaa_{0}.csv", LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 			pw = new PrintWriter(internetAAAOut);
 
 			String linea;
@@ -222,7 +226,7 @@ public class FormatoArchivo {
 			fr = new FileReader(tvBaseKalturaIn);
 			br = new BufferedReader(fr);
 
-			tvBaseKalturaOut = new FileWriter(PATH_ARCHIVOS + "tv_base_kaltura.csv");
+			tvBaseKalturaOut = new FileWriter(PATH_ARCHIVOS + MessageFormat.format("tv_base_kaltura_{0}.csv", LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 			pw = new PrintWriter(tvBaseKalturaOut);
 
 			String linea;

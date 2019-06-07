@@ -13,6 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
@@ -32,11 +35,13 @@ public class BDManagerImpl implements BDManager {
 
 		// descargar solo aquellos archivos que podemos obtener directamente en BDs
 		System.out.println("Inició proceso de descarga para producto: " + opcion);
-		descargaArchivo(PATH_ARCHIVOS+Constantes.getFile(opcion),
+		descargaArchivo(PATH_ARCHIVOS+MessageFormat.format(Constantes.getFile(opcion), LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))),
 				Constantes.getQueryDescarga(opcion),
 				Constantes.getCabecera(opcion),
 				opcion);
-		System.out.println("Descargó archivo " + Constantes.getFile(opcion) +" en la ruta: " + PATH_ARCHIVOS );	
+		System.out.println("Descargó archivo " +
+				MessageFormat.format(Constantes.getFile(opcion), LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) +
+				" en la ruta: " + PATH_ARCHIVOS );	
 
 	}
 
@@ -64,7 +69,12 @@ public class BDManagerImpl implements BDManager {
 			CopyManager mgr = new CopyManager(pgcon);
 			fileName = Constantes.getFile(producto);
 			sql = Constantes.getQueryCarga(producto);
-			in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+fileName)));
+			if (producto != "KENAN_62"){
+				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+
+						MessageFormat.format(Constantes.getFile(fileName), LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))))));
+			} else {
+				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+fileName)));
+			}
 			long rowsaffected  = mgr.copyIn(sql, in);
 			System.out.println("Se ejecutó: " + Constantes.getQueryCarga(producto) + " con el archivo: "
 					+Constantes.getFile(producto) + " y se copiaron " + rowsaffected + " registros");
@@ -157,10 +167,12 @@ public class BDManagerImpl implements BDManager {
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
 			for(int i = 0; i < 2;i++){
-				File file = new File(PATH_CRUCE+Constantes.getFileCruce(producto)[i]);
+				File file = new File(PATH_CRUCE+
+						MessageFormat.format(Constantes.getFileCruce(producto)[i], LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 				fileOutputStream = new FileOutputStream(file);
 				copyManager.copyOut("COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
-				System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo " + Constantes.getFileCruce(producto)[i]);
+				System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo " + 
+				MessageFormat.format(Constantes.getFileCruce(producto)[i], LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

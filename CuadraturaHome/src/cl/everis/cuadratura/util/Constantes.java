@@ -271,18 +271,18 @@ public class Constantes {
 			"SELECT COUNT(1) FROM tlf_3play_62 tlf_62 LEFT OUTER JOIN facturador_kenan_62 kn_62 "
 			+ "ON tLF_62.\"NRUT_CLIENTE\" = kn_62.\"RUT_SIN_DV\" WHERE kn_62.\"RUT_SIN_DV\" IS NULL"};
 	
-	private final static String[] FILES_CANALES_3P_KALTURA ={"canales_tplay_no_kaltura.csv","canales_kaltura_no_tplay.csv"};
-	private final static String[] FILES_CANALES_3P_KENAN ={"canales_tplay_no_kenan.csv","canales_kenan_no_tplay.csv"};
-	private final static String[] FILES_INTERNET_3P_AAA ={"internet_tplay_no_aaa.csv","internet_aaa_no_tplay.csv"};
-	private final static String[] FILES_INTERNET_3P_KENAN ={"internet_tplay_no_kenan.csv","internet_kenan_no_tplay.csv"};
-	private final static String[] FILES_TLF_3P_KENAN ={"tlf_tplay_no_kenan.csv","tlf_kenan_no_tplay.csv"};
-	private final static String[] FILES_TLF_3P_OTCAR ={"tlf_tplay_no_octar.csv","tlf_octar_no_tplay.csv"};
-	private final static String[] FILES_TV_3P_KALTURA ={"tv_tplay_no_kaltura.csv","tv_kaltura_no_tplay.csv"};
-	private final static String[] FILES_TV_3P_KENAN ={"tv_tplay_no_kenan.csv","tv_kenan_no_tplay.csv"};
-	private final static String[] FILES_TV_3P_KENAN_62 ={"tv_tplay_and_kenan_62.csv","tv_tplay_no_kenan_62.csv"};
-	private final static String[] FILES_CANALES_3P_KENAN_62 ={"canales_tplay_and_kenan_62.csv","canales_tplay_no_kenan_62.csv"};
-	private final static String[] FILES_INTERNET_3P_KENAN_62 ={"internet_tplay_no_kenan_62.csv","internet_tplay_no_kenan_62.csv"};
-	private final static String[] FILES_TLF_3P_KENAN_62 ={"tlf_tplay_and_kenan_62.csv","tlf_tplay_no_kenan_62.csv"};
+	private final static String[] FILES_CANALES_3P_KALTURA ={"canales_tplay_no_kaltura_{0}.csv","canales_kaltura_no_tplay_{0}.csv"};
+	private final static String[] FILES_CANALES_3P_KENAN ={"canales_tplay_no_kenan_{0}.csv","canales_kenan_no_tplay_{0}.csv"};
+	private final static String[] FILES_INTERNET_3P_AAA ={"internet_tplay_no_aaa_{0}.csv","internet_aaa_no_tplay_{0}.csv"};
+	private final static String[] FILES_INTERNET_3P_KENAN ={"internet_tplay_no_kenan_{0}.csv","internet_kenan_no_tplay_{0}.csv"};
+	private final static String[] FILES_TLF_3P_KENAN ={"tlf_tplay_no_kenan_{0}.csv","tlf_kenan_no_tplay_{0}.csv"};
+	private final static String[] FILES_TLF_3P_OTCAR ={"tlf_tplay_no_octar_{0}.csv","tlf_octar_no_tplay_{0}.csv"};
+	private final static String[] FILES_TV_3P_KALTURA ={"tv_tplay_no_kaltura_{0}.csv","tv_kaltura_no_tplay_{0}.csv"};
+	private final static String[] FILES_TV_3P_KENAN ={"tv_tplay_no_kenan_{0}.csv","tv_kenan_no_tplay_{0}.csv"};
+	private final static String[] FILES_TV_3P_KENAN_62 ={"tv_tplay_and_kenan_62_{0}.csv","tv_tplay_no_kenan_62_{0}.csv"};
+	private final static String[] FILES_CANALES_3P_KENAN_62 ={"canales_tplay_and_kenan_62_{0}.csv","canales_tplay_no_kenan_62_{0}.csv"};
+	private final static String[] FILES_INTERNET_3P_KENAN_62 ={"internet_tplay_no_kenan_62_{0}.csv","internet_tplay_no_kenan_62_{0}.csv"};
+	private final static String[] FILES_TLF_3P_KENAN_62 ={"tlf_tplay_and_kenan_62_{0}.csv","tlf_tplay_no_kenan_62_{0}.csv"};
 	
 	private final static String CARGA_TLF ="copy tlf_3play FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_INT ="copy internet_3play FROM stdin DELIMITER ';' CSV header";
@@ -311,16 +311,16 @@ public class Constantes {
 	private final static String CABECERA_TV_CANALES ="KEY_CANAL;RUT;DV;DETALLE;PRODUCTO;CODI_PRODUCTO;TRYBUY;ESTADO_CLIENTE";
 	private final static String CABECERA_OCTAR ="KEY_ANI;REQUEST_ID;RUT;DV;VALOR_DEFECTO";
 
-	private final static String FILE_TV_CANALES ="tv_tplay.csv";
-	private final static String FILE_TLF = "tlf_tplay.csv";
-	private final static String FILE_INT = "internet_tplay.csv";
-	private final static String FILE_OCTAR ="otcar.csv";
-	private final static String FILE_KALTURA ="tv_base_kaltura.csv";
-	private final static String FILE_KALTURA_C ="canales_kaltura.csv";
-	private final static String FILE_KENAN ="base_kenan.csv";
+	private final static String FILE_TV_CANALES ="tv_tplay_{0}.csv";
+	private final static String FILE_TLF = "tlf_tplay_{0}.csv";
+	private final static String FILE_INT = "internet_tplay_{0}.csv";
+	private final static String FILE_OCTAR ="otcar_{0}.csv";
+	private final static String FILE_KALTURA ="tv_base_kaltura_{0}.csv";
+	private final static String FILE_KALTURA_C ="canales_kaltura_{0}.csv";
+	private final static String FILE_KENAN ="base_kenan_{0}.csv";
 	private final static String FILE_KENAN_62 ="base_kenan_62.csv";
-	private final static String FILE_KENAN_C ="canales_kenan.csv";
-	private final static String FILE_AAA ="internet_aaa.csv";
+	private final static String FILE_KENAN_C ="canales_kenan_{0}.csv";
+	private final static String FILE_AAA ="internet_aaa_{0}.csv";
 	
 	private final static String QUERY_TV_CANALES = "SELECT RUT,"
 			+ "DV,"
@@ -360,7 +360,6 @@ public class Constantes {
 			+ "AND CLI.NRUT_CLIENTE = pp.NRUT_CLIENTE "
 			+ "AND pp.CORR_CANAL = pr.CODI_PRODUCTO "
 			+ "AND pp.FLAG_ACTIVADO = 0) "
-//			+ "WHERE ROWNUM <10 "
 			+ "ORDER BY RUT asc";
 	private final static String QUERY_TLF = "select d.codi_tecnico, c.nrut_cliente, c.drut_cliente, c.desc_glosaprod, c.nmro_solicitudact "
 			+ "from MDP_NEG_CLIENTESACTIVOS C, RMA_NEG_DATOSOTC D "
@@ -370,8 +369,6 @@ public class Constantes {
 			+ "and c.desc_tiposerv = 'TELEFONIA' "
 			+ "and d.codi_tecnico is not null "
 			+ "and desc_catego = 'PLAN BASE'";
-//			+ "and desc_catego = 'PLAN BASE' "
-//			+ "AND ROWNUM <10";
 	private final static String QUERY_INT = "select d.codi_tecnico, c.nrut_cliente, c.drut_cliente, c.desc_glosaprod, c.nmro_solicitudact "
 			+ "from MDP_NEG_CLIENTESACTIVOS C, RMA_NEG_DATOSOTC D "
 			+ "where C.nmro_solicitudact = D.corr_solicitud "
@@ -380,17 +377,12 @@ public class Constantes {
 			+ "and c.desc_tiposerv = 'INTERNET' "
 			+ "and d.codi_tecnico is not null "
 			+ "and desc_catego = 'PLAN BASE'";
-//			+ "and desc_catego = 'PLAN BASE' "
-//			+ "AND ROWNUM <10";
 	private final static String QUERY_OCTAR = "SELECT o.REQUEST_ID, o.RUT, o.DV, r.VALOR_DEFECTO "
 			+ "FROM SP_OXT o INNER JOIN SP_CS_ATRIBUTO_RECURSO r ON r.REQUEST_ID_OXT = o.REQUEST_ID "
 			+ "WHERE r.NOMBRE_ATRIBUTO = 'Ani asociado' "
 			+ "AND o.tipo_de_servicio = '3 PLAY FIBRA' "
 			+ "AND o.tipo_trabajo = 'INSTALACION' "
 			+ "AND o.tipo_de_termino_ott = 'Terminado'";
-//			+ "AND o.tipo_de_termino_ott = 'Terminado' "
-//			+ "AND ROWNUM <10";
-	
 	public static String getQueryDescarga(String arg) {
 		String toReturn = "";
 		if ("INTERNET".equals(arg)){
@@ -401,17 +393,7 @@ public class Constantes {
 			toReturn = QUERY_TV_CANALES;
 		} else if ("OTCAR".equals(arg)){
 			toReturn = QUERY_OCTAR;
-		} /*else if ("KALTURA".equals(arg)){
-			toReturn = QUERY_INT;
-		} else if ("KALTURA_C".equals(arg)){
-			toReturn = QUERY_INT;
-		} else if ("KENAN".equals(arg)){
-			toReturn = QUERY_INT;
-		} else if ("KENAN_C".equals(arg)){
-			toReturn = QUERY_INT;
-		} else if ("AAA".equals(arg)){
-			toReturn = QUERY_INT;
-		}*/
+		}
 		return toReturn;
 	}
 	
@@ -425,17 +407,7 @@ public class Constantes {
 			toReturn = CABECERA_TV_CANALES;
 		} else if ("OTCAR".equals(arg)){
 			toReturn = CABECERA_OCTAR;
-		} /*else if ("KALTURA".equals(arg)){
-			toReturn = CABECERA_KALTURA;
-		} else if ("KALTURA_C".equals(arg)){
-			toReturn = CABECERA_KALTURA_C;
-		} else if ("KENAN".equals(arg)){
-			toReturn = CABECERA_KENAN;
-		} else if ("KENAN_C".equals(arg)){
-			toReturn = CABECERA_KENAN_C;
-		} else if ("AAA".equals(arg)){
-			toReturn = QUERY_INT;
-		}*/
+		}
 		return toReturn;	
 	}
 	
