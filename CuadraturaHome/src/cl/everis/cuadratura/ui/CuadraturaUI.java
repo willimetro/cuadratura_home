@@ -15,20 +15,24 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cl.everis.cuadratura.bd.BDManager;
@@ -103,9 +107,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private JLabel labelInfoCanales;
 	private JTextArea jTextAreaStatusProcess;
 
-	private JComboBox<String> comboCanales = null;
+	private JList<String> listaCanales = null;
 	Map<String, FileCorteCanales> mapCanales = null;
 	List<FileCorteCanalesRow> fileCorteCanalesRows = null;
+	
+	JPanel comboPanel = null;
 
 	/**
 	 * Constructor
@@ -412,25 +418,33 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelChooser.add(cargarDatosBtn);
 		JPanel panelFileCargado = new JPanel();
 		panelFileCargado.setLayout(new BoxLayout(panelFileCargado, BoxLayout.Y_AXIS));
-		comboCanales = new JComboBox<String>();
-		comboCanales.addItem("Seleccione...");
-		comboCanales.setEnabled(false);
-		comboCanales.addActionListener(new ActionListener() {
-
+		listaCanales = new JList<String>();
+		listaCanales.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		JScrollPane scroolList = new JScrollPane(listaCanales);
+		scroolList.setBounds(10,30,200,110); 
+		listaCanales.addListSelectionListener(new ListSelectionListener() {
+			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String itemSeleccionado = (String) comboCanales.getSelectedItem();
-				int cantidad = mapCanales.get(itemSeleccionado).getCountCanales();
-				fileCorteCanalesRows = mapCanales.get(itemSeleccionado).getListaClientesCorte();
-				labelInfoCanales
-						.setText("Se intentará dar de baja " + cantidad + " clientes con canal " + itemSeleccionado);
-				cortarBtn.setEnabled(true);
+			public void valueChanged(ListSelectionEvent e) {
+				
 			}
 		});
+//		comboCanales.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//				String itemSeleccionado = (String) comboCanales.getSelectedItem();
+//				int cantidad = mapCanales.get(itemSeleccionado).getCountCanales();
+//				fileCorteCanalesRows = mapCanales.get(itemSeleccionado).getListaClientesCorte();
+//				labelInfoCanales
+//						.setText("Se intentará dar de baja " + cantidad + " clientes con canal " + itemSeleccionado);
+//				cortarBtn.setEnabled(true);
+//			}
+//		});
 		panelFileCargado
 				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione el canal que quiere dar de baja"));
-		JPanel comboPanel = new JPanel();
-		comboPanel.add(comboCanales);
+		comboPanel = new JPanel();
+		comboPanel.add(scroolList);
 		cortarBtn.addActionListener(new ActionListener() {
 
 			@Override
@@ -802,11 +816,12 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			ArchivoUtil archivoUtil = new ArchivoUtil();
 			mapCanales = archivoUtil
 					.getCanales(fileDialogCorteCanalesAdi.getSelectedFile().getAbsolutePath());
+			DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
 			for (Iterator<String> iterator = mapCanales.keySet().iterator(); iterator.hasNext();) {
 				String nomCanal = (String) iterator.next();
-				comboCanales.addItem(nomCanal);
+				defaultListModel.addElement(nomCanal);
 			}
-			comboCanales.setEnabled(true);
+			listaCanales.setModel(defaultListModel);
 		} else if (flagAction.equalsIgnoreCase("Cortar Canales")) {
 			int contador = 0;
 			statusProcess.setValue(0);
