@@ -111,7 +111,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private JList<String> listaCanales = null;
 	Map<String, FileCorteCanales> mapCanales = null;
 	List<FileCorteCanalesRow> fileCorteCanalesRows = null;
-	
+
 	JPanel comboPanel = null;
 
 	/**
@@ -422,26 +422,27 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		listaCanales = new JList<String>();
 		listaCanales.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		JScrollPane scroolList = new JScrollPane(listaCanales);
-		scroolList.setBounds(10,30,200,110); 
+		scroolList.setPreferredSize(new Dimension(94, 147));
 		listaCanales.addListSelectionListener(new ListSelectionListener() {
-			
+
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				
+				List<String> listaSeleccionada = listaCanales.getSelectedValuesList();
+				int cantidad = 0;
+				for (Iterator<String> iterator = listaSeleccionada.iterator(); iterator.hasNext();) {
+					String nomCanal = (String) iterator.next();
+					cantidad = cantidad + mapCanales.get(nomCanal).getCountCanales();
+					fileCorteCanalesRows = mapCanales.get(nomCanal).getListaClientesCorte();
+				}
+				if (listaSeleccionada.isEmpty()) {
+					labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
+					cortarBtn.setEnabled(false);
+				} else {
+					labelInfoCanales.setText("Se intentará dar de baja " + cantidad + " clientes ");
+					cortarBtn.setEnabled(true);
+				}
 			}
 		});
-//		comboCanales.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent arg0) {
-//				String itemSeleccionado = (String) comboCanales.getSelectedItem();
-//				int cantidad = mapCanales.get(itemSeleccionado).getCountCanales();
-//				fileCorteCanalesRows = mapCanales.get(itemSeleccionado).getListaClientesCorte();
-//				labelInfoCanales
-//						.setText("Se intentará dar de baja " + cantidad + " clientes con canal " + itemSeleccionado);
-//				cortarBtn.setEnabled(true);
-//			}
-//		});
 		panelFileCargado
 				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione el canal que quiere dar de baja"));
 		comboPanel = new JPanel();
@@ -468,6 +469,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelFileCargado.add(comboPanel);
 		labelInfoCanales = new JLabel(" ");
 		JPanel panelAlertCanales = new JPanel();
+		labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
 		panelAlertCanales.add(labelInfoCanales);
 		panelFileCargado.add(panelAlertCanales);
 		cargaArchivo.add(panelChooser);
@@ -516,8 +518,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelCorteCanales = new JLabel("Seleccione archivo Internet AAA (Splunk)",
-				SwingConstants.LEFT);
+		pathLabelCorteCanales = new JLabel("Seleccione archivo Internet AAA (Splunk)", SwingConstants.LEFT);
 		pathLabelCorteCanales.setEnabled(false);
 		pathLabelCorteCanales.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
@@ -821,8 +822,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			(new Correo()).enviarCorreo(mapResult);
 		} else if (flagAction.equalsIgnoreCase("Cargar Datos")) {
 			ArchivoUtil archivoUtil = new ArchivoUtil();
-			mapCanales = archivoUtil
-					.getCanales(fileDialogCorteCanalesAdi.getSelectedFile().getAbsolutePath());
+			mapCanales = archivoUtil.getCanales(fileDialogCorteCanalesAdi.getSelectedFile().getAbsolutePath());
 			DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
 			for (Iterator<String> iterator = mapCanales.keySet().iterator(); iterator.hasNext();) {
 				String nomCanal = (String) iterator.next();
