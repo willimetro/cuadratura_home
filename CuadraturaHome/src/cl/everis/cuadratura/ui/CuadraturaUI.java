@@ -1,6 +1,7 @@
 package cl.everis.cuadratura.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -495,15 +496,16 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogCorteCanalesAdi.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					pathLabelCorteCanales.setText("El archivo ha sido seleccionado                             ");
+					pathLabelCorteCanales.setText(fileDialogCorteCanalesAdi.getSelectedFile().getAbsolutePath());
 					cargarDatosBtn.setEnabled(true);
 				}
 			}
 		});
 
-		pathLabelCorteCanales = new JLabel("Seleccione archivo Internet AAA               (Splunk)",
+		pathLabelCorteCanales = new JLabel("Seleccione archivo Internet AAA (Splunk)",
 				SwingConstants.LEFT);
 		pathLabelCorteCanales.setEnabled(false);
+		pathLabelCorteCanales.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
@@ -535,13 +537,14 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogInternet.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					pathLabelInternet.setText("El archivo ha sido seleccionado                             ");
+					pathLabelInternet.setText(fileDialogInternet.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
 
-		pathLabelInternet = new JLabel("Seleccione archivo Internet AAA               (Splunk)", SwingConstants.LEFT);
+		pathLabelInternet = new JLabel("Seleccione archivo Internet AAA (Splunk)", SwingConstants.LEFT);
 		pathLabelInternet.setEnabled(false);
+		pathLabelInternet.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
@@ -574,13 +577,14 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogTvPlanesBase.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					pathLabelTvPlanesBase.setText("El archivo ha sido seleccionado                             ");
+					pathLabelTvPlanesBase.setText(fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
 
-		pathLabelTvPlanesBase = new JLabel("Seleccione archivo Planes Base             (Splunk)", SwingConstants.LEFT);
+		pathLabelTvPlanesBase = new JLabel("Seleccione archivo Planes Base (Splunk)", SwingConstants.LEFT);
 		pathLabelTvPlanesBase.setEnabled(false);
+		pathLabelTvPlanesBase.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
@@ -612,13 +616,14 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogTvAdicionales.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					pathLabelTvAdicionales.setText("El archivo ha sido seleccionado                             ");
+					pathLabelTvAdicionales.setText(fileDialogTvAdicionales.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
 
 		pathLabelTvAdicionales = new JLabel("Seleccione archivo Planes Adicionales (Splunk)", SwingConstants.LEFT);
 		pathLabelTvAdicionales.setEnabled(false);
+		pathLabelTvAdicionales.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
@@ -650,13 +655,14 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogKenan.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					pathLabelKenan.setText("El archivo ha sido seleccionado                             ");
+					pathLabelKenan.setText(fileDialogKenan.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
 
-		pathLabelKenan = new JLabel("Seleccione archivo Kenan                         (Splunk)", SwingConstants.LEFT);
+		pathLabelKenan = new JLabel("Seleccione archivo Kenan (Splunk)", SwingConstants.LEFT);
 		pathLabelKenan.setEnabled(false);
+		pathLabelKenan.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
@@ -688,13 +694,14 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogKenanAdi.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					pathLabelKenanAdi.setText("El archivo ha sido seleccionado                             ");
+					pathLabelKenanAdi.setText(fileDialogKenanAdi.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
 
-		pathLabelKenanAdi = new JLabel("Seleccione archivo Kenan Adicionales   (Splunk)", SwingConstants.LEFT);
+		pathLabelKenanAdi = new JLabel("Seleccione archivo Kenan Adicionales (Splunk)", SwingConstants.LEFT);
 		pathLabelKenanAdi.setEnabled(false);
+		pathLabelKenanAdi.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
