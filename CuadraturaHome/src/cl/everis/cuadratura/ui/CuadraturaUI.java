@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -110,7 +111,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 	private JList<String> listaCanales = null;
 	Map<String, FileCorteCanales> mapCanales = null;
-	List<FileCorteCanalesRow> fileCorteCanalesRows = null;
+	List<List<FileCorteCanalesRow>> listaListaCanales = null;
 
 	JPanel comboPanel = null;
 
@@ -429,10 +430,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			public void valueChanged(ListSelectionEvent e) {
 				List<String> listaSeleccionada = listaCanales.getSelectedValuesList();
 				int cantidad = 0;
+				listaListaCanales = new ArrayList<List<FileCorteCanalesRow>>();
 				for (Iterator<String> iterator = listaSeleccionada.iterator(); iterator.hasNext();) {
 					String nomCanal = (String) iterator.next();
 					cantidad = cantidad + mapCanales.get(nomCanal).getCountCanales();
-					fileCorteCanalesRows = mapCanales.get(nomCanal).getListaClientesCorte();
+					listaListaCanales.add(mapCanales.get(nomCanal).getListaClientesCorte());
 				}
 				if (listaSeleccionada.isEmpty()) {
 					labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
@@ -834,24 +836,28 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			statusProcess.setValue(0);
 			DesactivarCanales desactivarCanales = new DesactivarCanales();
 			LogEliminacion.iniciarFicheros();
-			for (Iterator<FileCorteCanalesRow> iterator = fileCorteCanalesRows.iterator(); iterator.hasNext();) {
-				FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator.next();
-				fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
-				DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
-						.desactivarCanalPremium(fileCorteCanalesRow);
-				if (contador == 0) {
-					jTextAreaStatusProcess.setText(
-							"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-									+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
-									+ canalesResponseOBJ.getDescripcion());
-				} else {
-					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "INFO;"
-							+ fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-							+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
-							+ canalesResponseOBJ.getDescripcion());
+			for (Iterator<List<FileCorteCanalesRow>> iterator = listaListaCanales.iterator(); iterator.hasNext();) {
+				List<FileCorteCanalesRow> list = (List<FileCorteCanalesRow>) iterator.next();
+				jTextAreaStatusProcess.setText("Se proceden a cortar el canal con codigo: "+list.get(0).getCodCanal());
+				for (Iterator<FileCorteCanalesRow> iterator2 = list.iterator(); iterator.hasNext();) {
+					FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator2.next();
+					fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
+					DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
+							.desactivarCanalPremium(fileCorteCanalesRow);
+					if (contador == 0) {
+						jTextAreaStatusProcess.setText(
+								"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+										+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+										+ canalesResponseOBJ.getDescripcion());
+					} else {
+						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "INFO;"
+								+ fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+								+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+								+ canalesResponseOBJ.getDescripcion());
+					}
+					statusProcess.setStringPainted(true);
+					statusProcess.setValue(calculoDeAvance(list.size(), ++contador));
 				}
-				statusProcess.setStringPainted(true);
-				statusProcess.setValue(calculoDeAvance(fileCorteCanalesRows.size(), ++contador));
 			}
 			LogEliminacion.cerrarFicheros();
 		}
