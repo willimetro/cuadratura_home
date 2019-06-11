@@ -839,6 +839,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			for (Iterator<List<FileCorteCanalesRow>> iterator = listaListaCanales.iterator(); iterator.hasNext();) {
 				List<FileCorteCanalesRow> list = (List<FileCorteCanalesRow>) iterator.next();
 				jTextAreaStatusProcess.setText("Se proceden a cortar el canal con codigo: "+list.get(0).getCodCanal());
+				int contador2 = 0;
 				for (Iterator<FileCorteCanalesRow> iterator2 = list.iterator(); iterator2.hasNext();) {
 					FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator2.next();
 					fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
@@ -849,6 +850,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 								"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 										+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
 										+ canalesResponseOBJ.getDescripcion());
+						contador++;
 					} else {
 						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "INFO;"
 								+ fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
@@ -856,7 +858,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 								+ canalesResponseOBJ.getDescripcion());
 					}
 					statusProcess.setStringPainted(true);
-					statusProcess.setValue(calculoDeAvance(list.size(), ++contador));
+					statusProcess.setValue(calculoDeAvance(list.size(), ++contador2));
 				}
 			}
 			LogEliminacion.cerrarFicheros();
