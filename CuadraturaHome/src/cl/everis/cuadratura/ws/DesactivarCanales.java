@@ -46,7 +46,7 @@ public class DesactivarCanales {
 		type.setRequest(rq);
 		type.getRequest().setProductId("");
 		type.getRequest().setUserId("");
-		type.getRequest().setHouseholdId(fileCorteCanalesRow.getCodiServicio());
+		type.getRequest().setHouseholdId(null != fileCorteCanalesRow.getCodiServicio() ? fileCorteCanalesRow.getCodiServicio() : "");
 		type.getRequest().setProductId(fileCorteCanalesRow.getCodCanal());
 		type.getRequest().setUserId(fileCorteCanalesRow.getRutConDv());
 		DesactivarCanalesResponseOBJ desactivarCanalesResponseOBJ = null;
@@ -81,7 +81,7 @@ public class DesactivarCanales {
 			pstmt.setString(1, fileCorteCanalesRow.getRutSinDV());
 			rs = pstmt.executeQuery();
 			if(rs.next()){
-				fileCorteCanalesRow.setCodiServicio(rs.getNString("CODI_SERVICIO"));
+				fileCorteCanalesRow.setCodiServicio(rs.getString("CODI_SERVICIO"));
 			} else {
 				fileCorteCanalesRow.setCodiServicio("");
 			}

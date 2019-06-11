@@ -839,7 +839,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			for (Iterator<List<FileCorteCanalesRow>> iterator = listaListaCanales.iterator(); iterator.hasNext();) {
 				List<FileCorteCanalesRow> list = (List<FileCorteCanalesRow>) iterator.next();
 				jTextAreaStatusProcess.setText("Se proceden a cortar el canal con codigo: "+list.get(0).getCodCanal());
-				for (Iterator<FileCorteCanalesRow> iterator2 = list.iterator(); iterator.hasNext();) {
+				for (Iterator<FileCorteCanalesRow> iterator2 = list.iterator(); iterator2.hasNext();) {
 					FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator2.next();
 					fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
 					DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
