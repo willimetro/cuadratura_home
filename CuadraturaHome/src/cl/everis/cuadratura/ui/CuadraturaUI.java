@@ -1,6 +1,7 @@
 package cl.everis.cuadratura.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -8,29 +9,59 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cl.everis.cuadratura.bd.BDManager;
 import cl.everis.cuadratura.bd.BDManagerImpl;
+import cl.everis.cuadratura.files.ArchivoUtil;
+import cl.everis.cuadratura.obj.CountOBJ;
+import cl.everis.cuadratura.obj.DesactivarCanalesResponseOBJ;
+import cl.everis.cuadratura.obj.FileCorteCanales;
+import cl.everis.cuadratura.obj.FileCorteCanalesRow;
+import cl.everis.cuadratura.util.LogEliminacion;
+import cl.everis.cuadratura.ws.Correo;
+import cl.everis.cuadratura.ws.DesactivarCanales;
 
-public class CuadraturaUI{
+/**
+ * 
+ * @author wugaldeq
+ *
+ */
+public class CuadraturaUI implements Runnable, ActionListener {
 
+	private final static String[] CRUCES_TPLAY = { "TPLAY_KALTURA", "TPLAY_KALTURA_C", "TPLAY_KENAN_TV",
+			"TPLAY_KENAN_TLF", "TPLAY_KENAN_INT", "TPLAY_KENAN_C", "TPLAY_AAA", "TPLAY_OTCAR" };
+	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_62", "KENAN_C",
+			"KALTURA", "KALTURA_C", "AAA" };
 	private JFrame mainFrame = null;
 	private JProgressBar statusProcess;
-	//CheckBox
+	// CheckBox
 	JCheckBox chTodos = new JCheckBox("Todos");
 	JCheckBox chTresPlayAAA = new JCheckBox("Internet AAA");
 	JCheckBox chTresPlayKalturaBase = new JCheckBox("TV Planes Base");
@@ -40,50 +71,82 @@ public class CuadraturaUI{
 	JCheckBox chTresPlayKenanTVBase = new JCheckBox("Kenan TV BASE");
 	JCheckBox chTresPlayKenanTVAdi = new JCheckBox("Kenan TV Adicionales");
 	JCheckBox chTresPlayKenanTel = new JCheckBox("Kenan Telefonía");
-	
-	//Botones para buscar los archivos (FileChooser)
+
+	// Botones para buscar los archivos (FileChooser)
 	JButton showFileDialogKenanAdiButton = new JButton("Buscar");
 	JButton showFileDialogKenanButton = new JButton("Buscar");
 	JButton showFileDialogAdicionalesButton = new JButton("Buscar");
 	JButton showFileDialogTvPlanesBaseButton = new JButton("Buscar");
 	JButton showFileDialogInternetButton = new JButton("Buscar");
-	
+
+	JButton showFileDialogCorteCanalesAdiButton = new JButton("Buscar");
+
 	private JLabel pathLabelTvPlanesBase;
 	private JLabel pathLabelInternet;
 	private JLabel pathLabelTvAdicionales;
 	private JLabel pathLabelKenan;
 	private JLabel pathLabelKenanAdi;
+	private JLabel pathLabelCorteCanales;
 	private GridBagConstraints showFileDialogConstrains;
 	final JFileChooser fileDialogTvPlanesBase = new JFileChooser();
 	final JFileChooser fileDialogInternet = new JFileChooser();
 	final JFileChooser fileDialogTvAdicionales = new JFileChooser();
 	final JFileChooser fileDialogKenan = new JFileChooser();
 	final JFileChooser fileDialogKenanAdi = new JFileChooser();
+
+	final JFileChooser fileDialogCorteCanalesAdi = new JFileChooser();
 	private GridBagConstraints pathConstrains;
-	
+
 	private BDManager bdManager = new BDManagerImpl();
-	
-	JButton iniciar = new JButton("Iniciar");
-	
+
+	private Thread hilo;
+
+	private String flagAction = "";
+
+	JButton iniciarBtn = new JButton("Iniciar");
+	JButton cargarDatosBtn = new JButton("Cargar Datos");
+	JButton cortarBtn = new JButton("Cortar");
+	private JLabel labelInfoCanales;
+	private JTextArea jTextAreaStatusProcess;
+
+	private JList<String> listaCanales = null;
+	Map<String, FileCorteCanales> mapCanales = null;
+	List<List<FileCorteCanalesRow>> listaListaCanales = null;
+
+	JPanel comboPanel = null;
+
+	/**
+	 * Constructor
+	 */
 	public CuadraturaUI() {
 		mainFrame = new JFrame("Cuadratura Home");
-		JTabbedPane jTabbedPane =  new JTabbedPane();
+		JTabbedPane jTabbedPane = new JTabbedPane();
 		JComponent tresPlay = makeTextPanel3Play("Panel #1");
-		jTabbedPane.addTab("3 Play",tresPlay);
+		jTabbedPane.addTab("3 Play", tresPlay);
 		jTabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 		JComponent inalambrico = makeTextPanelInalambrico("Panel #2");
-		
+
 		jTabbedPane.addTab("Inalámbrica", inalambrico);
 		jTabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		
+
+		JComponent corteBloqueo = makeTextPanelCorteBloqueo("Panel #3");
+
+		jTabbedPane.addTab("Corte y Bloqueo", corteBloqueo);
+		jTabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+
 		mainFrame.add(jTabbedPane, BorderLayout.CENTER);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setSize(800,600);
+		mainFrame.setSize(800, 600);
 		mainFrame.setVisible(true);
 		mainFrame.setResizable(false);
 	}
-	
+
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
 	protected JComponent makeTextPanel3Play(String text) {
 		JPanel panel3Play = new JPanel(false);
 		JPanel tiposCuad = new JPanel();
@@ -95,72 +158,9 @@ public class CuadraturaUI{
 		showFileChooser3playTvAdicionales(panelChooser);
 		showFileChooser3playKenan(panelChooser);
 		showFileChooser3playKenanAdi(panelChooser);
-		iniciar.setEnabled(false);
-		panelChooser.add(iniciar);
-		iniciar.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		            public void run() {
-		                if(!chTodos.isSelected()){
-		                	//Archivo AAA Splunk
-		                	if(chTresPlayAAA.isSelected()){
-		                		bdManager.cargaCSV("AAA");//Splunk
-		                		bdManager.cargaCSV("INTERNET");//BD
-		                		bdManager.actualiza("AAA");
-		                		bdManager.actualiza("INTERNET");//BD
-		                		bdManager.obtenerCruces("TPLAY_AAA");
-		                	} else if(chTresPlayKalturaBase.isSelected()){
-		                		bdManager.cargaCSV("KALTURA");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
-		                		bdManager.actualiza("KALTURA");
-		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KALTURA");
-		                	} else if(chTresPlayKalturaAdi.isSelected()){
-		                		bdManager.cargaCSV("KALTURA_C");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
-		                		bdManager.actualiza("KALTURA_C");
-		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KALTURA_C");
-		                	} else if(chTresPlayOTCARTel.isSelected()){
-		                		bdManager.cargaCSV("TLF");//Splunk
-		                		bdManager.cargaCSV("OCTAR");//BD
-		                		bdManager.actualiza("TLF");
-		                		bdManager.actualiza("OCTAR");//BD
-		                		bdManager.obtenerCruces("TPLAY_OCTAR");
-		                	} else if(chTresPlayKenanInter.isSelected()){
-		                		bdManager.cargaCSV("KENAN");//Splunk
-		                		bdManager.cargaCSV("INTERNET");//BD
-		                		bdManager.actualiza("KENAN");
-		                		bdManager.actualiza("INTERNET");//BD
-		                		bdManager.obtenerCruces("TPLAY_KENAN_INT");
-		                	} else if(chTresPlayKenanTVBase.isSelected()){
-		                		bdManager.cargaCSV("KENAN");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
-		                		bdManager.actualiza("KENAN");
-		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KENAN_TV");
-		                	} else if(chTresPlayKenanTVAdi.isSelected()){
-		                		bdManager.cargaCSV("KENAN_C");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
-		                		bdManager.actualiza("KENAN_C");
-		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KENAN_C");
-		                	} else if(chTresPlayKenanTel.isSelected()){
-		                		bdManager.cargaCSV("KENAN");//Splunk
-		                		bdManager.cargaCSV("TV");//BD
-		                		bdManager.actualiza("KENAN");
-		                		bdManager.actualiza("TV");//BD
-		                		bdManager.obtenerCruces("TPLAY_KENAN_TLF");
-		                	}
-		                } else {
-		                	
-		                }
-		            }
-		        });
-			}
-		});
+		iniciarBtn.setEnabled(false);
+		panelChooser.add(iniciarBtn);
+		iniciarBtn.addActionListener(this);
 		tiposCuad.setBorder(BorderFactory.createTitledBorder("Tipos de Cuadratura 3 play"));
 		tiposCuad.setLayout(new GridLayout(1, 2));
 		panelCheck.setBorder(BorderFactory.createTitledBorder("Seleccione la cuadratura"));
@@ -172,27 +172,31 @@ public class CuadraturaUI{
 		panel3Play.setLayout(new GridLayout(2, 1));
 		panel3Play.add(tiposCuad);
 		statusProcess = new JProgressBar();
-	    resultadosCuad.setLayout(new GridBagLayout());
-	    GridBagConstraints c = new GridBagConstraints();
-	    c.fill = GridBagConstraints.HORIZONTAL;
-	    c.gridx = 0;
-	    c.gridy = 0;
-	    c.weightx = 1;
-	    c.ipady = 20;
-	    resultadosCuad.add(statusProcess,c);
+		resultadosCuad.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 1;
+		c.ipady = 20;
+		resultadosCuad.add(statusProcess, c);
 		panel3Play.add(resultadosCuad);
 		return panel3Play;
-    }
-	
+	}
+
+	/**
+	 * 
+	 * @param panelCheck
+	 */
 	private void createMenuCheckFor3Play(JPanel panelCheck) {
-		
+
 		chTodos.setMnemonic(KeyEvent.VK_C);
 		chTodos.setSelected(false);
 		chTodos.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTodos.isSelected()) {
+				if (!chTodos.isSelected()) {
 					chTresPlayAAA.setSelected(false);
 					chTresPlayAAA.setEnabled(true);
 					chTresPlayKalturaBase.setSelected(false);
@@ -214,7 +218,7 @@ public class CuadraturaUI{
 					showFileDialogAdicionalesButton.setEnabled(false);
 					showFileDialogTvPlanesBaseButton.setEnabled(false);
 					showFileDialogInternetButton.setEnabled(false);
-					iniciar.setEnabled(false);
+					iniciarBtn.setEnabled(false);
 				} else {
 					chTresPlayAAA.setSelected(true);
 					chTresPlayAAA.setEnabled(false);
@@ -237,138 +241,138 @@ public class CuadraturaUI{
 					showFileDialogAdicionalesButton.setEnabled(true);
 					showFileDialogTvPlanesBaseButton.setEnabled(true);
 					showFileDialogInternetButton.setEnabled(true);
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
-				
+
 			}
 		});
-		
+
 		chTresPlayAAA.setMnemonic(KeyEvent.VK_C);
 		chTresPlayAAA.setSelected(false);
 		chTresPlayAAA.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayAAA.isSelected()){
+				if (!chTresPlayAAA.isSelected()) {
 					showFileDialogInternetButton.setEnabled(false);
-					iniciar.setEnabled(false);
+					iniciarBtn.setEnabled(false);
 				} else {
 					showFileDialogInternetButton.setEnabled(true);
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
 			}
 		});
-		
+
 		chTresPlayKalturaBase.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKalturaBase.setSelected(false);
 		chTresPlayKalturaBase.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKalturaBase.isSelected()){
+				if (!chTresPlayKalturaBase.isSelected()) {
 					showFileDialogTvPlanesBaseButton.setEnabled(false);
-					iniciar.setEnabled(false);
+					iniciarBtn.setEnabled(false);
 				} else {
 					showFileDialogTvPlanesBaseButton.setEnabled(true);
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
 			}
 		});
-		
+
 		chTresPlayKalturaAdi.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKalturaAdi.setSelected(false);
 		chTresPlayKalturaAdi.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKalturaAdi.isSelected()){
+				if (!chTresPlayKalturaAdi.isSelected()) {
 					showFileDialogAdicionalesButton.setEnabled(false);
-					iniciar.setEnabled(false);
+					iniciarBtn.setEnabled(false);
 				} else {
 					showFileDialogAdicionalesButton.setEnabled(true);
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
 			}
 		});
-		
+
 		chTresPlayOTCARTel.setMnemonic(KeyEvent.VK_C);
 		chTresPlayOTCARTel.setSelected(false);
 		chTresPlayOTCARTel.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayOTCARTel.isSelected()){
-					iniciar.setEnabled(false);
+				if (!chTresPlayOTCARTel.isSelected()) {
+					iniciarBtn.setEnabled(false);
 				} else {
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
 			}
 		});
-		
+
 		chTresPlayKenanInter.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanInter.setSelected(false);
 		chTresPlayKenanInter.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKenanInter.isSelected()){
+				if (!chTresPlayKenanInter.isSelected()) {
 					showFileDialogKenanButton.setEnabled(false);
-					iniciar.setEnabled(false);
+					iniciarBtn.setEnabled(false);
 				} else {
 					showFileDialogKenanButton.setEnabled(true);
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
 			}
 		});
-		
+
 		chTresPlayKenanTVBase.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanTVBase.setSelected(false);
 		chTresPlayKenanTVBase.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKenanTVBase.isSelected()){
+				if (!chTresPlayKenanTVBase.isSelected()) {
 					showFileDialogKenanButton.setEnabled(false);
-					iniciar.setEnabled(false);
+					iniciarBtn.setEnabled(false);
 				} else {
 					showFileDialogKenanButton.setEnabled(true);
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
 			}
 		});
-		
+
 		chTresPlayKenanTVAdi.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanTVAdi.setSelected(false);
 		chTresPlayKenanTVAdi.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKenanTVAdi.isSelected()){
+				if (!chTresPlayKenanTVAdi.isSelected()) {
 					showFileDialogKenanAdiButton.setEnabled(false);
-					iniciar.setEnabled(false);
+					iniciarBtn.setEnabled(false);
 				} else {
 					showFileDialogKenanAdiButton.setEnabled(true);
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
 			}
 		});
-		
+
 		chTresPlayKenanTel.setMnemonic(KeyEvent.VK_C);
 		chTresPlayKenanTel.setSelected(false);
 		chTresPlayKenanTel.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!chTresPlayKenanTel.isSelected()){
+				if (!chTresPlayKenanTel.isSelected()) {
 					showFileDialogKenanButton.setEnabled(false);
-					iniciar.setEnabled(false);
+					iniciarBtn.setEnabled(false);
 				} else {
 					showFileDialogKenanButton.setEnabled(true);
-					iniciar.setEnabled(true);
+					iniciarBtn.setEnabled(true);
 				}
 			}
 		});
-		
+
 		panelCheck.setLayout(new GridLayout(0, 2));
 		panelCheck.add(chTodos);
 		panelCheck.add(chTresPlayAAA);
@@ -381,6 +385,11 @@ public class CuadraturaUI{
 		panelCheck.add(chTresPlayKenanTel);
 	}
 
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
 	protected JComponent makeTextPanelInalambrico(String text) {
 		JPanel panelIna = new JPanel(false);
 		JPanel tiposCuad = new JPanel();
@@ -391,8 +400,144 @@ public class CuadraturaUI{
 		panelIna.add(tiposCuad);
 		panelIna.add(resultadosCuad);
 		return panelIna;
-    }
-	
+	}
+
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
+	protected JComponent makeTextPanelCorteBloqueo(String text) {
+		JPanel panelCB = new JPanel(false);
+		JPanel cargaArchivo = new JPanel();
+		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Configuración del Corte o Bloqueo"));
+		cargaArchivo.setLayout(new BoxLayout(cargaArchivo, BoxLayout.Y_AXIS));
+		JPanel panelChooser = new JPanel();
+		panelChooser.setBorder(BorderFactory.createTitledBorder("Paso 1 - Busque archivo y carguelo"));
+		showFileChooserCorteCanales(panelChooser);
+		cargarDatosBtn.setEnabled(false);
+		cargarDatosBtn.addActionListener(this);
+		panelChooser.add(cargarDatosBtn);
+		JPanel panelFileCargado = new JPanel();
+		panelFileCargado.setLayout(new BoxLayout(panelFileCargado, BoxLayout.Y_AXIS));
+		listaCanales = new JList<String>();
+		listaCanales.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		JScrollPane scroolList = new JScrollPane(listaCanales);
+		scroolList.setPreferredSize(new Dimension(94, 147));
+		listaCanales.addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				List<String> listaSeleccionada = listaCanales.getSelectedValuesList();
+				int cantidad = 0;
+				listaListaCanales = new ArrayList<List<FileCorteCanalesRow>>();
+				for (Iterator<String> iterator = listaSeleccionada.iterator(); iterator.hasNext();) {
+					String nomCanal = (String) iterator.next();
+					cantidad = cantidad + mapCanales.get(nomCanal).getCountCanales();
+					listaListaCanales.add(mapCanales.get(nomCanal).getListaClientesCorte());
+				}
+				if (listaSeleccionada.isEmpty()) {
+					labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
+					cortarBtn.setEnabled(false);
+				} else {
+					labelInfoCanales.setText("Se intentará dar de baja " + cantidad + " clientes ");
+					cortarBtn.setEnabled(true);
+				}
+			}
+		});
+		panelFileCargado
+				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione el canal que quiere dar de baja"));
+		comboPanel = new JPanel();
+		comboPanel.add(scroolList);
+		cortarBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Object[] options = { "Aceptar", "Cancelar" };
+				int n = JOptionPane.showOptionDialog(panelCB,
+						"Recuerde que " + labelInfoCanales.getText() + " Desea seguir con el proceso?",
+						"Seguro que desea seguir", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, null);
+				if (n == 0) {
+					flagAction = "Cortar Canales";
+					hilo = new Thread(CuadraturaUI.this);
+					hilo.start();
+					cortarBtn.setEnabled(false);
+				}
+			}
+		});
+		comboPanel.add(cortarBtn);
+		cortarBtn.setEnabled(false);
+		panelFileCargado.add(comboPanel);
+		labelInfoCanales = new JLabel(" ");
+		JPanel panelAlertCanales = new JPanel();
+		labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
+		panelAlertCanales.add(labelInfoCanales);
+		panelFileCargado.add(panelAlertCanales);
+		cargaArchivo.add(panelChooser);
+		cargaArchivo.add(panelFileCargado);
+		JPanel consolePanel = new JPanel();
+		consolePanel.setBorder(BorderFactory.createTitledBorder("Consola de Corte o bloqueo"));
+		panelCB.setLayout(new GridLayout(2, 1));
+		panelCB.add(cargaArchivo);
+		statusProcess = new JProgressBar();
+		consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.Y_AXIS));
+		JPanel panelStatusProgress = new JPanel();
+		statusProcess = new JProgressBar();
+		panelStatusProgress.add(statusProcess);
+		consolePanel.add(panelStatusProgress);
+		jTextAreaStatusProcess = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcess, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		consolePanel.add(scrollPane);
+		panelCB.add(consolePanel);
+		return panelCB;
+	}
+
+	/**
+	 * 
+	 * @param panelChooser
+	 */
+	private void showFileChooserCorteCanales(JPanel panelChooser) {
+		showFileDialogConstrains = new GridBagConstraints();
+		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
+		showFileDialogConstrains.gridx = 3;
+		showFileDialogConstrains.gridy = 0;
+		showFileDialogConstrains.gridwidth = 2;
+		showFileDialogConstrains.gridheight = 1;
+
+		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
+		fileDialogCorteCanalesAdi.setFileFilter(filtro);
+		showFileDialogCorteCanalesAdiButton.setEnabled(true);
+		showFileDialogCorteCanalesAdiButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int returnVal = fileDialogCorteCanalesAdi.showOpenDialog(mainFrame);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					pathLabelCorteCanales.setText(fileDialogCorteCanalesAdi.getSelectedFile().getAbsolutePath());
+					cargarDatosBtn.setEnabled(true);
+				}
+			}
+		});
+
+		pathLabelCorteCanales = new JLabel("Seleccione archivo Internet AAA (Splunk)", SwingConstants.LEFT);
+		pathLabelCorteCanales.setEnabled(false);
+		pathLabelCorteCanales.setPreferredSize(new Dimension(261, 16));
+		pathConstrains = new GridBagConstraints();
+		pathConstrains.insets = new Insets(0, 0, 0, 5);
+		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
+		pathConstrains.gridwidth = 2;
+		pathConstrains.gridx = 0;
+		pathConstrains.gridy = 0;
+		panelChooser.add(pathLabelCorteCanales, pathConstrains);
+		panelChooser.add(showFileDialogCorteCanalesAdiButton, showFileDialogConstrains);
+
+	}
+
+	/**
+	 * 
+	 * @param panelChooser
+	 */
 	private void showFileChooser3playIntenet(JPanel panelChooser) {
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
@@ -400,7 +545,7 @@ public class CuadraturaUI{
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		fileDialogInternet.setFileFilter(filtro);
 		showFileDialogInternetButton.setEnabled(false);
@@ -409,35 +554,38 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogInternet.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogInternet.getSelectedFile();
-					pathLabelInternet.setText(file.getAbsolutePath());
+					pathLabelInternet.setText(fileDialogInternet.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
-		
-		pathLabelInternet = new JLabel("Seleccione archivo Internet AAA               (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelInternet = new JLabel("Seleccione archivo Internet AAA (Splunk)", SwingConstants.LEFT);
 		pathLabelInternet.setEnabled(false);
+		pathLabelInternet.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelInternet,pathConstrains);		
-		panelChooser.add(showFileDialogInternetButton,showFileDialogConstrains);
-		
+		panelChooser.add(pathLabelInternet, pathConstrains);
+		panelChooser.add(showFileDialogInternetButton, showFileDialogConstrains);
+
 	}
 
-	
-	private void showFileChooser3playTvPlanesBase(JPanel panelChooser){
-		
+	/**
+	 * 
+	 * @param panelChooser
+	 */
+	private void showFileChooser3playTvPlanesBase(JPanel panelChooser) {
+
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogTvPlanesBaseButton.setEnabled(false);
 		fileDialogTvPlanesBase.setFileFilter(filtro);
@@ -446,33 +594,37 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogTvPlanesBase.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogTvPlanesBase.getSelectedFile();
-					pathLabelTvPlanesBase.setText(file.getAbsolutePath());
+					pathLabelTvPlanesBase.setText(fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
-		
-		pathLabelTvPlanesBase = new JLabel("Seleccione archivo Planes Base             (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelTvPlanesBase = new JLabel("Seleccione archivo Planes Base (Splunk)", SwingConstants.LEFT);
 		pathLabelTvPlanesBase.setEnabled(false);
+		pathLabelTvPlanesBase.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelTvPlanesBase,pathConstrains);
-		panelChooser.add(showFileDialogTvPlanesBaseButton,showFileDialogConstrains);
+		panelChooser.add(pathLabelTvPlanesBase, pathConstrains);
+		panelChooser.add(showFileDialogTvPlanesBaseButton, showFileDialogConstrains);
 	}
-	
-	private void showFileChooser3playTvAdicionales(JPanel panelChooser){
-		
+
+	/**
+	 * 
+	 * @param panelChooser
+	 */
+	private void showFileChooser3playTvAdicionales(JPanel panelChooser) {
+
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogAdicionalesButton.setEnabled(false);
 		fileDialogTvAdicionales.setFileFilter(filtro);
@@ -481,33 +633,37 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogTvAdicionales.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogTvAdicionales.getSelectedFile();
-					pathLabelTvAdicionales.setText(file.getAbsolutePath());
+					pathLabelTvAdicionales.setText(fileDialogTvAdicionales.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
-		
-		pathLabelTvAdicionales = new JLabel("Seleccione archivo Planes Adicionales (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelTvAdicionales = new JLabel("Seleccione archivo Planes Adicionales (Splunk)", SwingConstants.LEFT);
 		pathLabelTvAdicionales.setEnabled(false);
+		pathLabelTvAdicionales.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelTvAdicionales,pathConstrains);
-		panelChooser.add(showFileDialogAdicionalesButton,showFileDialogConstrains);
+		panelChooser.add(pathLabelTvAdicionales, pathConstrains);
+		panelChooser.add(showFileDialogAdicionalesButton, showFileDialogConstrains);
 	}
-	
-	private void showFileChooser3playKenan(JPanel panelChooser){
-		
+
+	/**
+	 * 
+	 * @param panelChooser
+	 */
+	private void showFileChooser3playKenan(JPanel panelChooser) {
+
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogKenanButton.setEnabled(false);
 		fileDialogKenan.setFileFilter(filtro);
@@ -516,33 +672,37 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogKenan.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogKenan.getSelectedFile();
-					pathLabelKenan.setText(file.getAbsolutePath());
+					pathLabelKenan.setText(fileDialogKenan.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
-		
-		pathLabelKenan = new JLabel("Seleccione archivo Kenan                         (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelKenan = new JLabel("Seleccione archivo Kenan (Splunk)", SwingConstants.LEFT);
 		pathLabelKenan.setEnabled(false);
+		pathLabelKenan.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelKenan,pathConstrains);
-		panelChooser.add(showFileDialogKenanButton,showFileDialogConstrains);
+		panelChooser.add(pathLabelKenan, pathConstrains);
+		panelChooser.add(showFileDialogKenanButton, showFileDialogConstrains);
 	}
-	
-	private void showFileChooser3playKenanAdi(JPanel panelChooser){
-		
+
+	/**
+	 * 
+	 * @param panelChooser
+	 */
+	private void showFileChooser3playKenanAdi(JPanel panelChooser) {
+
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
 		showFileDialogConstrains.gridy = 0;
 		showFileDialogConstrains.gridwidth = 2;
 		showFileDialogConstrains.gridheight = 1;
-		
+
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogKenanAdiButton.setEnabled(false);
 		fileDialogKenanAdi.setFileFilter(filtro);
@@ -551,21 +711,191 @@ public class CuadraturaUI{
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileDialogKenanAdi.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fileDialogKenanAdi.getSelectedFile();
-					pathLabelKenanAdi.setText(file.getAbsolutePath());
+					pathLabelKenanAdi.setText(fileDialogKenanAdi.getSelectedFile().getAbsolutePath());
 				}
 			}
 		});
-		
-		pathLabelKenanAdi = new JLabel("Seleccione archivo Kenan Adicionales   (Splunk)", SwingConstants.LEFT); 
+
+		pathLabelKenanAdi = new JLabel("Seleccione archivo Kenan Adicionales (Splunk)", SwingConstants.LEFT);
 		pathLabelKenanAdi.setEnabled(false);
+		pathLabelKenanAdi.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
 		pathConstrains.insets = new Insets(0, 0, 0, 5);
 		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
 		pathConstrains.gridwidth = 2;
 		pathConstrains.gridx = 0;
 		pathConstrains.gridy = 0;
-		panelChooser.add(pathLabelKenanAdi,pathConstrains);
-		panelChooser.add(showFileDialogKenanAdiButton,showFileDialogConstrains);
-	}	
+		panelChooser.add(pathLabelKenanAdi, pathConstrains);
+		panelChooser.add(showFileDialogKenanAdiButton, showFileDialogConstrains);
+	}
+
+	@Override
+	public void run() {
+
+		if (flagAction.equalsIgnoreCase("Iniciar")) {
+			Map<String, CountOBJ> mapResult = new HashMap<String, CountOBJ>();
+			if (!chTodos.isSelected()) {
+				/* INTERNET AAA */
+				if (chTresPlayAAA.isSelected()) {
+					bdManager.descargarCSV("INTERNET");
+					bdManager.actualiza("AAA", fileDialogInternet.getSelectedFile().getAbsolutePath());
+					bdManager.actualiza("INTERNET", null);
+					mapResult.put("TPLAY_AAA", bdManager.obtenerCruces("TPLAY_AAA"));
+					/* TV BASE KALTURA */
+				} else if (chTresPlayKalturaBase.isSelected()) {
+					bdManager.descargarCSV("TV");
+					bdManager.actualiza("KALTURA", fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath());
+					bdManager.actualiza("TV", null);// BD
+					mapResult.put("TPLAY_KALTURA", bdManager.obtenerCruces("TPLAY_KALTURA"));
+					/* CANALES ADICIONALES KALTURA */
+				} else if (chTresPlayKalturaAdi.isSelected()) {
+					bdManager.descargarCSV("TV");
+					bdManager.actualiza("KALTURA_C", fileDialogTvAdicionales.getSelectedFile().getAbsolutePath());
+					bdManager.actualiza("TV", null);
+					mapResult.put("TPLAY_KALTURA_C", bdManager.obtenerCruces("TPLAY_KALTURA_C"));
+					/* TELEFONIA OTCAR */
+				} else if (chTresPlayOTCARTel.isSelected()) {
+					bdManager.descargarCSV("TLF");
+					bdManager.descargarCSV("OTCAR");
+					bdManager.actualiza("TLF", null);
+					bdManager.actualiza("OTCAR", null);
+					mapResult.put("TPLAY_OTCAR", bdManager.obtenerCruces("TPLAY_OTCAR"));
+					/* INTERNET KENAN */
+				} else if (chTresPlayKenanInter.isSelected()) {
+					bdManager.descargarCSV("INTERNET");
+					bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath());
+					bdManager.actualiza("INTERNET", null);
+					bdManager.actualiza("KENAN_62", null);
+					mapResult.put("TPLAY_KENAN_INT", bdManager.obtenerCruces("TPLAY_KENAN_INT"));
+					mapResult.put("TPLAY_KENAN_INT_62", bdManager.obtenerCruces("TPLAY_KENAN_INT_62"));
+					/* TV BASE KENAN */
+				} else if (chTresPlayKenanTVBase.isSelected()) {
+					bdManager.descargarCSV("TV");
+					bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath());
+					bdManager.actualiza("TV", null);
+					bdManager.actualiza("KENAN_62", null);
+					mapResult.put("TPLAY_KENAN_TV", bdManager.obtenerCruces("TPLAY_KENAN_TV"));
+					mapResult.put("TPLAY_KENAN_TV_62", bdManager.obtenerCruces("TPLAY_KENAN_TV_62"));
+					/* CANALES ADICIONALES KENAN */
+				} else if (chTresPlayKenanTVAdi.isSelected()) {
+					bdManager.descargarCSV("TV");
+					bdManager.actualiza("KENAN_C", fileDialogKenanAdi.getSelectedFile().getAbsolutePath());
+					bdManager.actualiza("TV", null);
+					bdManager.actualiza("KENAN_62", null);
+					mapResult.put("TPLAY_KENAN_C", bdManager.obtenerCruces("TPLAY_KENAN_C"));
+					mapResult.put("TPLAY_KENAN_C_62", bdManager.obtenerCruces("TPLAY_KENAN_C_62"));
+					/* TELEFONIA KENAN */
+				} else if (chTresPlayKenanTel.isSelected()) {
+					bdManager.descargarCSV("TV");
+					bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath());
+					bdManager.actualiza("TV", null);
+					bdManager.actualiza("KENAN_62", null);
+					mapResult.put("TPLAY_KENAN_TLF", bdManager.obtenerCruces("TPLAY_KENAN_TLF"));
+					mapResult.put("TPLAY_KENAN_TLF_62", bdManager.obtenerCruces("TPLAY_KENAN_TLF_62"));
+				}
+
+			} else {
+				for (String s : PRODUCTOS_TPLAY) {
+
+					if ("KENAN".equals(s)) {
+						bdManager.actualiza(s, fileDialogKenan.getSelectedFile().getAbsolutePath());
+					} else if ("KENAN_C".equals(s)) {
+						bdManager.actualiza(s, fileDialogKenanAdi.getSelectedFile().getAbsolutePath());
+					} else if ("KALTURA".equals(s)) {
+						bdManager.actualiza(s, fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath());
+					} else if ("KALTURA_C".equals(s)) {
+						bdManager.actualiza(s, fileDialogTvAdicionales.getSelectedFile().getAbsolutePath());
+					} else if ("AAA".equals(s)) {
+						bdManager.actualiza(s, fileDialogInternet.getSelectedFile().getAbsolutePath());
+					} else if ("KENAN_62".equals(s)) {
+						bdManager.actualiza(s, null);
+					} else {
+						bdManager.descargarCSV(s);
+						bdManager.actualiza(s, null);
+					}
+				}
+				for (String s : CRUCES_TPLAY) {
+					mapResult.put(s, bdManager.obtenerCruces(s));
+					if (s.indexOf("KENAN") >= 0) {
+						mapResult.put(s + "_62", bdManager.obtenerCruces(s + "_62"));
+					}
+				}
+			}
+			(new Correo()).enviarCorreo(mapResult);
+		} else if (flagAction.equalsIgnoreCase("Cargar Datos")) {
+			ArchivoUtil archivoUtil = new ArchivoUtil();
+			mapCanales = archivoUtil.getCanales(fileDialogCorteCanalesAdi.getSelectedFile().getAbsolutePath());
+			DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
+			for (Iterator<String> iterator = mapCanales.keySet().iterator(); iterator.hasNext();) {
+				String nomCanal = (String) iterator.next();
+				defaultListModel.addElement(nomCanal);
+			}
+			listaCanales.setModel(defaultListModel);
+		} else if (flagAction.equalsIgnoreCase("Cortar Canales")) {
+			int contador = 0;
+			statusProcess.setValue(0);
+			DesactivarCanales desactivarCanales = new DesactivarCanales();
+			LogEliminacion.iniciarFicheros();
+			for (Iterator<List<FileCorteCanalesRow>> iterator = listaListaCanales.iterator(); iterator.hasNext();) {
+				List<FileCorteCanalesRow> list = (List<FileCorteCanalesRow>) iterator.next();
+				jTextAreaStatusProcess.setText("Se proceden a cortar el canal con codigo: "+list.get(0).getCodCanal());
+				int contador2 = 0;
+				for (Iterator<FileCorteCanalesRow> iterator2 = list.iterator(); iterator.hasNext();) {
+					FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator2.next();
+					fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
+					DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
+							.desactivarCanalPremium(fileCorteCanalesRow);
+					if (contador == 0) {
+						jTextAreaStatusProcess.setText(
+								"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+										+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+										+ canalesResponseOBJ.getDescripcion());
+						contador++;
+					} else {
+						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "INFO;"
+								+ fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+								+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+								+ canalesResponseOBJ.getDescripcion());
+					}
+					statusProcess.setStringPainted(true);
+					statusProcess.setValue(calculoDeAvance(list.size(), ++contador2));
+				}
+			}
+			LogEliminacion.cerrarFicheros();
+		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object o = e.getSource();
+		if (o instanceof JButton) {
+			JButton btn = (JButton) o;
+			if (btn.getText().equals("Iniciar")) {
+				flagAction = "Iniciar";
+				hilo = new Thread(this);
+				hilo.start();
+				btn.setEnabled(false);
+			} else if (btn.getText().equals("Cargar Datos")) {
+				flagAction = "Cargar Datos";
+				hilo = new Thread(this);
+				hilo.start();
+				btn.setEnabled(false);
+			}
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param size
+	 * @param i
+	 * @return
+	 */
+	private int calculoDeAvance(int size, int i) {
+		double indice = i;
+		double total = size;
+		int porcentaje = (int) ((indice / total) * 100);
+		return porcentaje;
+	}
 }
