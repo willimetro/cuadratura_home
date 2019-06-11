@@ -45,9 +45,11 @@ public class LogEliminacion {
 		try {
 			if (null != fw){
 				fw.close();
+				fw = null;
 			}
 			if (null != pw){
 				pw.close();
+				pw = null;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
