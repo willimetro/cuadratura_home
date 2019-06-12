@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -490,6 +491,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		jTextAreaStatusProcess = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcess, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		Dimension tamanhoTextArea = jTextAreaStatusProcess.getSize();
+		Point p = new Point(0,tamanhoTextArea.height);
+		scrollPane.getViewport().setViewPosition(p);
 		consolePanel.add(scrollPane);
 		panelCB.add(consolePanel);
 		return panelCB;
