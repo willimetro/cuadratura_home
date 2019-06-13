@@ -323,7 +323,7 @@ public class Constantes {
 	private final static String FILE_KENAN_62 ="base_kenan_62.csv";
 	private final static String FILE_KENAN_C ="canales_kenan_{0}.csv";
 	private final static String FILE_AAA ="internet_aaa_{0}.csv";
-	private final static String FILE_TODO_KAL ="todo_kaltura_{0}.csv.csv";
+	private final static String FILE_TODO_KAL ="todo_kaltura_{0}.csv";
 	
 	
 	private final static String QUERY_TV_CANALES = "SELECT RUT,"
