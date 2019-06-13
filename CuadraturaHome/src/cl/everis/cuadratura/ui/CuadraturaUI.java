@@ -82,6 +82,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	JButton showFileDialogCorteCanalesAdiButton = new JButton("Buscar");
 
 	private JLabel pathLabelTvPlanesBase;
+	private String pathLabelTodoTvKaltura;
 	private JLabel pathLabelInternet;
 	private JLabel pathLabelTvAdicionales;
 	private JLabel pathLabelKenan;
@@ -89,6 +90,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private JLabel pathLabelCorteCanales;
 	private GridBagConstraints showFileDialogConstrains;
 	final JFileChooser fileDialogTvPlanesBase = new JFileChooser();
+	final JFileChooser fileDialogTodoTvKaltura = new JFileChooser();
 	final JFileChooser fileDialogInternet = new JFileChooser();
 	final JFileChooser fileDialogTvAdicionales = new JFileChooser();
 	final JFileChooser fileDialogKenan = new JFileChooser();
@@ -114,7 +116,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	List<List<FileCorteCanalesRow>> listaListaCanales = null;
 
 	JPanel comboPanel = null;
-
+	JPanel panel3Play = null;
 	/**
 	 * Constructor
 	 */
@@ -148,7 +150,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	 * @return
 	 */
 	protected JComponent makeTextPanel3Play(String text) {
-		JPanel panel3Play = new JPanel(false);
+
+		panel3Play = new JPanel(false);
 		JPanel tiposCuad = new JPanel();
 		JPanel panelCheck = new JPanel();
 		createMenuCheckFor3Play(panelCheck);
@@ -525,7 +528,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelCorteCanales = new JLabel("Seleccione archivo Internet AAA (Splunk)", SwingConstants.LEFT);
+		pathLabelCorteCanales = new JLabel("Seleccione archivo de canales a cortar (kaltura)", SwingConstants.LEFT);
 		pathLabelCorteCanales.setEnabled(false);
 		pathLabelCorteCanales.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
@@ -749,6 +752,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 					/* TV BASE KALTURA */
 				} else if (chTresPlayKalturaBase.isSelected()) {
 					bdManager.descargarCSV("TV",jTextAreaStatusProcess);
+					if(null!= pathLabelTodoTvKaltura && !("NO").equals(pathLabelTodoTvKaltura)){
+						bdManager.actualiza("TODO_KALTURA", pathLabelTodoTvKaltura,jTextAreaStatusProcess);
+					}
 					bdManager.actualiza("KALTURA", fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
 					bdManager.actualiza("TV", null,jTextAreaStatusProcess);// BD
 					mapResult.put("TPLAY_KALTURA", bdManager.obtenerCruces("TPLAY_KALTURA",jTextAreaStatusProcess));
@@ -808,6 +814,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 						bdManager.actualiza(s, fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
 					} else if ("KALTURA".equals(s)) {
 						bdManager.actualiza(s, fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
+						if(null!= pathLabelTodoTvKaltura && !("NO").equals(pathLabelTodoTvKaltura)){
+							bdManager.actualiza("TODO_KALTURA", pathLabelTodoTvKaltura,jTextAreaStatusProcess);
+						}
 					} else if ("KALTURA_C".equals(s)) {
 						bdManager.actualiza(s, fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
 					} else if ("AAA".equals(s)) {
@@ -877,6 +886,23 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		if (o instanceof JButton) {
 			JButton btn = (JButton) o;
 			if (btn.getText().equals("Iniciar")) {
+				if (chTodos.isSelected()||chTresPlayKalturaBase.isSelected()){
+					Object[] options = { "Aceptar", "Cancelar" };
+					pathLabelTodoTvKaltura="NO";
+					int n = JOptionPane.showOptionDialog(panel3Play,
+							"Recuerde que " + labelInfoCanales.getText() + " Desea seguir con el proceso?",
+							"Seguro que desea seguir", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+							options, null);
+					if (n == 0) {
+						FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
+						fileDialogTodoTvKaltura.setFileFilter(filtro);
+						int returnVal = fileDialogTodoTvKaltura.showOpenDialog(mainFrame);
+						if (returnVal == JFileChooser.APPROVE_OPTION) {
+							pathLabelTodoTvKaltura=fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath();
+						}
+					}
+				}
+
 				flagAction = "Iniciar";
 				hilo = new Thread(this);
 				hilo.start();
