@@ -294,6 +294,7 @@ public class Constantes {
 	private final static String CARGA_KENAN_62 ="copy facturador_kenan_62 FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_KENAN_C ="copy facturador_kenan_canal FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_AAA ="copy internet_aaa FROM stdin DELIMITER ';' CSV header";
+	private final static String CARGA_TODO_KAL ="copy todo_kaltura FROM stdin DELIMITER ';' CSV header";
 	
 	private final static String TRUNCATE_TLF ="TRUNCATE tlf_3play";
 	private final static String TRUNCATE_INT ="TRUNCATE internet_3play";
@@ -305,6 +306,7 @@ public class Constantes {
 	private final static String TRUNCATE_KENAN_62 ="TRUNCATE facturador_kenan_62";
 	private final static String TRUNCATE_KENAN_C ="TRUNCATE facturador_kenan_canal";
 	private final static String TRUNCATE_AAA ="TRUNCATE internet_aaa";
+	private final static String TRUNCATE_TODO_KAL ="TRUNCATE todo_kaltura";
 	
 	private final static String CABECERA_TLF ="CODI_TECNICO;NRUT_CLIENTE;DRUT_CLIENTE;DESC_GLOSAPROD;NMRO_SOLICITUDACT;KEY_ANI";
 	private final static String CABECERA_INT ="CODI_TECNICO;NRUT_CLIENTE;DRUT_CLIENTE;DESC_GLOSAPROD;NMRO_SOLICITUDACT";
@@ -321,6 +323,8 @@ public class Constantes {
 	private final static String FILE_KENAN_62 ="base_kenan_62.csv";
 	private final static String FILE_KENAN_C ="canales_kenan_{0}.csv";
 	private final static String FILE_AAA ="internet_aaa_{0}.csv";
+	private final static String FILE_TODO_KAL ="todo_kaltura_{0}.csv";
+	
 	
 	private final static String QUERY_TV_CANALES = "SELECT RUT,"
 			+ "DV,"
@@ -433,6 +437,8 @@ public class Constantes {
 			toReturn = FILE_KENAN_C;
 		} else if ("AAA".equals(arg)){
 			toReturn = FILE_AAA;
+		} else if ("TODO_KALTURA".equals(arg)){
+			toReturn = FILE_TODO_KAL;
 		}
 		return toReturn;
 	}
@@ -459,6 +465,8 @@ public class Constantes {
 			toReturn = CARGA_KENAN_C;
 		} else if ("AAA".equals(arg)){
 			toReturn = CARGA_AAA;
+		} else if ("TODO_KALTURA".equals(arg)){
+			toReturn = CARGA_TODO_KAL;
 		}
 		return toReturn;
 	}
@@ -485,6 +493,8 @@ public class Constantes {
 			toReturn = TRUNCATE_KENAN_C;
 		} else if ("AAA".equals(arg)){
 			toReturn = TRUNCATE_AAA;
+		} else if ("TODO_KALTURA".equals(arg)){
+			toReturn = TRUNCATE_TODO_KAL;
 		}
 		return toReturn;
 	}

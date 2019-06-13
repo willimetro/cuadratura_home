@@ -31,6 +31,58 @@ public class FormatoArchivo {
 
 	private final static String PATH_ARCHIVOS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs\\";
 	private final static File DIR_CARGA_ARCHIVOS=new File(System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs");
+	
+	/**
+	 * 
+	 * @param pathArchivo
+	 */
+	public void formatGenerico(String pathArchivo) {
+		File inFile = null;
+		FileReader fr = null;
+		BufferedReader br = null;
+		FileWriter outFile = null;
+		PrintWriter pw = null;
+
+		try {
+			
+			if(!DIR_CARGA_ARCHIVOS.exists()){
+				DIR_CARGA_ARCHIVOS.mkdirs();
+			}
+			
+			inFile = new File(pathArchivo);
+			fr = new FileReader(inFile);
+			br = new BufferedReader(fr);
+
+			outFile = new FileWriter(PATH_ARCHIVOS + MessageFormat.format("todo_kaltura_{0}.csv", LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+			pw = new PrintWriter(outFile);
+
+			String linea;
+			while ((linea = br.readLine()) != null) {
+				String lineaAux = linea.replaceAll("\"", "").replaceAll(",", ";");
+				pw.println(lineaAux);
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (null != br) {
+					br.close();
+				}
+				if (null != fr) {
+					fr.close();
+				}
+				if (null != outFile) {
+					outFile.close();
+				}
+				if (null != pw) {
+					pw.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * 

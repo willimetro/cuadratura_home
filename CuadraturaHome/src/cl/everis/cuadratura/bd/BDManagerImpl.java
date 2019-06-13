@@ -102,15 +102,14 @@ public class BDManagerImpl implements BDManager {
 				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS + fileName)));
 			}
 			long rowsaffected = mgr.copyIn(sql, in);
-			System.out.println("Se ejecutó: " + Constantes.getQueryCarga(producto) + " con el archivo: "
-					+ Constantes.getFile(producto) + " y se copiaron " + rowsaffected + " registros");
+			System.out.println("Se ejecutó: " + sql + " con el archivo: "
+					+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
 			if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
-				jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: "
-						+ Constantes.getQueryCarga(producto) + " con el archivo: " + Constantes.getFile(producto)
-						+ " y se copiaron " + rowsaffected + " registros");
+				jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: " + sql + " con el archivo: "
+						+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
 			} else {
-				jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCarga(producto) + " con el archivo: "
-						+ Constantes.getFile(producto) + " y se copiaron " + rowsaffected + " registros");
+				jTextAreaStatusProcess.setText("Se ejecutó: " + sql + " con el archivo: "
+						+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
 			}
 
 		} catch (SQLException e) {
@@ -313,6 +312,8 @@ public class BDManagerImpl implements BDManager {
 			formatoArchivo.formatFileCanalesKaltura(archivo);
 		} else if ("AAA".equals(producto)) {
 			formatoArchivo.formatFileInternetAAA(archivo);
+		}  else if ("TODO_KALTURA".equals(producto)) {
+			formatoArchivo.formatGenerico(archivo);
 		}
 
 	}

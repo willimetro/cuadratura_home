@@ -13,6 +13,7 @@ import javax.xml.rpc.ServiceException;
 import com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.DesactivarVasYCanalPremium;
 import com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.DesactivarVasYCanalPremiumBindingStub;
 import com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.DesactivarVasYCanalPremiumLocator;
+import com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.DesactivarVasYCanalPremiumPortType;
 import com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.fault.DesactivarVasYCanalPremiumFaultType;
 import com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.request.DesactivarVasYCanalPremiumRequestType;
 import com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.request.RequestType;
@@ -56,7 +57,7 @@ public class DesactivarCanales {
 			DesactivarVasYCanalPremiumLocator desactivarVasYCanalPremiumLocator = new DesactivarVasYCanalPremiumLocator();
 			URL url = new URL(
 					"http://esb.entel.cl:80/provision/orderingserv/orqordenservicio/ose_n_px_desactivarvasycanalpremiumps");
-			DesactivarVasYCanalPremium desactivarVasYCanalPremium = (DesactivarVasYCanalPremium) desactivarVasYCanalPremiumLocator
+			DesactivarVasYCanalPremiumPortType desactivarVasYCanalPremium = desactivarVasYCanalPremiumLocator
 					.getDesactivarVasYCanalPremiumPort(url);
 			DesactivarVasYCanalPremiumBindingStub bindingStub = (DesactivarVasYCanalPremiumBindingStub) desactivarVasYCanalPremium;
 			bindingStub.setTimeout(10000);
