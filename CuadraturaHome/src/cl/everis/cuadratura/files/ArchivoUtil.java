@@ -68,14 +68,64 @@ public class ArchivoUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+			canales = null;
 			try {
 				if (null != fr) {
 					fr.close();
+				}
+				if (null != br) {
+					br.close();
 				}
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
 		}
 		return mapCanales;
+	}
+	
+	/**
+	 * 
+	 * @param archivo
+	 * @return
+	 */
+	public List<String> getRutsCorteTV(String archivo) {
+		File ruts = null;
+		FileReader fr = null;
+		BufferedReader br = null;
+
+		List<String> listaRuts = new ArrayList<String>();
+		try {
+			ruts = new File(archivo);
+			fr = new FileReader(ruts);
+			br = new BufferedReader(fr);
+
+			String linea;
+			int cont = 0;
+			while ((linea = br.readLine()) != null) {
+				if (cont == 0) {
+					cont++;
+				} else {
+					String[] lineaArray = linea.split(",");			
+					if (!listaRuts.contains(lineaArray[1])) {
+						listaRuts.add(lineaArray[1]);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			ruts = null;
+			try {
+				if (null != fr) {
+					fr.close();
+				}
+				if (null != br) {
+					br.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return listaRuts;
 	}
 }
