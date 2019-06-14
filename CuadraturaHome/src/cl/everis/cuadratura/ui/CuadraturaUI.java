@@ -47,6 +47,7 @@ import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 import cl.everis.cuadratura.util.LogEliminacion;
 import cl.everis.cuadratura.ws.Correo;
 import cl.everis.cuadratura.ws.DesactivarCanales;
+import cl.everis.cuadratura.ws.DesactivarTodoTV;
 
 /**
  * 
@@ -60,6 +61,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_62", "KENAN_C",
 			"KALTURA", "KALTURA_C", "AAA" };
 	private JFrame mainFrame = null;
+	private JProgressBar statusProcessTV;
 	private JProgressBar statusProcess;
 	// CheckBox
 	JCheckBox chTodos = new JCheckBox("Todos");
@@ -113,14 +115,19 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	JButton cortarBtn = new JButton("Cortar");
 	JButton cortarPlanesBtn = new JButton("Cortar");
 	private JLabel labelInfoCanales;
+	private JLabel labelInfoCorteTV;
 	private JTextArea jTextAreaStatusProcess;
+	private JTextArea jTextAreaStatusProcessTV;
 
 	private JList<String> listaCanales = null;
 	private JList<String> listaRuts = null;
 	Map<String, FileCorteCanales> mapCanales = null;
 	List<List<FileCorteCanalesRow>> listaListaCanales = null;
+	List<String> listaAllRuts = null;
+	List<String> listaRutsCorte = null;
 
 	JPanel comboPanel = null;
+	JPanel comboPanelTV = null;
 	JPanel panel3Play = null;
 	/**
 	 * Constructor
@@ -535,54 +542,46 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		JScrollPane scroolList = new JScrollPane(listaRuts);
 		scroolList.setPreferredSize(new Dimension(94, 147));
 		listaRuts.addListSelectionListener(new ListSelectionListener() {
-
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				List<String> listaSeleccionada = listaRuts.getSelectedValuesList();
-				int cantidad = 0;
-				listaListaCanales = new ArrayList<List<FileCorteCanalesRow>>();
-				for (Iterator<String> iterator = listaSeleccionada.iterator(); iterator.hasNext();) {
-					String nomCanal = (String) iterator.next();
-					cantidad = cantidad + mapCanales.get(nomCanal).getCountCanales();
-					listaListaCanales.add(mapCanales.get(nomCanal).getListaClientesCorte());
-				}
-				if (listaSeleccionada.isEmpty()) {
-					labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
+				listaRutsCorte = listaRuts.getSelectedValuesList();
+				int cantidad = listaRutsCorte.size();
+				if (listaRutsCorte.isEmpty()) {
+					labelInfoCorteTV.setText("Seleccione los RUTS que quiere regularizar");
 					cortarPlanesBtn.setEnabled(false);
 				} else {
-					labelInfoCanales.setText("Se intentará dar de baja " + cantidad + " clientes ");
+					labelInfoCorteTV.setText("Se intentará eliminar prductos de TV a " + cantidad + " clientes.");
 					cortarPlanesBtn.setEnabled(true);
 				}
 			}
 		});
 		panelFileCargado
-				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione el canal que quiere dar de baja"));
-		comboPanel = new JPanel();
-		comboPanel.add(scroolList);
+				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione los RUTS que desea dar de baja"));
+		comboPanelTV = new JPanel();
+		comboPanelTV.add(scroolList);
 		cortarPlanesBtn.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Object[] options = { "Aceptar", "Cancelar" };
 				int n = JOptionPane.showOptionDialog(panelCB,
-						"Recuerde que " + labelInfoCanales.getText() + " Desea seguir con el proceso?",
+						"Recuerde que " + labelInfoCorteTV.getText() + " Desea seguir con el proceso?",
 						"Seguro que desea seguir", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 						options, null);
 				if (n == 0) {
-					flagAction = "Cortar Canales";
+					flagAction = "Cortar TV";
 					hilo = new Thread(CuadraturaUI.this);
 					hilo.start();
 					cortarPlanesBtn.setEnabled(false);
 				}
 			}
 		});
-		comboPanel.add(cortarPlanesBtn);
+		comboPanelTV.add(cortarPlanesBtn);
 		cortarPlanesBtn.setEnabled(false);
-		panelFileCargado.add(comboPanel);
-		labelInfoCanales = new JLabel(" ");
+		panelFileCargado.add(comboPanelTV);
+		labelInfoCorteTV = new JLabel(" ");
 		JPanel panelAlertCanales = new JPanel();
-		labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
-		panelAlertCanales.add(labelInfoCanales);
+		labelInfoCorteTV.setText("Seleccione los Ruts para bajar TV ");
+		panelAlertCanales.add(labelInfoCorteTV);
 		panelFileCargado.add(panelAlertCanales);
 		cargaArchivo.add(panelChooser);
 		cargaArchivo.add(panelFileCargado);
@@ -590,16 +589,16 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		consolePanel.setBorder(BorderFactory.createTitledBorder("Consola de Corte o bloqueo"));
 		panelCB.setLayout(new GridLayout(2, 1));
 		panelCB.add(cargaArchivo);
-		statusProcess = new JProgressBar();
+		statusProcessTV = new JProgressBar();
 		consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.Y_AXIS));
 		JPanel panelStatusProgress = new JPanel();
-		statusProcess = new JProgressBar();
-		panelStatusProgress.add(statusProcess);
+		statusProcessTV = new JProgressBar();
+		panelStatusProgress.add(statusProcessTV);
 		consolePanel.add(panelStatusProgress);
-		jTextAreaStatusProcess = new JTextArea();
-		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcess, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		jTextAreaStatusProcessTV = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcessTV, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		Dimension tamanhoTextArea = jTextAreaStatusProcess.getSize();
+		Dimension tamanhoTextArea = jTextAreaStatusProcessTV.getSize();
 		Point p = new Point(0,tamanhoTextArea.height);
 		scrollPane.getViewport().setViewPosition(p);
 		consolePanel.add(scrollPane);
@@ -1021,8 +1020,23 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				}
 			}
 			LogEliminacion.cerrarFicheros();
+		} else if (flagAction.equalsIgnoreCase("Cargar Ruts")) {
+			ArchivoUtil archivoUtil = new ArchivoUtil();
+			listaAllRuts = archivoUtil.getRutsCorteTV(fileDialogCortePlanesTV.getSelectedFile().getAbsolutePath());
+			DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
+			for (String rut : listaAllRuts) {
+				defaultListModel.addElement(rut);
+			}
+			listaRuts.setModel(defaultListModel);
+		}  else if (flagAction.equalsIgnoreCase("Cortar TV")) {
+			int contador = 0;
+			statusProcessTV.setValue(0);
+			DesactivarTodoTV desactivarTodo = new DesactivarTodoTV();
+			LogEliminacion.iniciarFicheros();
+			for (String toDelete : listaRutsCorte) {
+				
+			}
 		}
-
 	}
 
 	@Override
@@ -1035,8 +1049,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 					Object[] options = { "Aceptar", "Cancelar" };
 					pathLabelTodoTvKaltura="NO";
 					int n = JOptionPane.showOptionDialog(panel3Play,
-							"Recuerde que " + labelInfoCanales.getText() + " Desea seguir con el proceso?",
-							"Seguro que desea seguir", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+							"Desea cargar archivo compendio de servicios Kaltura?",
+							"ARCHIVO TODO KALTURA", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 							options, null);
 					if (n == 0) {
 						FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
