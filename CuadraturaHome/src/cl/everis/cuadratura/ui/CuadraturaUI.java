@@ -80,6 +80,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	JButton showFileDialogInternetButton = new JButton("Buscar");
 
 	JButton showFileDialogCorteCanalesAdiButton = new JButton("Buscar");
+	JButton showFileDialogCortePlanesTVButton = new JButton("Buscar");
 
 	private JLabel pathLabelTvPlanesBase;
 	private String pathLabelTodoTvKaltura;
@@ -97,6 +98,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	final JFileChooser fileDialogKenanAdi = new JFileChooser();
 
 	final JFileChooser fileDialogCorteCanalesAdi = new JFileChooser();
+	final JFileChooser fileDialogCortePlanesTV = new JFileChooser();
 	private GridBagConstraints pathConstrains;
 
 	private BDManager bdManager = new BDManagerImpl();
@@ -107,11 +109,14 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 	JButton iniciarBtn = new JButton("Iniciar");
 	JButton cargarDatosBtn = new JButton("Cargar Datos");
+	JButton cargarDatosTVBtn = new JButton("Cargar Ruts");
 	JButton cortarBtn = new JButton("Cortar");
+	JButton cortarPlanesBtn = new JButton("Cortar");
 	private JLabel labelInfoCanales;
 	private JTextArea jTextAreaStatusProcess;
 
 	private JList<String> listaCanales = null;
+	private JList<String> listaRuts = null;
 	Map<String, FileCorteCanales> mapCanales = null;
 	List<List<FileCorteCanalesRow>> listaListaCanales = null;
 
@@ -136,6 +141,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 		jTabbedPane.addTab("Corte y Bloqueo", corteBloqueo);
 		jTabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+		
+		JComponent cortePlanesTV = makeTextPanelCortePlanesTV("Panel #4");
+		
+		jTabbedPane.addTab("Corte Planes TV", cortePlanesTV);
+		jTabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
 		mainFrame.add(jTabbedPane, BorderLayout.CENTER);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -501,6 +511,101 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelCB.add(consolePanel);
 		return panelCB;
 	}
+	
+	/**
+	 * 
+	 * @param text
+	 * @return
+	 */
+	protected JComponent makeTextPanelCortePlanesTV(String text) {
+		JPanel panelCB = new JPanel(false);
+		JPanel cargaArchivo = new JPanel();
+		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Configuración del Corte TV"));
+		cargaArchivo.setLayout(new BoxLayout(cargaArchivo, BoxLayout.Y_AXIS));
+		JPanel panelChooser = new JPanel();
+		panelChooser.setBorder(BorderFactory.createTitledBorder("Paso 1 - Busque archivo y carguelo"));
+		showFileChooserCortePlanesTV(panelChooser);
+		cargarDatosTVBtn.setEnabled(false);
+		cargarDatosTVBtn.addActionListener(this);
+		panelChooser.add(cargarDatosTVBtn);
+		JPanel panelFileCargado = new JPanel();
+		panelFileCargado.setLayout(new BoxLayout(panelFileCargado, BoxLayout.Y_AXIS));
+		listaRuts = new JList<String>();
+		listaRuts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		JScrollPane scroolList = new JScrollPane(listaRuts);
+		scroolList.setPreferredSize(new Dimension(94, 147));
+		listaRuts.addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				List<String> listaSeleccionada = listaRuts.getSelectedValuesList();
+				int cantidad = 0;
+				listaListaCanales = new ArrayList<List<FileCorteCanalesRow>>();
+				for (Iterator<String> iterator = listaSeleccionada.iterator(); iterator.hasNext();) {
+					String nomCanal = (String) iterator.next();
+					cantidad = cantidad + mapCanales.get(nomCanal).getCountCanales();
+					listaListaCanales.add(mapCanales.get(nomCanal).getListaClientesCorte());
+				}
+				if (listaSeleccionada.isEmpty()) {
+					labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
+					cortarPlanesBtn.setEnabled(false);
+				} else {
+					labelInfoCanales.setText("Se intentará dar de baja " + cantidad + " clientes ");
+					cortarPlanesBtn.setEnabled(true);
+				}
+			}
+		});
+		panelFileCargado
+				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione el canal que quiere dar de baja"));
+		comboPanel = new JPanel();
+		comboPanel.add(scroolList);
+		cortarPlanesBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Object[] options = { "Aceptar", "Cancelar" };
+				int n = JOptionPane.showOptionDialog(panelCB,
+						"Recuerde que " + labelInfoCanales.getText() + " Desea seguir con el proceso?",
+						"Seguro que desea seguir", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, null);
+				if (n == 0) {
+					flagAction = "Cortar Canales";
+					hilo = new Thread(CuadraturaUI.this);
+					hilo.start();
+					cortarPlanesBtn.setEnabled(false);
+				}
+			}
+		});
+		comboPanel.add(cortarPlanesBtn);
+		cortarPlanesBtn.setEnabled(false);
+		panelFileCargado.add(comboPanel);
+		labelInfoCanales = new JLabel(" ");
+		JPanel panelAlertCanales = new JPanel();
+		labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
+		panelAlertCanales.add(labelInfoCanales);
+		panelFileCargado.add(panelAlertCanales);
+		cargaArchivo.add(panelChooser);
+		cargaArchivo.add(panelFileCargado);
+		JPanel consolePanel = new JPanel();
+		consolePanel.setBorder(BorderFactory.createTitledBorder("Consola de Corte o bloqueo"));
+		panelCB.setLayout(new GridLayout(2, 1));
+		panelCB.add(cargaArchivo);
+		statusProcess = new JProgressBar();
+		consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.Y_AXIS));
+		JPanel panelStatusProgress = new JPanel();
+		statusProcess = new JProgressBar();
+		panelStatusProgress.add(statusProcess);
+		consolePanel.add(panelStatusProgress);
+		jTextAreaStatusProcess = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcess, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		Dimension tamanhoTextArea = jTextAreaStatusProcess.getSize();
+		Point p = new Point(0,tamanhoTextArea.height);
+		scrollPane.getViewport().setViewPosition(p);
+		consolePanel.add(scrollPane);
+		panelCB.add(consolePanel);
+		return panelCB;
+	}
 
 	/**
 	 * 
@@ -539,6 +644,46 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		pathConstrains.gridy = 0;
 		panelChooser.add(pathLabelCorteCanales, pathConstrains);
 		panelChooser.add(showFileDialogCorteCanalesAdiButton, showFileDialogConstrains);
+
+	}
+	
+	/**
+	 * 
+	 * @param panelChooser
+	 */
+	private void showFileChooserCortePlanesTV(JPanel panelChooser) {
+		showFileDialogConstrains = new GridBagConstraints();
+		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
+		showFileDialogConstrains.gridx = 3;
+		showFileDialogConstrains.gridy = 0;
+		showFileDialogConstrains.gridwidth = 2;
+		showFileDialogConstrains.gridheight = 1;
+
+		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
+		fileDialogCortePlanesTV.setFileFilter(filtro);
+		showFileDialogCortePlanesTVButton.setEnabled(true);
+		showFileDialogCortePlanesTVButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int returnVal = fileDialogCortePlanesTV.showOpenDialog(mainFrame);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					pathLabelCorteCanales.setText(fileDialogCortePlanesTV.getSelectedFile().getAbsolutePath());
+					cargarDatosTVBtn.setEnabled(true);
+				}
+			}
+		});
+
+		pathLabelCorteCanales = new JLabel("Seleccione archivo de Planes de Televisión", SwingConstants.LEFT);
+		pathLabelCorteCanales.setEnabled(false);
+		pathLabelCorteCanales.setPreferredSize(new Dimension(261, 16));
+		pathConstrains = new GridBagConstraints();
+		pathConstrains.insets = new Insets(0, 0, 0, 5);
+		pathConstrains.fill = GridBagConstraints.HORIZONTAL;
+		pathConstrains.gridwidth = 2;
+		pathConstrains.gridx = 0;
+		pathConstrains.gridy = 0;
+		panelChooser.add(pathLabelCorteCanales, pathConstrains);
+		panelChooser.add(showFileDialogCortePlanesTVButton, showFileDialogConstrains);
 
 	}
 
@@ -890,8 +1035,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 					Object[] options = { "Aceptar", "Cancelar" };
 					pathLabelTodoTvKaltura="NO";
 					int n = JOptionPane.showOptionDialog(panel3Play,
-							"Desea cargar archivo compendio de servicios Kaltura?",
-							"ARCHIVO TODO KALTURA", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+							"Recuerde que " + labelInfoCanales.getText() + " Desea seguir con el proceso?",
+							"Seguro que desea seguir", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 							options, null);
 					if (n == 0) {
 						FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
@@ -909,6 +1054,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				btn.setEnabled(false);
 			} else if (btn.getText().equals("Cargar Datos")) {
 				flagAction = "Cargar Datos";
+				hilo = new Thread(this);
+				hilo.start();
+				btn.setEnabled(false);
+			} else if (btn.getText().equals("Cargar Ruts")) {
+				flagAction = "Cargar Ruts";
 				hilo = new Thread(this);
 				hilo.start();
 				btn.setEnabled(false);
