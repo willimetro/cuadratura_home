@@ -139,19 +139,20 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		jTabbedPane.addTab("3 Play", tresPlay);
 		jTabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-		JComponent inalambrico = makeTextPanelInalambrico("Panel #2");
-
-		jTabbedPane.addTab("Inalámbrica", inalambrico);
-		jTabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
-		JComponent corteBloqueo = makeTextPanelCorteBloqueo("Panel #3");
-
-		jTabbedPane.addTab("Corte y Bloqueo", corteBloqueo);
-		jTabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-		
-		JComponent cortePlanesTV = makeTextPanelCortePlanesTV("Panel #4");
+		JComponent cortePlanesTV = makeTextPanelCortePlanesTV("Panel #2");
 		
 		jTabbedPane.addTab("Corte Planes TV", cortePlanesTV);
+		jTabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+		
+		JComponent corteCanalesTV = makeTextPanelCorteBloqueo("Panel #3");
+
+		jTabbedPane.addTab("Corte Canales TV", corteCanalesTV);
+		jTabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+		
+		
+		JComponent inalambrico = makeTextPanelInalambrico("Panel #4");
+
+		jTabbedPane.addTab("Inalámbrica", inalambrico);
 		jTabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
 		mainFrame.add(jTabbedPane, BorderLayout.CENTER);
@@ -432,10 +433,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	protected JComponent makeTextPanelCorteBloqueo(String text) {
 		JPanel panelCB = new JPanel(false);
 		JPanel cargaArchivo = new JPanel();
-		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Configuración del Corte o Bloqueo"));
+		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Configuración Corte Canales TV"));
 		cargaArchivo.setLayout(new BoxLayout(cargaArchivo, BoxLayout.Y_AXIS));
 		JPanel panelChooser = new JPanel();
-		panelChooser.setBorder(BorderFactory.createTitledBorder("Paso 1 - Busque archivo y carguelo"));
+		panelChooser.setBorder(BorderFactory.createTitledBorder("Paso 1 - Busque archivo y cárguelo"));
 		showFileChooserCorteCanales(panelChooser);
 		cargarDatosBtn.setEnabled(false);
 		cargarDatosBtn.addActionListener(this);
@@ -527,10 +528,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	protected JComponent makeTextPanelCortePlanesTV(String text) {
 		JPanel panelCB = new JPanel(false);
 		JPanel cargaArchivo = new JPanel();
-		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Configuración del Corte TV"));
+		cargaArchivo.setBorder(BorderFactory.createTitledBorder("Configuración Corte Planes TV"));
 		cargaArchivo.setLayout(new BoxLayout(cargaArchivo, BoxLayout.Y_AXIS));
 		JPanel panelChooser = new JPanel();
-		panelChooser.setBorder(BorderFactory.createTitledBorder("Paso 1 - Busque archivo y carguelo"));
+		panelChooser.setBorder(BorderFactory.createTitledBorder("Paso 1 - Busque archivo y cárguelo"));
 		showFileChooserCortePlanesTV(panelChooser);
 		cargarDatosTVBtn.setEnabled(false);
 		cargarDatosTVBtn.addActionListener(this);
@@ -556,7 +557,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 		panelFileCargado
-				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione los RUTS que desea dar de baja"));
+				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione los RUTS para dar de baja"));
 		comboPanelTV = new JPanel();
 		comboPanelTV.add(scroolList);
 		cortarPlanesBtn.addActionListener(new ActionListener() {
@@ -632,7 +633,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelCorteCanales = new JLabel("Seleccione archivo de canales a cortar (kaltura)", SwingConstants.LEFT);
+		pathLabelCorteCanales = new JLabel("Seleccione Archivo de Canales TV (kaltura)", SwingConstants.LEFT);
 		pathLabelCorteCanales.setEnabled(false);
 		pathLabelCorteCanales.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
@@ -672,7 +673,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelCorteCanales = new JLabel("Seleccione archivo de Planes de Televisión", SwingConstants.LEFT);
+		pathLabelCorteCanales = new JLabel("Seleccione Archivo de Planes de Televisión (Kaltura)", SwingConstants.LEFT);
 		pathLabelCorteCanales.setEnabled(false);
 		pathLabelCorteCanales.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
@@ -1000,21 +1001,24 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				int contador2 = 0;
 				for (Iterator<FileCorteCanalesRow> iterator2 = list.iterator(); iterator2.hasNext();) {
 					FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator2.next();
-					fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
-					DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
-							.desactivarCanalPremium(fileCorteCanalesRow);
-					if (contador == 0) {
-						jTextAreaStatusProcess.setText(
-								"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-										+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
-										+ canalesResponseOBJ.getDescripcion());
-						contador++;
-					} else {
-						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "INFO;"
-								+ fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-								+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
-								+ canalesResponseOBJ.getDescripcion());
+					if (!desactivarCanales.validaFacturado(fileCorteCanalesRow)){
+						fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
+						DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
+								.desactivarCanalPremium(fileCorteCanalesRow);
+						if (contador == 0) {
+							jTextAreaStatusProcess.setText(
+									"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+											+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+											+ canalesResponseOBJ.getDescripcion());
+							contador++;
+						} else {
+							jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "INFO;"
+									+ fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+									+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+									+ canalesResponseOBJ.getDescripcion());
+						}
 					}
+
 					statusProcess.setStringPainted(true);
 					statusProcess.setValue(calculoDeAvance(list.size(), ++contador2));
 				}

@@ -33,7 +33,7 @@ import cl.everis.cuadratura.util.LogEliminacion;
 public class DesactivarTodoTV {
 
 	private final static String QUERY_VALIDA_KENAN = "SELECT kn.\"ESTADO\" FROM facturador_kenan kn "
-			+ "WHERE kn.\"PLAN\"='PLAN TELEVISION'AND kn.\"RUT_CLIENTE\"=?";
+			+ "WHERE kn.\"PLAN\"='PLAN TELEVISION'AND kn.\"ESTADO\" in ('Nuevo','Facturado') AND kn.\"RUT_CLIENTE\"=?";
 	private final static String QUERY_TODO = "SELECT tk.\"HOUSE_HOLD_ID\", tk.\"MODULE_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"= ?";
 
 	/**
@@ -116,11 +116,8 @@ public class DesactivarTodoTV {
 			pstmt = conn.prepareStatement(QUERY_VALIDA_KENAN);
 			pstmt.setString(1, rut);
 			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				facturado = (!"Retirado".equals(rs.getString("ESTADO")));
-				if(facturado){
-					break;
-				}
+			if (rs.next()) {
+				facturado = true;
 			}
 			if (!facturado){
 				serviciosTV = new ArrayList<FileCorteCanalesRow>();

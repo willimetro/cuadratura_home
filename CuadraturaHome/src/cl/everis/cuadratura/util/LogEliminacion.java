@@ -23,7 +23,7 @@ public class LogEliminacion {
 			if (!DIR_LOG.exists()){
 				DIR_LOG.mkdirs();
 			}
-			if ("corte_canales".equals(opt)) {
+			if ("corte_canal".equals(opt)) {
 				if (null == fwC){
 					fwC = new FileWriter(FILE_CANALES+LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy.ss"))+".csv" , true);
 					pwC = new PrintWriter(fwC);
