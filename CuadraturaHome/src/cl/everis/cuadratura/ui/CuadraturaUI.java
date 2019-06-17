@@ -989,6 +989,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				defaultListModel.addElement(nomCanal);
 			}
 			listaCanales.setModel(defaultListModel);
+		} else if(flagAction.equalsIgnoreCase("Cargar Ruts")) {
+			
 		} else if (flagAction.equalsIgnoreCase("Cortar Canales")) {
 			int contador = 0;
 			statusProcess.setValue(0);
