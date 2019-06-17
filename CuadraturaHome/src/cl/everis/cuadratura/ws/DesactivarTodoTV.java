@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.rpc.ServiceException;
 
@@ -32,7 +34,7 @@ public class DesactivarTodoTV {
 
 	private final static String QUERY_VALIDA_KENAN = "SELECT kn.\"ESTADO\" FROM facturador_kenan kn "
 			+ "WHERE kn.\"PLAN\"='PLAN TELEVISION'AND kn.\"RUT_CLIENTE\"=?";
-	private final static String QUERY_TODO = "SELECT tk.\"HOUSE_HOLD_ID\", tk.\"MODULE_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"=";
+	private final static String QUERY_TODO = "SELECT tk.\"HOUSE_HOLD_ID\", tk.\"MODULE_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"= ?";
 
 	/**
 	 * 
@@ -64,33 +66,33 @@ public class DesactivarTodoTV {
 			desactivarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			desactivarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
 			LogEliminacion
-					.escribirTraza("INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-							+ ";CODIGO_RESPONSE: " + resp.getResponse().getHeaderOut().getCodigo() + ";DESCRIPCION: "
-							+ resp.getResponse().getHeaderOut().getDescripcion());
+			.escribirTrazaTv("INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+			+ ";CODIGO_RESPONSE: " + resp.getResponse().getHeaderOut().getCodigo() + ";DESCRIPCION: "
+			+ resp.getResponse().getHeaderOut().getDescripcion());
 		} catch (MalformedURLException e1) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-							+ ";CODIGO_RESPONSE: MALFORMEDURLEXCEPTION;DESCRIPCION: URL ERRONEA");
+					+ ";CODIGO_RESPONSE: MALFORMEDURLEXCEPTION;DESCRIPCION: URL ERRONEA");
 			e1.printStackTrace();
 		} catch (ServiceException e1) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-							+ ";CODIGO_RESPONSE: SERVICEEXCEPTION;DESCRIPCION: SERVICIO CON ERROR");
+					+ ";CODIGO_RESPONSE: SERVICEEXCEPTION;DESCRIPCION: SERVICIO CON ERROR");
 			e1.printStackTrace();
 		} catch (DesactivarVasYCanalPremiumFaultType e) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-							+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
+					+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
 			e.printStackTrace();
 		} catch (RemoteException e) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-							+ ";CODIGO_RESPONSE: REMOTEEXCEPTION;DESCRIPCION: ERROR REMOTO");
+					+ ";CODIGO_RESPONSE: REMOTEEXCEPTION;DESCRIPCION: ERROR REMOTO");
 			e.printStackTrace();
 		} catch (Exception e) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-							+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
+					+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
 			e.printStackTrace();
 		}
 
@@ -99,28 +101,52 @@ public class DesactivarTodoTV {
 
 	/**
 	 * 
-	 * @param fileCorteCanalesRow
+	 * @param rut
 	 * @return
 	 */
-	public FileCorteCanalesRow getCodServicioCanalesPremium(FileCorteCanalesRow fileCorteCanalesRow) {
+	public List<FileCorteCanalesRow> validaFacturado(String rut) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-
-		conn = ConnectionCuadraturaBD.getConnTPlay();
+		boolean facturado = false;
+		List<FileCorteCanalesRow> serviciosTV = null;
+		FileCorteCanalesRow servicio = null;
+		conn = ConnectionCuadraturaBD.getLocalConn();
 		try {
 			pstmt = conn.prepareStatement(QUERY_VALIDA_KENAN);
-			pstmt.setString(1, fileCorteCanalesRow.getRutSinDV());
+			pstmt.setString(1, rut);
 			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				fileCorteCanalesRow.setCodiServicio(rs.getString("CODI_SERVICIO"));
+			while (rs.next()) {
+				facturado = (!"Retirado".equals(rs.getString("ESTADO")));
+				if(facturado){
+					break;
+				}
+			}
+			if (!facturado){
+				serviciosTV = new ArrayList<FileCorteCanalesRow>();
+				pstmt = conn.prepareStatement(QUERY_TODO);
+				pstmt.setString(1, rut);
+				rs = pstmt.executeQuery();
+				while (rs.next()) {
+					servicio = new FileCorteCanalesRow();
+					servicio.setRutConDv(rut);
+					servicio.setCodiServicio(rs.getString("HOUSE_HOLD_ID"));
+					servicio.setCodCanal(rs.getString("MODULE_ID"));
+					serviciosTV.add(servicio);
+				} if (serviciosTV.isEmpty()) {
+					LogEliminacion.escribirTrazaTv("INFO;" + rut + ";TV"
+							+ ";CODIGO_RESPONSE: 1001;DESCRIPCION: "
+							+ "NO SE ENCUENTRA RUT EN COMPENDIO KALTURA");
+				}
+				
 			} else {
-				fileCorteCanalesRow.setCodiServicio("");
+				LogEliminacion.escribirTrazaTv("INFO;" + rut + ";TV"
+						+ ";CODIGO_RESPONSE: 1000;DESCRIPCION: "
+						+ "SE ENCUENTRA EN KENAN. REGULARIZAR EN 3 PLAY");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		return fileCorteCanalesRow;
+		return serviciosTV;
 	}
 }

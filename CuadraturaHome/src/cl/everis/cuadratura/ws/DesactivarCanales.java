@@ -66,31 +66,31 @@ public class DesactivarCanales {
 			desactivarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			desactivarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
 			LogEliminacion
-					.escribirTraza("INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+					.escribirTrazaCanales("INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 							+ ";CODIGO_RESPONSE: " + resp.getResponse().getHeaderOut().getCodigo() + ";DESCRIPCION: "
 							+ resp.getResponse().getHeaderOut().getDescripcion());
 		} catch (MalformedURLException e1) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 							+ ";CODIGO_RESPONSE: MALFORMEDURLEXCEPTION;DESCRIPCION: URL ERRONEA");
 			e1.printStackTrace();
 		} catch (ServiceException e1) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 							+ ";CODIGO_RESPONSE: SERVICEEXCEPTION;DESCRIPCION: SERVICIO CON ERROR");
 			e1.printStackTrace();
 		} catch (DesactivarVasYCanalPremiumFaultType e) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 							+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
 			e.printStackTrace();
 		} catch (RemoteException e) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 							+ ";CODIGO_RESPONSE: REMOTEEXCEPTION;DESCRIPCION: ERROR REMOTO");
 			e.printStackTrace();
 		} catch (Exception e) {
-			LogEliminacion.escribirTraza(
+			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 							+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
 			e.printStackTrace();
