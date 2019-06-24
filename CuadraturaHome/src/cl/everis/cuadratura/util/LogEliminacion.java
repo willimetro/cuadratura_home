@@ -13,24 +13,29 @@ public class LogEliminacion {
 	private static PrintWriter pwC = null;
 	private static FileWriter fwT = null;
 	private static PrintWriter pwT = null;
-	private final static String FILE_CANALES = System.getProperty("user.home")+"\\Desktop\\cuadratura\\LogEliminacion\\LogEliminacionCanales_";
-	private final static String FILE_TV = System.getProperty("user.home")+"\\Desktop\\cuadratura\\LogEliminacion\\LogEliminacionTv_";
-	private final static File DIR_LOG=new File(System.getProperty("user.home")+"\\Desktop\\cuadratura\\LogEliminacion");
+	private final static String FILE_CANALES = System.getProperty("user.home")
+			+ "\\Desktop\\cuadratura\\LogEliminacion\\LogEliminacionCanales_";
+	private final static String FILE_TV = System.getProperty("user.home")
+			+ "\\Desktop\\cuadratura\\LogEliminacion\\LogEliminacionTv_";
+	private final static File DIR_LOG = new File(
+			System.getProperty("user.home") + "\\Desktop\\cuadratura\\LogEliminacion");
 
-	public static void iniciarFichero(String opt){
-		try
-		{
-			if (!DIR_LOG.exists()){
+	public static void iniciarFichero(String opt) {
+		try {
+			if (!DIR_LOG.exists()) {
 				DIR_LOG.mkdirs();
 			}
 			if ("corte_canal".equals(opt)) {
-				if (null == fwC){
-					fwC = new FileWriter(FILE_CANALES+LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy.ss"))+".csv" , true);
+				if (null == fwC) {
+					fwC = new FileWriter(FILE_CANALES
+							+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy.ss")) + ".csv", true);
 					pwC = new PrintWriter(fwC);
 				}
 			} else if ("corte_tv".equals(opt)) {
-				if (null == fwT){
-					fwT = new FileWriter(FILE_TV+LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy.ss"))+".csv" , true);
+				if (null == fwT) {
+					fwT = new FileWriter(
+							FILE_TV + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy.ss")) + ".csv",
+							true);
 					pwT = new PrintWriter(fwT);
 				}
 			}
@@ -41,45 +46,43 @@ public class LogEliminacion {
 
 	}
 
-	public static void escribirTrazaCanales(String mensaje){
+	public static void escribirTrazaCanales(String mensaje) {
 
-		try
-		{
-			pwC.flush();
+		try {
 			pwC.println(mensaje);
+			pwC.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void escribirTrazaTv(String mensaje){
 
-		try
-		{
-			pwT.flush();
+	public static void escribirTrazaTv(String mensaje) {
+
+		try {
 			pwT.println(mensaje);
+			pwT.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void cerrarFicheros(String opt){	
+	public static void cerrarFicheros(String opt) {
 		try {
 			if ("corte_canales".equals(opt)) {
-				if (null != fwC){
+				if (null != fwC) {
 					fwC.close();
 					fwC = null;
 				}
-				if (null != pwC){
+				if (null != pwC) {
 					pwC.close();
 					pwC = null;
 				}
 			} else if ("corte_tv".equals(opt)) {
-				if (null != fwT){
+				if (null != fwT) {
 					fwT.close();
 					fwT = null;
 				}
-				if (null != pwT){
+				if (null != pwT) {
 					pwT.close();
 					pwT = null;
 				}
@@ -90,4 +93,3 @@ public class LogEliminacion {
 	}
 
 }
-

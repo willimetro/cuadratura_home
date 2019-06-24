@@ -5,7 +5,7 @@ package cl.everis.cuadratura.obj;
  * @author wugaldeq
  *
  */
-public class DesactivarCanalesResponseOBJ {
+public class ActivarDesactivarCanalesResponseOBJ {
 
 	private String codResponse;
 	private String descripcion;

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,10 +41,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import cl.everis.cuadratura.bd.BDManager;
 import cl.everis.cuadratura.bd.BDManagerImpl;
 import cl.everis.cuadratura.files.ArchivoUtil;
+import cl.everis.cuadratura.obj.ActivarDesactivarCanalesResponseOBJ;
 import cl.everis.cuadratura.obj.CountOBJ;
-import cl.everis.cuadratura.obj.DesactivarCanalesResponseOBJ;
 import cl.everis.cuadratura.obj.FileCorteCanales;
 import cl.everis.cuadratura.obj.FileCorteCanalesRow;
+import cl.everis.cuadratura.obj.RespValidacionesOBJ;
 import cl.everis.cuadratura.util.LogEliminacion;
 import cl.everis.cuadratura.ws.Correo;
 import cl.everis.cuadratura.ws.DesactivarCanales;
@@ -140,16 +142,16 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		jTabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 		JComponent cortePlanesTV = makeTextPanelCortePlanesTV("Panel #2");
-		
+
 		jTabbedPane.addTab("Corte Planes TV", cortePlanesTV);
 		jTabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		
+
 		JComponent corteCanalesTV = makeTextPanelCorteBloqueo("Panel #3");
 
 		jTabbedPane.addTab("Corte Canales TV", corteCanalesTV);
 		jTabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-		
-		
+
+
 		JComponent inalambrico = makeTextPanelInalambrico("Panel #4");
 
 		jTabbedPane.addTab("Inalámbrica", inalambrico);
@@ -192,7 +194,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		resultadosCuad.setBorder(BorderFactory.createTitledBorder("Resultados Cuadratura 3 play"));
 		panel3Play.setLayout(new GridLayout(2, 1));
 		panel3Play.add(tiposCuad);
-		
+
 		statusProcess = new JProgressBar();
 		resultadosCuad.setLayout(new BoxLayout(resultadosCuad, BoxLayout.Y_AXIS));
 		JPanel panelStatusProgress = new JPanel();
@@ -469,7 +471,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 		panelFileCargado
-				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione el canal que quiere dar de baja"));
+		.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione el canal que quiere dar de baja"));
 		comboPanel = new JPanel();
 		comboPanel.add(scroolList);
 		cortarBtn.addActionListener(new ActionListener() {
@@ -519,7 +521,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelCB.add(consolePanel);
 		return panelCB;
 	}
-	
+
 	/**
 	 * 
 	 * @param text
@@ -557,7 +559,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 		panelFileCargado
-				.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione los RUTS para dar de baja"));
+		.setBorder(BorderFactory.createTitledBorder("Paso 2 - Seleccione los RUTS para dar de baja"));
 		comboPanelTV = new JPanel();
 		comboPanelTV.add(scroolList);
 		cortarPlanesBtn.addActionListener(new ActionListener() {
@@ -646,7 +648,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelChooser.add(showFileDialogCorteCanalesAdiButton, showFileDialogConstrains);
 
 	}
-	
+
 	/**
 	 * 
 	 * @param panelChooser
@@ -991,42 +993,70 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 			listaCanales.setModel(defaultListModel);
 		} else if (flagAction.equalsIgnoreCase("Cortar Canales")) {
-			int contador = 0;
 			statusProcess.setValue(0);
 			DesactivarCanales desactivarCanales = new DesactivarCanales();
 			LogEliminacion.iniciarFichero("corte_canal");
 			for (Iterator<List<FileCorteCanalesRow>> iterator = listaListaCanales.iterator(); iterator.hasNext();) {
 				List<FileCorteCanalesRow> list = (List<FileCorteCanalesRow>) iterator.next();
-				jTextAreaStatusProcess.setText("Se proceden a cortar el canal con codigo: "+list.get(0).getCodCanal());
+				String codigo = list.get(0).getCodCanal();
+				jTextAreaStatusProcess.setText("Se proceden a cortar el canal con codigo: "+codigo);
 				int contador2 = 0;
 				for (Iterator<FileCorteCanalesRow> iterator2 = list.iterator(); iterator2.hasNext();) {
 					FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator2.next();
-					if (!desactivarCanales.validaFacturado(fileCorteCanalesRow)){
-						fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
-						DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
-								.desactivarCanalPremium(fileCorteCanalesRow);
-						if (contador == 0) {
-							jTextAreaStatusProcess.setText(
+					RespValidacionesOBJ facturado = new RespValidacionesOBJ();
+					facturado.setToDelete(false);
+					RespValidacionesOBJ objDeleteCDF = new RespValidacionesOBJ();
+					objDeleteCDF.setToDelete(false);
+					if("20752".equals(codigo)||"20753".equals(codigo)){
+						objDeleteCDF = desactivarCanales.validaCDF(fileCorteCanalesRow);
+						if (!objDeleteCDF.isToDelete()){
+							jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + 
 									"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-											+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
-											+ canalesResponseOBJ.getDescripcion());
-							contador++;
-						} else {
-							jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "INFO;"
-									+ fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
-									+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
-									+ canalesResponseOBJ.getDescripcion());
+									+ ";CODIGO_RESPONSE: " + objDeleteCDF.getResp().getCodResponse() + ";DESCRIPCION: "
+									+ objDeleteCDF.getResp().getDescripcion());
+						}
+					} else {
+						facturado = desactivarCanales.validaFacturado(fileCorteCanalesRow);
+						if (!facturado.isToDelete()){
+							jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + 
+									"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+									+ ";CODIGO_RESPONSE: " + facturado.getResp().getCodResponse() + ";DESCRIPCION: "
+									+ facturado.getResp().getDescripcion());
 						}
 					}
-
+					if (facturado.isToDelete() || objDeleteCDF.isToDelete()){
+						fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
+						ActivarDesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
+								.desactivarCanalPremium(fileCorteCanalesRow);
+						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + 
+								"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
+								+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+								+ canalesResponseOBJ.getDescripcion());
+					}
 					statusProcess.setStringPainted(true);
 					statusProcess.setValue(calculoDeAvance(list.size(), ++contador2));
 				}
+				DefaultListModel<String> defaultListModel = (DefaultListModel<String>)listaCanales.getModel();
+				if("20752".equals(codigo)){
+					defaultListModel.removeElement("CDF HD");
+				} else if("20750".equals(codigo)){
+					defaultListModel.removeElement("Fox+");
+				} else if("20753".equals(codigo)){
+					defaultListModel.removeElement("CDF Premium");
+				} else if("20751".equals(codigo)){
+					defaultListModel.removeElement("HBO Max");
+				} else if("20749".equals(codigo)){
+					defaultListModel.removeElement("Fox Sports + HD");
+				} else if("20748".equals(codigo)){
+					defaultListModel.removeElement("Plan Adulto");
+				}
+				//listaCanales.setModel(defaultListModel); para probar
 			}
 			LogEliminacion.cerrarFicheros("corte_canal");
 		} else if (flagAction.equalsIgnoreCase("Cargar Ruts")) {
 			ArchivoUtil archivoUtil = new ArchivoUtil();
 			listaAllRuts = archivoUtil.getRutsCorteTV(fileDialogCortePlanesTV.getSelectedFile().getAbsolutePath());
+			Collections.sort(listaAllRuts); 
 			DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
 			for (String rut : listaAllRuts) {
 				defaultListModel.addElement(rut);
@@ -1038,55 +1068,45 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			DesactivarTodoTV desactivarTodo = new DesactivarTodoTV();
 			List<FileCorteCanalesRow> toDeleteFinal = new ArrayList<FileCorteCanalesRow>();
 			LogEliminacion.iniciarFichero("corte_tv");
-			jTextAreaStatusProcessTV.setText("Se proceden a validar en kenan los ruts seleccionados");
+			String toAppend = "Se proceden a validar en kenan los ruts seleccionados";
+			jTextAreaStatusProcessTV.setText(toAppend);
+			listaAllRuts.removeAll(listaRutsCorte);
+			DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
+			for (String rut : listaAllRuts) {
+				defaultListModel.addElement(rut);
+			}
 			for (String rutDelete : listaRutsCorte) {
 				List<FileCorteCanalesRow> toDelete = desactivarTodo.validaFacturado(rutDelete);	
 				if(null == toDelete){
-					if (contador == 0) {
-						jTextAreaStatusProcessTV.setText(
-								"INFO;" + rutDelete + ";TV"
-										+ ";CODIGO_RESPONSE: 1000;DESCRIPCION: "
-										+ "SE ENCUENTRA EN KENAN. REGULARIZAR EN 3 PLAY");
-					} else {
-						jTextAreaStatusProcessTV.setText(jTextAreaStatusProcessTV.getText() + "\n" + "INFO;"
-								+ rutDelete + ";TV"
-								+ ";CODIGO_RESPONSE: 1000;DESCRIPCION: "
-								+ "SE ENCUENTRA EN KENAN. REGULARIZAR EN 3 PLAY");
-					}
+					toAppend = toAppend	+ "\n" + "INFO;" + rutDelete + ";TV"
+							+ ";CODIGO_RESPONSE: 1000;DESCRIPCION: "
+							+ "SE ENCUENTRA EN KENAN. REGULARIZAR EN 3 PLAY";
+					contador++;
 				} else if(toDelete.isEmpty()){
-					if (contador == 0) {
-						jTextAreaStatusProcessTV.setText(
-								"INFO;" + rutDelete + ";TV"
-										+ ";CODIGO_RESPONSE: 1001;DESCRIPCION: "
-										+ "NO SE ENCUENTRA RUT EN COMPENDIO KALTURA");
-					} else {
-						jTextAreaStatusProcessTV.setText(jTextAreaStatusProcessTV.getText() + "\n" + "INFO;"
-								+ rutDelete + ";TV"
-								+ ";CODIGO_RESPONSE: 1001;DESCRIPCION: "
-								+ "NO SE ENCUENTRA RUT EN COMPENDIO KALTURA");
-					}
+					toAppend = toAppend	+ "\n" + "INFO;" + rutDelete + ";TV"
+							+ ";CODIGO_RESPONSE: 1001;DESCRIPCION: "
+							+ "NO SE ENCUENTRA RUT EN COMPENDIO KALTURA";
+					contador++;
 				} else { 
 					toDeleteFinal.addAll(toDelete);
 				}
 			}
 			
+			jTextAreaStatusProcessTV.setText(toAppend);
+			int size = toDeleteFinal.size() + contador;
+			statusProcessTV.setStringPainted(true);
+			statusProcessTV.setValue(calculoDeAvance(size, contador));
+			
 			for (FileCorteCanalesRow producto : toDeleteFinal) {
-				DesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarTodo.desactivarModulo(producto);
-				if (contador == 0) {
-					jTextAreaStatusProcessTV.setText(
-							"INFO;" + producto.getRutConDv() + ";" + producto.getCodCanal()
-									+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
-									+ canalesResponseOBJ.getDescripcion());
-				} else {
-					jTextAreaStatusProcessTV.setText(jTextAreaStatusProcessTV.getText() + "\n" + "INFO;"
-							+ producto.getRutConDv() + ";" + producto.getCodCanal()
-							+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
-							+ canalesResponseOBJ.getDescripcion());
-				}
+				ActivarDesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarTodo.desactivarModulo(producto);
+				jTextAreaStatusProcessTV.setText(jTextAreaStatusProcessTV.getText() + "\n" + "INFO;"
+						+ producto.getRutConDv() + ";" + producto.getCodCanal()
+						+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
+						+ canalesResponseOBJ.getDescripcion());
 				statusProcessTV.setStringPainted(true);
-				statusProcessTV.setValue(calculoDeAvance(toDeleteFinal.size(), ++contador));
+				statusProcessTV.setValue(calculoDeAvance(size, ++contador));
 			}
-			listaAllRuts.removeAll(listaRutsCorte);
+			listaRuts.setModel(defaultListModel);
 			LogEliminacion.cerrarFicheros("corte_tv");
 		}
 	}
