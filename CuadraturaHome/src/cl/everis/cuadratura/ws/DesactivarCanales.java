@@ -38,6 +38,8 @@ public class DesactivarCanales {
 
 	private final static String QUERY_HOUSE_HOLD_ID =  "SELECT tk.\"HOUSE_HOLD_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"= ? "
 			+ "AND tk.\"MODULE_ID\" = ?";
+	
+	private final static String QUERY_EXISTE =  "SELECT COUNT(*) FROM todo_kaltura tk WHERE tk.\"RUT\"= ? AND tk.\"MODULE_ID\" = ?";
 
 	private final static String QUERY_VALIDA_KENAN = "select * from facturador_kenan_canal fcan where fcan.\"ESTADO\" in ('Facturado','Nuevo') "
 			+ "and fcan.\"RUT_CLIENTE\" = ? and fcan.\"CODIGO_TPLAY\" = ?";
@@ -277,6 +279,8 @@ public class DesactivarCanales {
 		ResultSet rs1 = null;
 		PreparedStatement pstmt2 = null;
 		ResultSet rs2 = null;
+		PreparedStatement pstmt3 = null;
+		ResultSet rs3 = null;
 		String codiKal = reg.getCodCanal();
 		String codiTplay = null;
 		String codiKen = null;
@@ -338,19 +342,19 @@ public class DesactivarCanales {
 						LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
 								+ reg.getCodCanal()
 								+ ";CODIGO_RESPONSE: 1004;DESCRIPCION: "
-								+ "CDF NO SE ENCUENTRA EN KENAN, SE DEBE ELIMINAR EN 3PLAY Y FALLA ELIMINACION EN KALTURA CON CODIGO: "
+								+ "CLIENTE CDF NO SE ENCUENTRA EN KENAN, SE DEBE ELIMINAR EN 3PLAY Y FALLA ELIMINACION EN KALTURA CON CODIGO: "
 								+ resp.getCodResponse());
 						resp.setCodResponse("1004");
-						resp.setDescripcion("CDF NO SE ENCUENTRA EN KENAN, SE DEBE ELIMINAR EN 3PLAY Y FALLA ELIMINACION EN KALTURA CON CODIGO: "
+						resp.setDescripcion("CLIENTE CDF NO SE ENCUENTRA EN KENAN, SE DEBE ELIMINAR EN 3PLAY Y FALLA ELIMINACION EN KALTURA CON CODIGO: "
 								+ resp.getCodResponse());
 					} else {
 						LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
 								+ reg.getCodCanal()
 								+ ";CODIGO_RESPONSE: 1005;DESCRIPCION: "
-								+ "CDF NO SE ENCUENTRA EN KENAN, SE DEBE ELIMINAR EN 3PLAY Y SE ELIMINA EN KALTURA CON RESPUESTA: "
+								+ "CLIENTE CDF NO SE ENCUENTRA EN KENAN, DEBE ELIMINAR EN 3PLAY Y EN KALTURA SE OBTIENE RESPUESTA DE ELIMINACION: "
 								+ resp.getDescripcion());
 						resp.setCodResponse("1005");
-						resp.setDescripcion("CDF NO SE ENCUENTRA EN KENAN, SE DEBE ELIMINAR EN 3PLAY Y SE ELIMINA EN KALTURA CON RESPUESTA: "
+						resp.setDescripcion("CLIENTE CDF NO SE ENCUENTRA EN KENAN, DEBE ELIMINAR EN 3PLAY Y EN KALTURA SE OBTIENE RESPUESTA DE ELIMINACION: "
 								+ resp.getDescripcion());
 					}
 				} else if(null!=codiKal && !codiKal.equals(codiKen)){
@@ -362,44 +366,59 @@ public class DesactivarCanales {
 						LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
 								+ reg.getCodCanal()
 								+ ";CODIGO_RESPONSE: 1006;DESCRIPCION: "
-								+ "NO SE PUDO ELIMINAR CANAL PARA CREAR "+codiTplay+", LA DESCRIPCION DE ELIMINACION ES: "
+								+ "NO SE PUDO ELIMINAR CANAL "+reg.getCodCanal()+" PARA VALIDAR "+codiTplay+", LA DESCRIPCION DE ELIMINACION ES: "
 								+ resp.getDescripcion());
 						resp.setCodResponse("1006");
-						resp.setDescripcion("NO SE PUDO ELIMINAR CANAL PARA CREAR "+codiTplay+", LA DESCRIPCION DE ELIMINACION ES: "
+						resp.setDescripcion("NO SE PUDO ELIMINAR CANAL "+reg.getCodCanal()+" PARA VALIDAR "+codiTplay+", LA DESCRIPCION DE ELIMINACION ES: "
 								+ resp.getDescripcion());
 					} else {
-						FileCorteCanalesRow regCrea = new FileCorteCanalesRow();
-						regCrea.setCodCanal(codiTplay);
-						regCrea.setCodiServicio(reg.getCodiServicio());
-						regCrea.setRutConDv(reg.getRutConDv());
-						resp = activarCanalPremium(regCrea);
-						if (!"0000".equals(resp.getCodResponse())){
+						pstmt3 = conn.prepareStatement(QUERY_EXISTE);
+						pstmt3.setString(1, reg.getRutConDv());
+						pstmt3.setString(2, codiTplay);
+						rs3 = pstmt3.executeQuery();
+						if (rs3.next()){
 							LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
 									+ reg.getCodCanal()
-									+ ";CODIGO_RESPONSE: 1007;DESCRIPCION: "
-									+ "SE ELIMINO CANAL Y SE OBTUVO ERROR CREANDO "+codiTplay+" CON DESCRIPCION: "
+									+ ";CODIGO_RESPONSE: 1009;DESCRIPCION: "
+									+ "SE ELIMINO CANAL "+reg.getCodCanal()+" Y SE ENCUENTRA QUE CANAL "+codiTplay+" YA EXISTE EN KALTURA, LA DESCRIPCION DE ELIMINACION ES: "
 									+ resp.getDescripcion());	
-							resp.setCodResponse("1007");
-							resp.setDescripcion("SE ELIMINO CANAL Y SE OBTUVO ERROR CREANDO " +codiTplay+" CON DESCRIPCION: "
+							resp.setCodResponse("1009");
+							resp.setDescripcion("SE ELIMINO CANAL "+reg.getCodCanal()+" Y SE ENCUENTRA QUE CANAL "+codiTplay+" YA EXISTE EN KALTURA, LA DESCRIPCION DE ELIMINACION ES: "
 									+ resp.getDescripcion());
 						} else {
-							LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
-									+ reg.getCodCanal()
-									+ ";CODIGO_RESPONSE: 1008;DESCRIPCION: "
-									+ "SE ELIMINO CANAL Y SE CREO " +codiTplay+" CON DESCRIPCION: "
-									+ resp.getDescripcion());
-							resp.setCodResponse("1008");
-							resp.setDescripcion("SE ELIMINO CANAL Y SE CREO " +codiTplay+" CON DESCRIPCION: "
-									+ resp.getDescripcion());
+							FileCorteCanalesRow regCrea = new FileCorteCanalesRow();
+							regCrea.setCodCanal(codiTplay);
+							regCrea.setCodiServicio(reg.getCodiServicio());
+							regCrea.setRutConDv(reg.getRutConDv());
+							resp = activarCanalPremium(regCrea);
+							if (!"0000".equals(resp.getCodResponse())){
+								LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
+										+ reg.getCodCanal()
+										+ ";CODIGO_RESPONSE: 1007;DESCRIPCION: "
+										+ "SE ELIMINO CANAL "+reg.getCodCanal()+" Y SE OBTUVO ERROR CREANDO CANAL "+codiTplay+" CON DESCRIPCION: "
+										+ resp.getDescripcion());	
+								resp.setCodResponse("1007");
+								resp.setDescripcion("SE ELIMINO CANAL "+reg.getCodCanal()+" Y SE OBTUVO ERROR CREANDO CANAL "+codiTplay+" CON DESCRIPCION: "
+										+ resp.getDescripcion());
+							} else {
+								LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
+										+ reg.getCodCanal()
+										+ ";CODIGO_RESPONSE: 1008;DESCRIPCION: "
+										+ "SE ELIMINO CANAL "+reg.getCodCanal()+" Y SE CREO " +codiTplay+" CON DESCRIPCION: "
+										+ resp.getDescripcion());
+								resp.setCodResponse("1008");
+								resp.setDescripcion("SE ELIMINO CANAL "+reg.getCodCanal()+" Y SE CREO " +codiTplay+" CON DESCRIPCION: "
+										+ resp.getDescripcion());
+							}
 						}
 					}	
 				} else if(null!=codiKal && codiKal.equals(codiKen)){
 					//				CASO EN QUE TIENE IGUAL CDF EN KALTURA Y KENAN Y NO EN 3PLAY
 					LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
 							+ reg.getCodCanal()
-							+ ";CODIGO_RESPONSE: 1009;DESCRIPCION: "
+							+ ";CODIGO_RESPONSE: 1010;DESCRIPCION: "
 							+ "CLIENTE CDF SE ENCUENTRA EN KENAN Y ES DIFERENTE EN 3 PLAY");
-					resp.setCodResponse("1009");
+					resp.setCodResponse("1010");
 					resp.setDescripcion("CLIENTE CDF SE ENCUENTRA EN KENAN Y ES DIFERENTE EN 3 PLAY");
 				}				
 			}
@@ -408,11 +427,27 @@ public class DesactivarCanales {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs1.close();
-				pstmt1.close();
-				rs2.close();
-				pstmt2.close();
-				conn.close();
+				if (null!=rs1){
+					rs1.close();
+				}
+				if (null!=pstmt1){
+					pstmt1.close();
+				}
+				if (null!=rs2){
+					rs2.close();
+				}
+				if (null!=pstmt2){
+					pstmt2.close();
+				}
+				if (null!=rs3){
+					rs3.close();
+				}
+				if (null!=pstmt3){
+					pstmt3.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
