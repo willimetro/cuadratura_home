@@ -120,9 +120,15 @@ public class BDManagerImpl implements BDManager {
 			e.printStackTrace();
 		} finally {
 			try {
-				in.close();
-				pgcon.close();
-				conn.close();
+				if (null!=in){
+					in.close();
+				}
+				if (null!=pgcon){
+					pgcon.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -136,9 +142,10 @@ public class BDManagerImpl implements BDManager {
 	@Override
 	public void borraDB(String producto, JTextArea jTextAreaStatusProcess) {
 		Connection conn = null;
+		Statement statement = null;
 		try {
 			conn = ConnectionCuadraturaBD.getLocalConn();
-			Statement statement = conn.createStatement();
+			statement = conn.createStatement();
 			statement.executeUpdate(Constantes.getQueryTruncate(producto));
 			System.out.println("Se ejecutó: " + Constantes.getQueryTruncate(producto));
 			if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
@@ -151,7 +158,12 @@ public class BDManagerImpl implements BDManager {
 			e.printStackTrace();
 		} finally {
 			try {
-				conn.close();
+				if (null!=statement){
+					statement.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -162,6 +174,8 @@ public class BDManagerImpl implements BDManager {
 	public void descargaArchivo(String filename, String query, String cabecera, String producto) {
 
 		Connection conn = null;
+		ResultSet rs = null;
+		Statement stmt = null;
 		FileWriter fw = null;
 
 		try {
@@ -176,8 +190,8 @@ public class BDManagerImpl implements BDManager {
 			fw = new FileWriter(filename);
 			fw.append(cabecera);
 			fw.append('\n');
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				fw.flush();
 				procesar(fw, rs, producto);
@@ -187,8 +201,18 @@ public class BDManagerImpl implements BDManager {
 			e.printStackTrace();
 		} finally {
 			try {
-				conn.close();
-				fw.close();
+				if (null!= rs){
+					rs.close();
+				}
+				if (null!=stmt){
+					stmt.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
+				if (null != fw){
+					fw.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -236,8 +260,12 @@ public class BDManagerImpl implements BDManager {
 			e.printStackTrace();
 		} finally {
 			try {
-				conn.close();
-				fileOutputStream.close();
+				if (null!=conn){
+					conn.close();
+				}
+				if (null!=fileOutputStream){
+					fileOutputStream.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (IOException e1) {
@@ -263,9 +291,15 @@ public class BDManagerImpl implements BDManager {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs.close();
-				pstmt.close();
-				conn.close();
+				if (null!=rs){
+					rs.close();
+				}
+				if (null!=pstmt){
+					pstmt.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -287,8 +321,12 @@ public class BDManagerImpl implements BDManager {
 				e.printStackTrace();
 			} finally {
 				try {
-					conn.close();
-					statement.close();
+					if (null!=statement){
+						statement.close();
+					}
+					if (null!=conn){
+						conn.close();
+					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

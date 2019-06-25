@@ -258,9 +258,15 @@ public class DesactivarCanales {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs.close();
-				pstmt.close();
-				conn.close();
+				if (null!=rs){
+					rs.close();
+				}
+				if (null!=pstmt){
+					pstmt.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
