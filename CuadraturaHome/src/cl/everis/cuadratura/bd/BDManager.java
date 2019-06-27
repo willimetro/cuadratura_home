@@ -15,21 +15,23 @@ public interface BDManager {
 	/**
 	 * 
 	 * @param producto
+	 * @param jTextAreaStatusProcess 
 	 */
-	void cargaCSV(String producto, JTextArea jTextAreaStatusProcess);
+	JTextArea cargaCSV(String producto, JTextArea jTextAreaStatusProcess);
 
 	/**
 	 * 
 	 * @param producto
+	 * @param jTextAreaStatusProcess 
 	 */
-	void borraDB(String producto, JTextArea jTextAreaStatusProcess);
+	JTextArea borraDB(String producto, JTextArea jTextAreaStatusProcess);
 	
 	/**
 	 * 
 	 * @param opcion 
 	 * @param jTextAreaStatusProcess 
 	 */
-	void descargarCSV(String opcion, JTextArea jTextAreaStatusProcess);
+	JTextArea descargarCSV(String opcion, JTextArea jTextAreaStatusProcess);
 	
 	/**
 	 * 
@@ -37,7 +39,7 @@ public interface BDManager {
 	 * @param archivo
 	 * @param jTextAreaStatusProcess 
 	 */
-	void actualiza(String producto, String archivo, JTextArea jTextAreaStatusProcess);
+	JTextArea actualiza(String producto, String archivo, JTextArea jTextAreaStatusProcess);
 	
 	/**
 	 * 
@@ -58,6 +60,7 @@ public interface BDManager {
 	/**
 	 * 
 	 * @param producto
+	 * @param jTextAreaStatusProcess 
 	 */
 	CountOBJ obtenerCruces(String producto, JTextArea jTextAreaStatusProcess);	
 	

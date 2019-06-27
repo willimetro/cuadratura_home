@@ -63,8 +63,6 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_62", "KENAN_C",
 			"KALTURA", "KALTURA_C", "AAA" };
 	private JFrame mainFrame = null;
-	private JProgressBar statusProcessTV;
-	private JProgressBar statusProcess;
 	// CheckBox
 	JCheckBox chTodos = new JCheckBox("Todos");
 	JCheckBox chTresPlayAAA = new JCheckBox("Internet AAA");
@@ -118,13 +116,19 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	JButton cortarPlanesBtn = new JButton("Cortar");
 	private JLabel labelInfoCanales;
 	private JLabel labelInfoCorteTV;
-	private JTextArea jTextAreaStatusProcess;
-	private JTextArea jTextAreaStatusProcessTV;
+	//Text Area
+	private JTextArea textAreaTplay;
+	private JTextArea textAreaCorte;
+	private JTextArea textAreaTV;
+	//Progress Bar
+	private JProgressBar statusProcessTplay;
+	private JProgressBar statusProcessTV;
+	private JProgressBar statusProcessCorte;
 
 	private JList<String> listaCanales = null;
 	private JList<String> listaRuts = null;
 	Map<String, FileCorteCanales> mapCanales = null;
-	List<List<FileCorteCanalesRow>> listaListaCanales = null;
+	List<String> listaSeleccionada = null;
 	List<String> listaAllRuts = null;
 	List<String> listaRutsCorte = null;
 
@@ -194,16 +198,18 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		resultadosCuad.setBorder(BorderFactory.createTitledBorder("Resultados Cuadratura 3 play"));
 		panel3Play.setLayout(new GridLayout(2, 1));
 		panel3Play.add(tiposCuad);
-
-		statusProcess = new JProgressBar();
+		statusProcessTplay = new JProgressBar();
 		resultadosCuad.setLayout(new BoxLayout(resultadosCuad, BoxLayout.Y_AXIS));
 		JPanel panelStatusProgress = new JPanel();
-		statusProcess = new JProgressBar();
-		panelStatusProgress.add(statusProcess);
+		statusProcessTplay = new JProgressBar();
+		panelStatusProgress.add(statusProcessTplay);
 		resultadosCuad.add(panelStatusProgress);
-		jTextAreaStatusProcess = new JTextArea();
-		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcess, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		textAreaTplay = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(textAreaTplay, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		Dimension tamanhoTextArea = textAreaTplay.getSize();
+		Point p = new Point(0,tamanhoTextArea.height);
+		scrollPane.getViewport().setViewPosition(p);
 		resultadosCuad.add(scrollPane);
 		panel3Play.add(resultadosCuad);
 		return panel3Play;
@@ -453,13 +459,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				List<String> listaSeleccionada = listaCanales.getSelectedValuesList();
+				listaSeleccionada = listaCanales.getSelectedValuesList();
 				int cantidad = 0;
-				listaListaCanales = new ArrayList<List<FileCorteCanalesRow>>();
 				for (Iterator<String> iterator = listaSeleccionada.iterator(); iterator.hasNext();) {
 					String nomCanal = (String) iterator.next();
 					cantidad = cantidad + mapCanales.get(nomCanal).getCountCanales();
-					listaListaCanales.add(mapCanales.get(nomCanal).getListaClientesCorte());
 				}
 				if (listaSeleccionada.isEmpty()) {
 					labelInfoCanales.setText("Seleccione los canales que quiere regularizar ");
@@ -505,16 +509,16 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		consolePanel.setBorder(BorderFactory.createTitledBorder("Consola de Corte o bloqueo"));
 		panelCB.setLayout(new GridLayout(2, 1));
 		panelCB.add(cargaArchivo);
-		statusProcess = new JProgressBar();
+		statusProcessCorte = new JProgressBar();
 		consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.Y_AXIS));
 		JPanel panelStatusProgress = new JPanel();
-		statusProcess = new JProgressBar();
-		panelStatusProgress.add(statusProcess);
+		statusProcessCorte = new JProgressBar();
+		panelStatusProgress.add(statusProcessCorte);
 		consolePanel.add(panelStatusProgress);
-		jTextAreaStatusProcess = new JTextArea();
-		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcess, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		textAreaCorte = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(textAreaCorte, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		Dimension tamanhoTextArea = jTextAreaStatusProcess.getSize();
+		Dimension tamanhoTextArea = textAreaCorte.getSize();
 		Point p = new Point(0,tamanhoTextArea.height);
 		scrollPane.getViewport().setViewPosition(p);
 		consolePanel.add(scrollPane);
@@ -598,10 +602,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		statusProcessTV = new JProgressBar();
 		panelStatusProgress.add(statusProcessTV);
 		consolePanel.add(panelStatusProgress);
-		jTextAreaStatusProcessTV = new JTextArea();
-		JScrollPane scrollPane = new JScrollPane(jTextAreaStatusProcessTV, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		textAreaTV = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(textAreaTV, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		Dimension tamanhoTextArea = jTextAreaStatusProcessTV.getSize();
+		Dimension tamanhoTextArea = textAreaTV.getSize();
 		Point p = new Point(0,tamanhoTextArea.height);
 		scrollPane.getViewport().setViewPosition(p);
 		consolePanel.add(scrollPane);
@@ -892,93 +896,121 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			if (!chTodos.isSelected()) {
 				/* INTERNET AAA */
 				if (chTresPlayAAA.isSelected()) {
-					bdManager.descargarCSV("INTERNET",jTextAreaStatusProcess);
-					bdManager.actualiza("AAA", fileDialogInternet.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
-					bdManager.actualiza("INTERNET", null,jTextAreaStatusProcess);
-					mapResult.put("TPLAY_AAA", bdManager.obtenerCruces("TPLAY_AAA",jTextAreaStatusProcess));
+					textAreaTplay.setText(bdManager.descargarCSV("INTERNET",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("AAA", fileDialogInternet.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("INTERNET", null,textAreaTplay).getText());
+					CountOBJ obj = bdManager.obtenerCruces("TPLAY_AAA",textAreaTplay);
+					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_AAA", obj);
 					/* TV BASE KALTURA */
 				} else if (chTresPlayKalturaBase.isSelected()) {
-					bdManager.descargarCSV("TV",jTextAreaStatusProcess);
+					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
 					if(null!= pathLabelTodoTvKaltura && !("NO").equals(pathLabelTodoTvKaltura)){
-						bdManager.actualiza("TODO_KALTURA", pathLabelTodoTvKaltura,jTextAreaStatusProcess);
+						textAreaTplay.setText(bdManager.actualiza("TODO_KALTURA", pathLabelTodoTvKaltura,textAreaTplay).getText());
 					}
-					bdManager.actualiza("KALTURA", fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
-					bdManager.actualiza("TV", null,jTextAreaStatusProcess);// BD
-					mapResult.put("TPLAY_KALTURA", bdManager.obtenerCruces("TPLAY_KALTURA",jTextAreaStatusProcess));
+					textAreaTplay.setText(bdManager.actualiza("KALTURA", fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());// BD
+					CountOBJ obj = bdManager.obtenerCruces("TPLAY_KALTURA",textAreaTplay);
+					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KALTURA", obj);
 					/* CANALES ADICIONALES KALTURA */
 				} else if (chTresPlayKalturaAdi.isSelected()) {
-					bdManager.descargarCSV("TV",jTextAreaStatusProcess);
-					bdManager.actualiza("KALTURA_C", fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
-					bdManager.actualiza("TV", null,jTextAreaStatusProcess);
-					mapResult.put("TPLAY_KALTURA_C", bdManager.obtenerCruces("TPLAY_KALTURA_C",jTextAreaStatusProcess));
+					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KALTURA_C", fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					CountOBJ obj = bdManager.obtenerCruces("TPLAY_KALTURA_C",textAreaTplay);
+					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KALTURA_C", obj);
 					/* TELEFONIA OTCAR */
 				} else if (chTresPlayOTCARTel.isSelected()) {
-					bdManager.descargarCSV("TLF",jTextAreaStatusProcess);
-					bdManager.descargarCSV("OTCAR",jTextAreaStatusProcess);
-					bdManager.actualiza("TLF", null,jTextAreaStatusProcess);
-					bdManager.actualiza("OTCAR", null,jTextAreaStatusProcess);
-					mapResult.put("TPLAY_OTCAR", bdManager.obtenerCruces("TPLAY_OTCAR",jTextAreaStatusProcess));
+					textAreaTplay.setText(bdManager.descargarCSV("TLF",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.descargarCSV("OTCAR",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("TLF", null,textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("OTCAR", null,textAreaTplay).getText());
+					CountOBJ obj = bdManager.obtenerCruces("TPLAY_OTCAR",textAreaTplay);
+					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_OTCAR", obj);
 					/* INTERNET KENAN */
 				} else if (chTresPlayKenanInter.isSelected()) {
-					bdManager.descargarCSV("INTERNET",jTextAreaStatusProcess);
-					bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
-					bdManager.actualiza("INTERNET", null,jTextAreaStatusProcess);
-					bdManager.actualiza("KENAN_62", null,jTextAreaStatusProcess);
-					mapResult.put("TPLAY_KENAN_INT", bdManager.obtenerCruces("TPLAY_KENAN_INT",jTextAreaStatusProcess));
-					mapResult.put("TPLAY_KENAN_INT_62", bdManager.obtenerCruces("TPLAY_KENAN_INT_62",jTextAreaStatusProcess));
+					textAreaTplay.setText(bdManager.descargarCSV("INTERNET",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("INTERNET", null,textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KENAN_62", null,textAreaTplay).getText());
+					CountOBJ obj1 = bdManager.obtenerCruces("TPLAY_KENAN_INT",textAreaTplay);
+					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KENAN_INT", obj1);
+					CountOBJ obj2 = bdManager.obtenerCruces("TPLAY_KENAN_INT_62",textAreaTplay);
+					textAreaTplay.setText(obj2.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KENAN_INT_62", obj2);
 					/* TV BASE KENAN */
 				} else if (chTresPlayKenanTVBase.isSelected()) {
-					bdManager.descargarCSV("TV",jTextAreaStatusProcess);
-					bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
-					bdManager.actualiza("TV", null,jTextAreaStatusProcess);
-					bdManager.actualiza("KENAN_62", null,jTextAreaStatusProcess);
-					mapResult.put("TPLAY_KENAN_TV", bdManager.obtenerCruces("TPLAY_KENAN_TV",jTextAreaStatusProcess));
-					mapResult.put("TPLAY_KENAN_TV_62", bdManager.obtenerCruces("TPLAY_KENAN_TV_62",jTextAreaStatusProcess));
+					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KENAN_62", null,textAreaTplay).getText());
+					CountOBJ obj1 = bdManager.obtenerCruces("TPLAY_KENAN_TV",textAreaTplay);
+					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KENAN_TV", obj1);
+					CountOBJ obj2 = bdManager.obtenerCruces("TPLAY_KENAN_TV_62",textAreaTplay);
+					textAreaTplay.setText(obj2.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KENAN_TV_62", obj2);
 					/* CANALES ADICIONALES KENAN */
 				} else if (chTresPlayKenanTVAdi.isSelected()) {
-					bdManager.descargarCSV("TV",jTextAreaStatusProcess);
-					bdManager.actualiza("KENAN_C", fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
-					bdManager.actualiza("TV", null,jTextAreaStatusProcess);
-					bdManager.actualiza("KENAN_62", null,jTextAreaStatusProcess);
-					mapResult.put("TPLAY_KENAN_C", bdManager.obtenerCruces("TPLAY_KENAN_C",jTextAreaStatusProcess));
-					mapResult.put("TPLAY_KENAN_C_62", bdManager.obtenerCruces("TPLAY_KENAN_C_62",jTextAreaStatusProcess));
+					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KENAN_C", fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KENAN_62", null,textAreaTplay).getText());
+					CountOBJ obj1 = bdManager.obtenerCruces("TPLAY_KENAN_C",textAreaTplay);
+					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KENAN_C", obj1);
+					CountOBJ obj2 = bdManager.obtenerCruces("TPLAY_KENAN_C_62",textAreaTplay);
+					textAreaTplay.setText(obj2.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KENAN_C_62", obj2);
 					/* TELEFONIA KENAN */
 				} else if (chTresPlayKenanTel.isSelected()) {
-					bdManager.descargarCSV("TV",jTextAreaStatusProcess);
-					bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
-					bdManager.actualiza("TV", null,jTextAreaStatusProcess);
-					bdManager.actualiza("KENAN_62", null,jTextAreaStatusProcess);
-					mapResult.put("TPLAY_KENAN_TLF", bdManager.obtenerCruces("TPLAY_KENAN_TLF",jTextAreaStatusProcess));
-					mapResult.put("TPLAY_KENAN_TLF_62", bdManager.obtenerCruces("TPLAY_KENAN_TLF_62",jTextAreaStatusProcess));
+					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("KENAN_62", null,textAreaTplay).getText());
+					CountOBJ obj1 = bdManager.obtenerCruces("TPLAY_KENAN_TLF",textAreaTplay);
+					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KENAN_TLF", obj1);
+					CountOBJ obj2 = bdManager.obtenerCruces("TPLAY_KENAN_TLF_62",textAreaTplay);
+					textAreaTplay.setText(obj2.getjTextAreaStatusProcess().getText());
+					mapResult.put("TPLAY_KENAN_TLF_62", obj2);
 				}
 
 			} else {
 				for (String s : PRODUCTOS_TPLAY) {
 
 					if ("KENAN".equals(s)) {
-						bdManager.actualiza(s, fileDialogKenan.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
+						textAreaTplay.setText(bdManager.actualiza(s, fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
 					} else if ("KENAN_C".equals(s)) {
-						bdManager.actualiza(s, fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
+						textAreaTplay.setText(bdManager.actualiza(s, fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
 					} else if ("KALTURA".equals(s)) {
-						bdManager.actualiza(s, fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
+						textAreaTplay.setText(bdManager.actualiza(s, fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
 						if(null!= pathLabelTodoTvKaltura && !("NO").equals(pathLabelTodoTvKaltura)){
-							bdManager.actualiza("TODO_KALTURA", pathLabelTodoTvKaltura,jTextAreaStatusProcess);
+							textAreaTplay.setText(bdManager.actualiza("TODO_KALTURA", pathLabelTodoTvKaltura,textAreaTplay).getText());
 						}
 					} else if ("KALTURA_C".equals(s)) {
-						bdManager.actualiza(s, fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
+						textAreaTplay.setText(bdManager.actualiza(s, fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
 					} else if ("AAA".equals(s)) {
-						bdManager.actualiza(s, fileDialogInternet.getSelectedFile().getAbsolutePath(),jTextAreaStatusProcess);
+						textAreaTplay.setText(bdManager.actualiza(s, fileDialogInternet.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
 					} else if ("KENAN_62".equals(s)) {
-						bdManager.actualiza(s, null,jTextAreaStatusProcess);
+						textAreaTplay.setText(bdManager.actualiza(s, null,textAreaTplay).getText());
 					} else {
-						bdManager.descargarCSV(s,jTextAreaStatusProcess);
-						bdManager.actualiza(s, null,jTextAreaStatusProcess);
+						textAreaTplay.setText(bdManager.descargarCSV(s,textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza(s, null,textAreaTplay).getText());
 					}
 				}
 				for (String s : CRUCES_TPLAY) {
-					mapResult.put(s, bdManager.obtenerCruces(s,jTextAreaStatusProcess));
+					CountOBJ obj1 = bdManager.obtenerCruces(s,textAreaTplay);
+					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
+					mapResult.put(s, obj1);
 					if (s.indexOf("KENAN") >= 0) {
-						mapResult.put(s + "_62", bdManager.obtenerCruces(s + "_62",jTextAreaStatusProcess));
+						CountOBJ obj2 = bdManager.obtenerCruces(s + "_62",textAreaTplay);
+						textAreaTplay.setText(obj2.getjTextAreaStatusProcess().getText());
+						mapResult.put(s + "_62", obj2);
 					}
 				}
 			}
@@ -993,13 +1025,14 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 			listaCanales.setModel(defaultListModel);
 		} else if (flagAction.equalsIgnoreCase("Cortar Canales")) {
-			statusProcess.setValue(0);
+			statusProcessCorte.setValue(0);
 			DesactivarCanales desactivarCanales = new DesactivarCanales();
 			LogEliminacion.iniciarFichero("corte_canal");
-			for (Iterator<List<FileCorteCanalesRow>> iterator = listaListaCanales.iterator(); iterator.hasNext();) {
-				List<FileCorteCanalesRow> list = (List<FileCorteCanalesRow>) iterator.next();
+			for (Iterator<String> iterator = listaSeleccionada.iterator(); iterator.hasNext();) {
+				String nomCanal = (String) iterator.next();
+				List<FileCorteCanalesRow> list = mapCanales.get(nomCanal).getListaClientesCorte();;
 				String codigo = list.get(0).getCodCanal();
-				jTextAreaStatusProcess.setText("Se proceden a cortar el canal con codigo: "+codigo);
+				textAreaCorte.setText("Se proceden a cortar el canal con codigo: "+codigo);
 				int contador2 = 0;
 				for (Iterator<FileCorteCanalesRow> iterator2 = list.iterator(); iterator2.hasNext();) {
 					FileCorteCanalesRow fileCorteCanalesRow = (FileCorteCanalesRow) iterator2.next();
@@ -1010,7 +1043,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 					if("20752".equals(codigo)||"20753".equals(codigo)){
 						objDeleteCDF = desactivarCanales.validaCDF(fileCorteCanalesRow);
 						if (!objDeleteCDF.isToDelete()){
-							jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + 
+							textAreaCorte.setText(textAreaCorte.getText() + "\n" + 
 									"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 									+ ";CODIGO_RESPONSE: " + objDeleteCDF.getResp().getCodResponse() + ";DESCRIPCION: "
 									+ objDeleteCDF.getResp().getDescripcion());
@@ -1018,7 +1051,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 					} else {
 						facturado = desactivarCanales.validaFacturado(fileCorteCanalesRow);
 						if (!facturado.isToDelete()){
-							jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + 
+							textAreaCorte.setText(textAreaCorte.getText() + "\n" + 
 									"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 									+ ";CODIGO_RESPONSE: " + facturado.getResp().getCodResponse() + ";DESCRIPCION: "
 									+ facturado.getResp().getDescripcion());
@@ -1028,15 +1061,17 @@ public class CuadraturaUI implements Runnable, ActionListener {
 						fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
 						ActivarDesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
 								.desactivarCanalPremium(fileCorteCanalesRow);
-						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + 
+						textAreaCorte.setText(textAreaCorte.getText() + "\n" + 
 								"INFO;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 								+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
 								+ canalesResponseOBJ.getDescripcion());
 					}
-					statusProcess.setStringPainted(true);
-					statusProcess.setValue(calculoDeAvance(list.size(), ++contador2));
+					statusProcessCorte.setStringPainted(true);
+					statusProcessCorte.setValue(calculoDeAvance(list.size(), ++contador2));
 				}
 				DefaultListModel<String> defaultListModel = (DefaultListModel<String>)listaCanales.getModel();
+				defaultListModel.removeElement(nomCanal);
+				/**
 				if("20752".equals(codigo)){
 					defaultListModel.removeElement("CDF HD");
 				} else if("20750".equals(codigo)){
@@ -1051,6 +1086,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 					defaultListModel.removeElement("Plan Adulto");
 				}
 				//listaCanales.setModel(defaultListModel); para probar
+				**/
 			}
 			LogEliminacion.cerrarFicheros("corte_canal");
 		} else if (flagAction.equalsIgnoreCase("Cargar Ruts")) {
@@ -1069,7 +1105,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			List<FileCorteCanalesRow> toDeleteFinal = new ArrayList<FileCorteCanalesRow>();
 			LogEliminacion.iniciarFichero("corte_tv");
 			String toAppend = "Se proceden a validar en kenan los ruts seleccionados";
-			jTextAreaStatusProcessTV.setText(toAppend);
+			textAreaTV.setText(toAppend);
 			listaAllRuts.removeAll(listaRutsCorte);
 			DefaultListModel<String> defaultListModel = new DefaultListModel<String>();
 			for (String rut : listaAllRuts) {
@@ -1092,14 +1128,14 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				}
 			}
 			
-			jTextAreaStatusProcessTV.setText(toAppend);
+			textAreaTV.setText(toAppend);
 			int size = toDeleteFinal.size() + contador;
 			statusProcessTV.setStringPainted(true);
 			statusProcessTV.setValue(calculoDeAvance(size, contador));
 			
 			for (FileCorteCanalesRow producto : toDeleteFinal) {
 				ActivarDesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarTodo.desactivarModulo(producto);
-				jTextAreaStatusProcessTV.setText(jTextAreaStatusProcessTV.getText() + "\n" + "INFO;"
+				textAreaTV.setText(textAreaTV.getText() + "\n" + "INFO;"
 						+ producto.getRutConDv() + ";" + producto.getCodCanal()
 						+ ";CODIGO_RESPONSE: " + canalesResponseOBJ.getCodResponse() + ";DESCRIPCION: "
 						+ canalesResponseOBJ.getDescripcion());

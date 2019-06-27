@@ -42,7 +42,7 @@ public class BDManagerImpl implements BDManager {
 			System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces");
 
 	@Override
-	public void descargarCSV(String opcion, JTextArea jTextAreaStatusProcess) {
+	public JTextArea descargarCSV(String opcion, JTextArea jTextAreaStatusProcess) {
 
 		// descargar solo aquellos archivos que podemos obtener directamente en
 		// BDs
@@ -66,19 +66,20 @@ public class BDManagerImpl implements BDManager {
 							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
 					+ " en la ruta: " + PATH_ARCHIVOS);
 		}
+		return jTextAreaStatusProcess;
 
 	}
 
 	@Override
-	public void actualiza(String producto, String archivo, JTextArea jTextAreaStatusProcess) {
-		borraDB(producto, jTextAreaStatusProcess);
+	public JTextArea actualiza(String producto, String archivo, JTextArea jTextAreaStatusProcess) {
+		jTextAreaStatusProcess = borraDB(producto, jTextAreaStatusProcess);
 		if (null != archivo)
 			formatear(archivo, producto);
-		cargaCSV(producto, jTextAreaStatusProcess);
+		return cargaCSV(producto, jTextAreaStatusProcess);
 	}
 
 	@Override
-	public void cargaCSV(String producto, JTextArea jTextAreaStatusProcess) {
+	public JTextArea cargaCSV(String producto, JTextArea jTextAreaStatusProcess) {
 		Connection conn = null;
 		BaseConnection pgcon = null;
 		Reader in = null;
@@ -136,11 +137,12 @@ public class BDManagerImpl implements BDManager {
 			}
 
 		}
+		return jTextAreaStatusProcess;
 
 	}
 
 	@Override
-	public void borraDB(String producto, JTextArea jTextAreaStatusProcess) {
+	public JTextArea borraDB(String producto, JTextArea jTextAreaStatusProcess) {
 		Connection conn = null;
 		Statement statement = null;
 		try {
@@ -168,6 +170,7 @@ public class BDManagerImpl implements BDManager {
 				e.printStackTrace();
 			}
 		}
+		return jTextAreaStatusProcess;
 	}
 
 	@Override
@@ -332,6 +335,7 @@ public class BDManagerImpl implements BDManager {
 				}
 			}
 		}
+		contadores.setjTextAreaStatusProcess(jTextAreaStatusProcess);
 		return contadores;
 	}
 

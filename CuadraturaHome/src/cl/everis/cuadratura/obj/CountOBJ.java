@@ -1,5 +1,7 @@
 package cl.everis.cuadratura.obj;
 
+import javax.swing.JTextArea;
+
 /**
  * 
  * @author wugaldeq
@@ -10,6 +12,23 @@ public class CountOBJ {
 	private int totalRed;
 	private int totalTplay;
 	private int dif;
+	private JTextArea jTextAreaStatusProcess;
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public JTextArea getjTextAreaStatusProcess() {
+		return jTextAreaStatusProcess;
+	}
+
+	/**
+	 * 
+	 * @param jTextAreaStatusProcess
+	 */
+	public void setjTextAreaStatusProcess(JTextArea jTextAreaStatusProcess) {
+		this.jTextAreaStatusProcess = jTextAreaStatusProcess;
+	}
 
 	/**
 	 * 
