@@ -68,17 +68,19 @@ public class Constantes {
 			+ "ON  tplay.\"CODI_TECNICO\" = aaa.\"UID\" "
 			+ "WHERE aaa.\"UID\" IS NULL",
 			// RED_NO_3PLAY
-			"SELECT aaa.* FROM internet_aaa aaa LEFT OUTER JOIN internet_3play tplay "
+			"SELECT aa.* FROM (SELECT aaa.* FROM internet_aaa aaa LEFT OUTER JOIN internet_3play tplay "
 			+ "ON  aaa.\"UID\" = tplay.\"CODI_TECNICO\" "
-			+ "WHERE tplay.\"CODI_TECNICO\" IS NULL",
+			+ "WHERE tplay.\"CODI_TECNICO\" IS NULL) AS aa LEFT OUTER JOIN bdservicios_retirados bserv "
+			+ "ON  aa.\"UID\" = bserv.\"VALOR_ATRIBUTO\" WHERE bserv.\"VALOR_ATRIBUTO\" IS NULL",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM internet_3play",
 			// COUNT TOTAL RED
 			"SELECT COUNT(1) FROM internet_aaa",
 			// COUNT RED_NO_3PLAY
-			"SELECT COUNT(1) FROM internet_aaa aaa LEFT OUTER JOIN internet_3play tplay "
+			"SELECT COUNT(1) FROM (SELECT aaa.* FROM internet_aaa aaa LEFT OUTER JOIN internet_3play tplay "
 			+ "ON  aaa.\"UID\" = tplay.\"CODI_TECNICO\" "
-			+ "WHERE tplay.\"CODI_TECNICO\" IS NULL"};
+			+ "WHERE tplay.\"CODI_TECNICO\" IS NULL) AS aa LEFT OUTER JOIN bdservicios_retirados bserv "
+			+ "ON  aa.\"UID\" = bserv.\"VALOR_ATRIBUTO\" WHERE bserv.\"VALOR_ATRIBUTO\" IS NULL"};
 	private final static String[] QUERYS_INTERNET_3P_KENAN ={
 			// 3PLAY_NO_RED
 			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\","
@@ -295,6 +297,7 @@ public class Constantes {
 	private final static String CARGA_KENAN_C ="copy facturador_kenan_canal FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_AAA ="copy internet_aaa FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_TODO_KAL ="copy todo_kaltura FROM stdin DELIMITER ';' CSV header";
+	private final static String CARGA_SERVRET ="copy bdservicios_retirados FROM stdin DELIMITER ';' CSV header";
 	
 	private final static String TRUNCATE_TLF ="TRUNCATE tlf_3play";
 	private final static String TRUNCATE_INT ="TRUNCATE internet_3play";
@@ -307,11 +310,13 @@ public class Constantes {
 	private final static String TRUNCATE_KENAN_C ="TRUNCATE facturador_kenan_canal";
 	private final static String TRUNCATE_AAA ="TRUNCATE internet_aaa";
 	private final static String TRUNCATE_TODO_KAL ="TRUNCATE todo_kaltura";
+	private final static String TRUNCATE_SERVRET ="TRUNCATE bdservicios_retirados";
 	
 	private final static String CABECERA_TLF ="CODI_TECNICO;NRUT_CLIENTE;DRUT_CLIENTE;DESC_GLOSAPROD;NMRO_SOLICITUDACT;KEY_ANI";
 	private final static String CABECERA_INT ="CODI_TECNICO;NRUT_CLIENTE;DRUT_CLIENTE;DESC_GLOSAPROD;NMRO_SOLICITUDACT";
 	private final static String CABECERA_TV_CANALES ="KEY_CANAL;RUT;DV;DETALLE;PRODUCTO;CODI_PRODUCTO;TRYBUY;ESTADO_CLIENTE";
 	private final static String CABECERA_OCTAR ="KEY_ANI;REQUEST_ID;RUT;DV;VALOR_DEFECTO";
+	private final static String CABECERA_SERVRET ="RUT;COD_SERVICIO_TECNICO;ATRIBUTO_NOM;VALOR_ATRIBUTO;VALOR_ATRIBUTO_1";
 
 	private final static String FILE_TV_CANALES ="tv_tplay_{0}.csv";
 	private final static String FILE_TLF = "tlf_tplay_{0}.csv";
@@ -324,6 +329,7 @@ public class Constantes {
 	private final static String FILE_KENAN_C ="canales_kenan_{0}.csv";
 	private final static String FILE_AAA ="internet_aaa_{0}.csv";
 	private final static String FILE_TODO_KAL ="todo_kaltura_{0}.csv";
+	private final static String FILE_SERVRET ="servicios_retirados_{0}.csv";
 	
 	
 	private final static String QUERY_TV_CANALES = "SELECT RUT,"
@@ -373,6 +379,11 @@ public class Constantes {
 			+ "and c.desc_tiposerv = 'TELEFONIA' "
 			+ "and d.codi_tecnico is not null "
 			+ "and desc_catego = 'PLAN BASE'";
+	private final static String QUERY_INT = "select (select v.id_banda_ancha from MDP_OXC_VENTA V where v.rut_cliente =c.nrut_cliente "
+			+ "and v.tipo_termino = 'Terminado' and v.nro_comercial = (select max(f.nro_comercial) from MDP_OXC_VENTA F where f.rut_cliente = v.rut_cliente "
+			+ "and f.tipo_termino = 'Terminado' and f.estado_oxc = 40) and v.estado_oxc = 40) as codi_tecnico, c.nrut_cliente, c.drut_cliente, c.desc_glosaprod, c.nmro_solicitudact "
+			+ "from MDP_NEG_CLIENTESACTIVOS C where c.vlor_estadocomp = 1 and c.desc_tiposerv = 'INTERNET' and c.desc_catego = 'PLAN BASE'";
+	/**
 	private final static String QUERY_INT = "select d.codi_tecnico, c.nrut_cliente, c.drut_cliente, c.desc_glosaprod, c.nmro_solicitudact "
 			+ "from MDP_NEG_CLIENTESACTIVOS C, RMA_NEG_DATOSOTC D "
 			+ "where C.nmro_solicitudact = D.corr_solicitud "
@@ -381,12 +392,18 @@ public class Constantes {
 			+ "and c.desc_tiposerv = 'INTERNET' "
 			+ "and d.codi_tecnico is not null "
 			+ "and desc_catego = 'PLAN BASE'";
+	**/
 	private final static String QUERY_OCTAR = "SELECT o.REQUEST_ID, o.RUT, o.DV, r.VALOR_DEFECTO "
 			+ "FROM SP_OXT o INNER JOIN SP_CS_ATRIBUTO_RECURSO r ON r.REQUEST_ID_OXT = o.REQUEST_ID "
 			+ "WHERE r.NOMBRE_ATRIBUTO = 'Ani asociado' "
 			+ "AND o.tipo_de_servicio = '3 PLAY FIBRA' "
 			+ "AND o.tipo_trabajo = 'INSTALACION' "
 			+ "AND o.tipo_de_termino_ott = 'Terminado'";
+	private final static String QUERY_SERVRET = "select tec.rut, tec.cod_servicio_tecnico, rec.ATRIBUTO_NOM, rec.VALOR_ATRIBUTO, atr.VALOR_ATRIBUTO "
+			+ "from servicio_tecnico tec, recurso_atributo rec, atributo_servicio atr "
+			+ "where tec.ID_TRANSACCION=rec.ID_TRANSACCION and tec.ID_TRANSACCION = atr.ID_TRANSACCION and tec.serv_gen='3 PLAY FIBRA' "
+			+ "and rec.ATRIBUTO_NOM = 'Cuenta PPPe INTE' and atr.ATRIBUTO_NOM ='Tipo_Servicio_SIAC' and tec.estado in ('RET')";
+	
 	public static String getQueryDescarga(String arg) {
 		String toReturn = "";
 		if ("INTERNET".equals(arg)){
@@ -397,6 +414,8 @@ public class Constantes {
 			toReturn = QUERY_TV_CANALES;
 		} else if ("OTCAR".equals(arg)){
 			toReturn = QUERY_OCTAR;
+		} else if ("SERV_RETIRADOS".equals(arg)){
+			toReturn = QUERY_SERVRET;
 		}
 		return toReturn;
 	}
@@ -411,6 +430,8 @@ public class Constantes {
 			toReturn = CABECERA_TV_CANALES;
 		} else if ("OTCAR".equals(arg)){
 			toReturn = CABECERA_OCTAR;
+		} else if ("SERV_RETIRADOS".equals(arg)){
+			toReturn = CABECERA_SERVRET;
 		}
 		return toReturn;	
 	}
@@ -439,6 +460,8 @@ public class Constantes {
 			toReturn = FILE_AAA;
 		} else if ("TODO_KALTURA".equals(arg)){
 			toReturn = FILE_TODO_KAL;
+		}  else if ("SERV_RETIRADOS".equals(arg)){
+			toReturn = FILE_SERVRET;
 		}
 		return toReturn;
 	}
@@ -467,6 +490,8 @@ public class Constantes {
 			toReturn = CARGA_AAA;
 		} else if ("TODO_KALTURA".equals(arg)){
 			toReturn = CARGA_TODO_KAL;
+		} else if ("SERV_RETIRADOS".equals(arg)){
+			toReturn = CARGA_SERVRET;
 		}
 		return toReturn;
 	}
@@ -495,6 +520,8 @@ public class Constantes {
 			toReturn = TRUNCATE_AAA;
 		} else if ("TODO_KALTURA".equals(arg)){
 			toReturn = TRUNCATE_TODO_KAL;
+		} else if ("SERV_RETIRADOS".equals(arg)){
+			toReturn = TRUNCATE_SERVRET;
 		}
 		return toReturn;
 	}

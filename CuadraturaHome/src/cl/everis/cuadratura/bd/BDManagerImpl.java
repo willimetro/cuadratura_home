@@ -187,7 +187,9 @@ public class BDManagerImpl implements BDManager {
 			}
 			if ("OTCAR".equals(producto)) {
 				conn = ConnectionCuadraturaBD.getConnOCTAR();
-			} else {
+			} else if("SERV_RETIRADOS".equals(producto)){
+				conn = ConnectionCuadraturaBD.getConnServicios();
+			}  else {
 				conn = ConnectionCuadraturaBD.getConnTPlay();
 			}
 			fw = new FileWriter(filename);
@@ -364,7 +366,7 @@ public class BDManagerImpl implements BDManager {
 
 		int columnas = rs.getMetaData().getColumnCount();
 
-		if ("INTERNET".equals(producto) && !"".equals(rs.getNString("CODI_TECNICO").trim())) {
+		if (("INTERNET".equals(producto) && null != rs.getNString("CODI_TECNICO") && !"".equals(rs.getNString("CODI_TECNICO").trim()))||"SERV_RETIRADOS".equals(producto)) {
 			for (int i = 1; i < columnas; i++) {
 				fw.append(rs.getString(i) + ";");
 			}

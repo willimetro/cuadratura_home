@@ -61,7 +61,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private final static String[] CRUCES_TPLAY = { "TPLAY_KALTURA", "TPLAY_KALTURA_C", "TPLAY_KENAN_TV",
 			"TPLAY_KENAN_TLF", "TPLAY_KENAN_INT", "TPLAY_KENAN_C", "TPLAY_AAA", "TPLAY_OTCAR" };
 	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_62", "KENAN_C",
-			"KALTURA", "KALTURA_C", "AAA" };
+			"KALTURA", "KALTURA_C", "AAA", "SERV_RETIRADOS"};
 	private JFrame mainFrame = null;
 	// CheckBox
 	JCheckBox chTodos = new JCheckBox("Todos");
@@ -897,8 +897,10 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				/* INTERNET AAA */
 				if (chTresPlayAAA.isSelected()) {
 					textAreaTplay.setText(bdManager.descargarCSV("INTERNET",textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.descargarCSV("SERV_RETIRADOS",textAreaTplay).getText());
 					textAreaTplay.setText(bdManager.actualiza("AAA", fileDialogInternet.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
 					textAreaTplay.setText(bdManager.actualiza("INTERNET", null,textAreaTplay).getText());
+					textAreaTplay.setText(bdManager.actualiza("SERV_RETIRADOS", null,textAreaTplay).getText());
 					CountOBJ obj = bdManager.obtenerCruces("TPLAY_AAA",textAreaTplay);
 					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_AAA", obj);

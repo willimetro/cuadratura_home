@@ -35,7 +35,7 @@ public class Correo {
 										+ ((null != c.get("TPLAY_KALTURA")) ? "<th>BASE TV(KALTURA)</th>" : "")
 										+ ((null != c.get("TPLAY_KALTURA_C")) ? "<th>CANALES TV(KALTURA)</th>" : "")
 										+ ((null != c.get("TPLAY_OTCAR")) ? "<th>TELEFONIA(OTCAR)</th>" : "")
-										+ ((null != c.get("TPLAY_AAA")) ? "<th>INTERNET(AAA)</th>" : "") + "<tr/>"
+										+ ((null != c.get("TPLAY_AAA")) ? "<th>INTERNET AAA(SIN RETIRADOS)</th>" : "") + "<tr/>"
 										+ "<tr>"
 										+ "<td>TOTAL 3PLAY</td>"
 										+ ((null != c.get("TPLAY_KALTURA"))
