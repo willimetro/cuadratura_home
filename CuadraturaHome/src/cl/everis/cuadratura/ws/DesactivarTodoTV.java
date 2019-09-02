@@ -51,7 +51,7 @@ public class DesactivarTodoTV {
 		type.getRequest().setHouseholdId(null != fileCorteCanalesRow.getCodiServicio() ? fileCorteCanalesRow.getCodiServicio() : "");
 		type.getRequest().setProductId(fileCorteCanalesRow.getCodCanal());
 		type.getRequest().setUserId(fileCorteCanalesRow.getRutConDv());
-		ActivarDesactivarCanalesResponseOBJ desactivarCanalesResponseOBJ = null;
+		ActivarDesactivarCanalesResponseOBJ desactivarCanalesResponseOBJ = new ActivarDesactivarCanalesResponseOBJ();
 
 		try {
 			DesactivarVasYCanalPremiumLocator desactivarVasYCanalPremiumLocator = new DesactivarVasYCanalPremiumLocator();
@@ -67,7 +67,6 @@ public class DesactivarTodoTV {
 			ResponseType rs = new ResponseType(new HeaderOutType("0000", "PRUEBA EXITOSA", "", ""));
 			resp.setResponse(rs);
 			**/
-			desactivarCanalesResponseOBJ = new ActivarDesactivarCanalesResponseOBJ();
 			desactivarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			desactivarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
 			LogEliminacion
@@ -78,26 +77,36 @@ public class DesactivarTodoTV {
 			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: MALFORMEDURLEXCEPTION;DESCRIPCION: URL ERRONEA");
+			desactivarCanalesResponseOBJ.setCodResponse("MALFORMEDURLEXCEPTION");
+			desactivarCanalesResponseOBJ.setDescripcion("URL ERRONEA");
 			e1.printStackTrace();
 		} catch (ServiceException e1) {
 			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: SERVICEEXCEPTION;DESCRIPCION: SERVICIO CON ERROR");
+			desactivarCanalesResponseOBJ.setCodResponse("SERVICEEXCEPTION");
+			desactivarCanalesResponseOBJ.setDescripcion("SERVICIO CON ERROR");
 			e1.printStackTrace();
 		} /****/catch (DesactivarVasYCanalPremiumFaultType e) {
 			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
+			desactivarCanalesResponseOBJ.setCodResponse("DESACTIVARCANALESPREMIUMTYPE");
+			desactivarCanalesResponseOBJ.setDescripcion("SERVICIO CON ERROR");
 			e.printStackTrace();
 		} catch (RemoteException e) {
 			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: REMOTEEXCEPTION;DESCRIPCION: ERROR REMOTO");
+			desactivarCanalesResponseOBJ.setCodResponse("REMOTEEXCEPTION");
+			desactivarCanalesResponseOBJ.setDescripcion("ERROR REMOTO");
 			e.printStackTrace();
 		} /****/catch (Exception e) {
 			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
+			desactivarCanalesResponseOBJ.setCodResponse("ERROR GENERAL");
+			desactivarCanalesResponseOBJ.setDescripcion("ERROR GENERAL");
 			e.printStackTrace();
 		}
 

@@ -15,7 +15,9 @@ public class Correo {
 		try {
 //			em.enviarMail("carboleda@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 //					getHtmlCorreo(c), null);
-			em.enviarMail("iarancibia@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
+//			em.enviarMail("iarancibia@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
+//					getHtmlCorreo(c), null);
+			em.enviarMail("cbtorres@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 					getHtmlCorreo(c), null);
 			em.enviarMail("wugaldeq@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 					getHtmlCorreo(c), null);
