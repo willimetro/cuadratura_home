@@ -12,7 +12,58 @@ public class CountOBJ {
 	private int totalRed;
 	private int totalTplay;
 	private int dif;
+	private int totalOk;
+	private int totalRedTplay;
+	private int totalKenan;
 	private JTextArea jTextAreaStatusProcess;
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getTotalOk() {
+		return totalOk;
+	}
+
+	/**
+	 * 
+	 * @param totalOk
+	 */
+	public void setTotalOk(int totalOk) {
+		this.totalOk = totalOk;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getTotalRedTplay() {
+		return totalRedTplay;
+	}
+
+	/**
+	 * 
+	 * @param totalRedTplay
+	 */
+	public void setTotalRedTplay(int totalRedTplay) {
+		this.totalRedTplay = totalRedTplay;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getTotalKenan() {
+		return totalKenan;
+	}
+
+	/**
+	 * 
+	 * @param totalKenan
+	 */
+	public void setTotalKenan(int totalKenan) {
+		this.totalKenan = totalKenan;
+	}
 	
 	/**
 	 * 
@@ -66,7 +117,7 @@ public class CountOBJ {
 	 * 
 	 * @return
 	 */
-	public int getDiferencia() {
+	public int getDif() {
 		return dif;
 	}
 
@@ -74,7 +125,7 @@ public class CountOBJ {
 	 * 
 	 * @param redNoTplay
 	 */
-	public void setDiferencia(int redNoTplay) {
+	public void setDif(int redNoTplay) {
 		this.dif = redNoTplay;
 	}
 

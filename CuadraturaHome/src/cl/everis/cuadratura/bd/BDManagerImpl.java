@@ -36,10 +36,13 @@ public class BDManagerImpl implements BDManager {
 
 	private final static String PATH_ARCHIVOS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs\\";
 	private final static String PATH_CRUCE = System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces\\";
+	private final static String PATH_CROS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces\\Cross\\";
 	private final static File DIR_CARGA_ARCHIVOS = new File(
 			System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs");
 	private final static File DIR_DESC_ARCHIVOS = new File(
 			System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces");
+	private final static File DIR_DESC_CROS = new File(
+			System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces\\Cross");
 
 	@Override
 	public JTextArea descargarCSV(String opcion, JTextArea jTextAreaStatusProcess) {
@@ -289,7 +292,7 @@ public class BDManagerImpl implements BDManager {
 					else if (i == 3)
 						contadores.setTotalRed(rs.getInt(1));
 					else
-						contadores.setDiferencia(rs.getInt(1));
+						contadores.setDif(rs.getInt(1));
 				}
 			}
 		} catch (Exception e) {
@@ -341,6 +344,91 @@ public class BDManagerImpl implements BDManager {
 		return contadores;
 	}
 
+	@Override
+	public CountOBJ obtenerCrucesCros(String producto, JTextArea jTextAreaStatusProcess) {
+		Connection conn = null;
+		FileOutputStream fileOutputStream = null;
+		CountOBJ contadores = new CountOBJ();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Statement statement = null;
+		try {
+			if (!DIR_DESC_CROS.exists()) {
+				DIR_DESC_CROS.mkdirs();
+			}
+			conn = ConnectionCuadraturaBD.getLocalConn();
+			CopyManager copyManager = new CopyManager((BaseConnection) conn);
+			for (int i = 0; i < 8; i++) {
+				if (i==0 || i==1) {
+					statement = conn.createStatement();
+					statement.executeUpdate(Constantes.getQueryCruce(producto)[i]);
+					if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"\n"+"Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
+					} else {
+						jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
+					}
+				} else if (i==2 || i==3 || i==4) {
+					File file = new File(PATH_CROS + MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					fileOutputStream = new FileOutputStream(file);
+					copyManager.copyOut(
+							"COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)",
+							fileOutputStream);
+					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+							+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: "
+								+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+								+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+										LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					} else {
+						jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]
+								+ " y se entrega en archivo " + MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+										LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					}
+				} else {
+					pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
+					rs = pstmt.executeQuery();
+					if (rs.next()) {
+						if (i == 5)
+							contadores.setTotalOk(rs.getInt(1));
+						else if (i == 6)
+							contadores.setTotalRedTplay(rs.getInt(1));
+						else
+							contadores.setTotalKenan(rs.getInt(1));
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (null!=rs){
+					rs.close();
+				}
+				if (null!=pstmt){
+					pstmt.close();
+				}
+				if (null!=statement){
+					statement.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
+				if (null!=fileOutputStream){
+					fileOutputStream.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		contadores.setjTextAreaStatusProcess(jTextAreaStatusProcess);
+		return contadores;	
+	}
+	
 	@Override
 	public void formatear(String archivo, String producto) {
 

@@ -62,6 +62,13 @@ public interface BDManager {
 	 * @param producto
 	 * @param jTextAreaStatusProcess 
 	 */
-	CountOBJ obtenerCruces(String producto, JTextArea jTextAreaStatusProcess);	
+	CountOBJ obtenerCruces(String producto, JTextArea jTextAreaStatusProcess);
+	
+	/**
+	 * 
+	 * @param producto
+	 * @param jTextAreaStatusProcess 
+	 */
+	CountOBJ obtenerCrucesCros(String s, JTextArea textAreaTplay);	
 	
 }

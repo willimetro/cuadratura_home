@@ -49,6 +49,12 @@ public class DesactivarCanales {
 	private final static String QUERY_KENAN_CDF = "SELECT * FROM facturador_kenan_canal fcan WHERE fcan.\"RUT_CLIENTE\" = ? AND fcan.\"CANAL\" "
 			+ "LIKE ('%CDF%') AND fcan.\"ESTADO\" in ('Facturado','Nuevo')";
 
+	private ActivarVasYCanalPremiumBindingQSServiceLocator activarVasYCanalPremiumLocator;
+	private ActivarVasYCanalPremiumPortType activarVasYCanalPremium;
+	private ActivarVasYCanalPremiumBindingStub bindingStub;
+	private DesactivarVasYCanalPremiumLocator desactivarVasYCanalPremiumLocator;
+	private DesactivarVasYCanalPremiumPortType desactivarVasYCanalPremium;
+	private DesactivarVasYCanalPremiumBindingStub binding;
 	/**	private final static String QUERY = "select d.codi_servicio "
 			+ "from MDP_NEG_CLIENTESACTIVOS C, RMA_NEG_DATOSOTC D " + "where C.nmro_solicitudact = D.corr_solicitud "
 			+ "and D.CORR_TIPOSERVICIO = 2 " + "and c.vlor_estadocomp = 1 " + "and c.desc_tiposerv = 'TELEVISION' "
@@ -72,12 +78,20 @@ public class DesactivarCanales {
 		ActivarDesactivarCanalesResponseOBJ activarCanalesResponseOBJ = null;
 
 		try {
-			ActivarVasYCanalPremiumBindingQSServiceLocator activarVasYCanalPremiumLocator = new ActivarVasYCanalPremiumBindingQSServiceLocator();
+			
 			URL url = new URL(
 					"http://esb.entel.cl/provision/orderingserv/orqordenservicio/ose_n_px_activarvasycanalpremiumps");
-			ActivarVasYCanalPremiumPortType activarVasYCanalPremium = activarVasYCanalPremiumLocator
-					.getActivarVasYCanalPremiumBindingQSPort(url);
-			ActivarVasYCanalPremiumBindingStub bindingStub = (ActivarVasYCanalPremiumBindingStub) activarVasYCanalPremium;
+			
+			if (null==activarVasYCanalPremiumLocator) {
+				activarVasYCanalPremiumLocator = new ActivarVasYCanalPremiumBindingQSServiceLocator();
+			}
+			if (null==activarVasYCanalPremium) {
+				activarVasYCanalPremium = activarVasYCanalPremiumLocator
+						.getActivarVasYCanalPremiumBindingQSPort(url);
+			}
+			if (null==bindingStub) {
+				bindingStub = (ActivarVasYCanalPremiumBindingStub) activarVasYCanalPremium;
+			}
 			bindingStub.setTimeout(10000);
 			ActivarVasYCanalPremiumResponseType resp = bindingStub.activarVasYCanalPremium(type);
 			/**
@@ -138,14 +152,21 @@ public class DesactivarCanales {
 		ActivarDesactivarCanalesResponseOBJ desactivarCanalesResponseOBJ = new ActivarDesactivarCanalesResponseOBJ();
 
 		try {
-			DesactivarVasYCanalPremiumLocator desactivarVasYCanalPremiumLocator = new DesactivarVasYCanalPremiumLocator();
 			URL url = new URL(
 					"http://esb.entel.cl:80/provision/orderingserv/orqordenservicio/ose_n_px_desactivarvasycanalpremiumps");
-			DesactivarVasYCanalPremiumPortType desactivarVasYCanalPremium = desactivarVasYCanalPremiumLocator
+			
+			if (null==desactivarVasYCanalPremiumLocator) {
+				desactivarVasYCanalPremiumLocator = new DesactivarVasYCanalPremiumLocator();
+			}
+			if (null==desactivarVasYCanalPremium) {
+				desactivarVasYCanalPremium = desactivarVasYCanalPremiumLocator
 					.getDesactivarVasYCanalPremiumPort(url);
-			DesactivarVasYCanalPremiumBindingStub bindingStub = (DesactivarVasYCanalPremiumBindingStub) desactivarVasYCanalPremium;
-			bindingStub.setTimeout(10000);
-			DesactivarVasYCanalPremiumResponseType resp = bindingStub.desactivarVasYCanalPremium(type);
+			}
+			if (null==binding) {
+				binding = (DesactivarVasYCanalPremiumBindingStub) desactivarVasYCanalPremium;
+			}
+			binding.setTimeout(10000);
+			DesactivarVasYCanalPremiumResponseType resp = binding.desactivarVasYCanalPremium(type);
 			/**
 			DesactivarVasYCanalPremiumResponseType resp = new DesactivarVasYCanalPremiumResponseType();
 			com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.ResponseType rs = new com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.ResponseType(

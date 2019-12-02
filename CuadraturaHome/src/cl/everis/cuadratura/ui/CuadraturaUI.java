@@ -60,6 +60,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 
 	private final static String[] CRUCES_TPLAY = { "TPLAY_KALTURA", "TPLAY_KALTURA_C", "TPLAY_KENAN_TV",
 			"TPLAY_KENAN_TLF", "TPLAY_KENAN_INT", "TPLAY_KENAN_C", "TPLAY_AAA", "TPLAY_OTCAR" };
+	private final static String[] CRUCES_CROS = { "INTERNET", "TV", "TLF", "ADICIONALES" };
 	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_62", "KENAN_C",
 			"KALTURA", "KALTURA_C", "AAA", "SERV_RETIRADOS"};
 	private JFrame mainFrame = null;
@@ -1007,6 +1008,16 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				}
 				for (String s : CRUCES_TPLAY) {
 					CountOBJ obj1 = bdManager.obtenerCruces(s,textAreaTplay);
+					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
+					mapResult.put(s, obj1);
+					if (s.indexOf("KENAN") >= 0) {
+						CountOBJ obj2 = bdManager.obtenerCruces(s + "_62",textAreaTplay);
+						textAreaTplay.setText(obj2.getjTextAreaStatusProcess().getText());
+						mapResult.put(s + "_62", obj2);
+					}
+				}
+				for (String s : CRUCES_CROS) {
+					CountOBJ obj1 = bdManager.obtenerCrucesCros(s,textAreaTplay);
 					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
 					mapResult.put(s, obj1);
 					if (s.indexOf("KENAN") >= 0) {
