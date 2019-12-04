@@ -243,7 +243,7 @@ public class BDManagerImpl implements BDManager {
 			}
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
-			for (int i = 0; i < 2; i++) {
+			for (int i = 0; i < 3; i++) {
 				File file = new File(PATH_CRUCE + MessageFormat.format(Constantes.getFileCruce(producto)[i],
 						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 				fileOutputStream = new FileOutputStream(file);
@@ -283,16 +283,20 @@ public class BDManagerImpl implements BDManager {
 
 		try {
 			conn = ConnectionCuadraturaBD.getLocalConn();
-			for (int i = 2; i < 5; i++) {
+			for (int i = 3; i < 8; i++) {
 				pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
 				rs = pstmt.executeQuery();
 				if (rs.next()) {
-					if (i == 2)
+					if (i == 3)
 						contadores.setTotalTplay(rs.getInt(1));
-					else if (i == 3)
+					else if (i == 4)
 						contadores.setTotalRed(rs.getInt(1));
+					else if (i == 5)
+						contadores.setTotalAmbos(rs.getInt(1));
+					else if (i == 6)
+						contadores.setDifTplayRed(rs.getInt(1));
 					else
-						contadores.setDif(rs.getInt(1));
+						contadores.setDifRedTplay(rs.getInt(1));
 				}
 			}
 		} catch (Exception e) {
@@ -315,7 +319,7 @@ public class BDManagerImpl implements BDManager {
 		if (producto.indexOf("KENAN") >= 0 && producto.indexOf("62") < 0) {
 			try {
 				conn = ConnectionCuadraturaBD.getLocalConn();
-				for (int i = 5; i < Constantes.getQueryCruce(producto).length; i++) {
+				for (int i = 8; i < Constantes.getQueryCruce(producto).length; i++) {
 					statement = conn.createStatement();
 					statement.executeUpdate(Constantes.getQueryCruce(producto)[i]);
 					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);

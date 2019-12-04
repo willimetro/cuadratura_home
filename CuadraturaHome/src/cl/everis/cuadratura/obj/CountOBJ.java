@@ -9,9 +9,11 @@ import javax.swing.JTextArea;
  */
 public class CountOBJ {
 
-	private int totalRed;
 	private int totalTplay;
-	private int dif;
+	private int totalRed;
+	private int totalAmbos;
+	private int difTplayRed;
+	private int difRedTplay;
 	private int totalOk;
 	private int totalRedTplay;
 	private int totalKenan;
@@ -117,16 +119,48 @@ public class CountOBJ {
 	 * 
 	 * @return
 	 */
-	public int getDif() {
-		return dif;
+	public int getDifRedTplay() {
+		return difRedTplay;
 	}
 
 	/**
 	 * 
 	 * @param redNoTplay
 	 */
-	public void setDif(int redNoTplay) {
-		this.dif = redNoTplay;
+	public void setDifRedTplay(int redNoTplay) {
+		this.difRedTplay = redNoTplay;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getTotalAmbos() {
+		return totalAmbos;
+	}
+
+	/**
+	 * 
+	 * @param totalAmbos
+	 */
+	public void setTotalAmbos(int totalAmbos) {
+		this.totalAmbos = totalAmbos;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getDifTplayRed() {
+		return difTplayRed;
+	}
+
+	/**
+	 * 
+	 * @param difTplayRed
+	 */
+	public void setDifTplayRed(int difTplayRed) {
+		this.difTplayRed = difTplayRed;
 	}
 
 }
