@@ -1,5 +1,7 @@
 package cl.everis.cuadratura.bd;
 
+import javax.swing.JTextArea;
+
 import cl.everis.cuadratura.obj.CountOBJ;
 
 /**
@@ -13,27 +15,31 @@ public interface BDManager {
 	/**
 	 * 
 	 * @param producto
+	 * @param jTextAreaStatusProcess 
 	 */
-	void cargaCSV(String producto);
+	JTextArea cargaCSV(String producto, JTextArea jTextAreaStatusProcess);
 
 	/**
 	 * 
 	 * @param producto
+	 * @param jTextAreaStatusProcess 
 	 */
-	void borraDB(String producto);
+	JTextArea borraDB(String producto, JTextArea jTextAreaStatusProcess);
 	
 	/**
 	 * 
 	 * @param opcion 
+	 * @param jTextAreaStatusProcess 
 	 */
-	void descargarCSV(String opcion);
+	JTextArea descargarCSV(String opcion, JTextArea jTextAreaStatusProcess);
 	
 	/**
 	 * 
 	 * @param producto
 	 * @param archivo
+	 * @param jTextAreaStatusProcess 
 	 */
-	void actualiza(String producto, String archivo);
+	JTextArea actualiza(String producto, String archivo, JTextArea jTextAreaStatusProcess);
 	
 	/**
 	 * 
@@ -54,7 +60,15 @@ public interface BDManager {
 	/**
 	 * 
 	 * @param producto
+	 * @param jTextAreaStatusProcess 
 	 */
-	CountOBJ obtenerCruces(String producto);	
+	CountOBJ obtenerCruces(String producto, JTextArea jTextAreaStatusProcess);
+	
+	/**
+	 * 
+	 * @param producto
+	 * @param jTextAreaStatusProcess 
+	 */
+	CountOBJ obtenerCrucesCros(String s, JTextArea textAreaTplay);	
 	
 }

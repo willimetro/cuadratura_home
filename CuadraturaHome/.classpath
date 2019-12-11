@@ -31,5 +31,6 @@
 	<classpathentry kind="lib" path="lib/org.apache.commons.logging_1.1.1.v201101211721.jar"/>
 	<classpathentry kind="lib" path="lib/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/ose_n_px_desactivarvasycanalpremiumps.jar"/>
+	<classpathentry kind="lib" path="lib/ose_n_px_activarvasycanalpremiumps.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

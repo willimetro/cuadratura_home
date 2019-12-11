@@ -17,6 +17,8 @@ import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import javax.swing.JTextArea;
+
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
@@ -34,34 +36,53 @@ public class BDManagerImpl implements BDManager {
 
 	private final static String PATH_ARCHIVOS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs\\";
 	private final static String PATH_CRUCE = System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces\\";
-	private final static File DIR_CARGA_ARCHIVOS=new File(System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs");
-	private final static File DIR_DESC_ARCHIVOS=new File(System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces");
+	private final static String PATH_CROS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces\\Cross\\";
+	private final static File DIR_CARGA_ARCHIVOS = new File(
+			System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs");
+	private final static File DIR_DESC_ARCHIVOS = new File(
+			System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces");
+	private final static File DIR_DESC_CROS = new File(
+			System.getProperty("user.home") + "\\Desktop\\cuadratura\\Cruces\\Cross");
 
 	@Override
-	public void descargarCSV(String opcion) {
+	public JTextArea descargarCSV(String opcion, JTextArea jTextAreaStatusProcess) {
 
-		// descargar solo aquellos archivos que podemos obtener directamente en BDs
+		// descargar solo aquellos archivos que podemos obtener directamente en
+		// BDs
 		System.out.println("Inició proceso de descarga para producto: " + opcion);
-		descargaArchivo(PATH_ARCHIVOS+MessageFormat.format(Constantes.getFile(opcion), LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))),
-				Constantes.getQueryDescarga(opcion),
-				Constantes.getCabecera(opcion),
-				opcion);
-		System.out.println("Descargó archivo " +
-				MessageFormat.format(Constantes.getFile(opcion), LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) +
-				" en la ruta: " + PATH_ARCHIVOS );	
+		descargaArchivo(
+				PATH_ARCHIVOS + MessageFormat.format(Constantes.getFile(opcion),
+						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))),
+				Constantes.getQueryDescarga(opcion), Constantes.getCabecera(opcion), opcion);
+		System.out.println("Descargó archivo "
+				+ MessageFormat.format(Constantes.getFile(opcion),
+						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
+				+ " en la ruta: " + PATH_ARCHIVOS);
+		if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+			jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Descargó archivo "
+					+ MessageFormat.format(Constantes.getFile(opcion),
+							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
+					+ " en la ruta: " + PATH_ARCHIVOS);
+		} else {
+			jTextAreaStatusProcess.setText("Descargó archivo "
+					+ MessageFormat.format(Constantes.getFile(opcion),
+							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
+					+ " en la ruta: " + PATH_ARCHIVOS);
+		}
+		return jTextAreaStatusProcess;
 
 	}
 
 	@Override
-	public void actualiza(String producto, String archivo) {
-		borraDB(producto);
-		if(null != archivo)
+	public JTextArea actualiza(String producto, String archivo, JTextArea jTextAreaStatusProcess) {
+		jTextAreaStatusProcess = borraDB(producto, jTextAreaStatusProcess);
+		if (null != archivo)
 			formatear(archivo, producto);
-		cargaCSV(producto);
+		return cargaCSV(producto, jTextAreaStatusProcess);
 	}
 
 	@Override
-	public void cargaCSV(String producto) {
+	public JTextArea cargaCSV(String producto, JTextArea jTextAreaStatusProcess) {
 		Connection conn = null;
 		BaseConnection pgcon = null;
 		Reader in = null;
@@ -70,23 +91,30 @@ public class BDManagerImpl implements BDManager {
 		String sql = "";
 
 		try {
-			if(!DIR_CARGA_ARCHIVOS.exists()){
+			if (!DIR_CARGA_ARCHIVOS.exists()) {
 				DIR_CARGA_ARCHIVOS.mkdirs();
 			}
 			conn = ConnectionCuadraturaBD.getLocalConn();
-			pgcon = (BaseConnection)conn;
+			pgcon = (BaseConnection) conn;
 			CopyManager mgr = new CopyManager(pgcon);
 			fileName = Constantes.getFile(producto);
 			sql = Constantes.getQueryCarga(producto);
-			if (producto != "KENAN_62"){
-				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+
-						MessageFormat.format(fileName, LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))))));
+			if (producto != "KENAN_62") {
+				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS + MessageFormat.format(fileName,
+						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))))));
 			} else {
-				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS+fileName)));
+				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS + fileName)));
 			}
-			long rowsaffected  = mgr.copyIn(sql, in);
-			System.out.println("Se ejecutó: " + Constantes.getQueryCarga(producto) + " con el archivo: "
-					+Constantes.getFile(producto) + " y se copiaron " + rowsaffected + " registros");
+			long rowsaffected = mgr.copyIn(sql, in);
+			System.out.println("Se ejecutó: " + sql + " con el archivo: "
+					+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
+			if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+				jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: " + sql + " con el archivo: "
+						+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
+			} else {
+				jTextAreaStatusProcess.setText("Se ejecutó: " + sql + " con el archivo: "
+						+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -96,9 +124,15 @@ public class BDManagerImpl implements BDManager {
 			e.printStackTrace();
 		} finally {
 			try {
-				in.close();
-				pgcon.close();
-				conn.close();
+				if (null!=in){
+					in.close();
+				}
+				if (null!=pgcon){
+					pgcon.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -106,48 +140,66 @@ public class BDManagerImpl implements BDManager {
 			}
 
 		}
+		return jTextAreaStatusProcess;
 
 	}
 
 	@Override
-	public void borraDB(String producto) {
+	public JTextArea borraDB(String producto, JTextArea jTextAreaStatusProcess) {
 		Connection conn = null;
+		Statement statement = null;
 		try {
 			conn = ConnectionCuadraturaBD.getLocalConn();
-			Statement statement = conn.createStatement();
+			statement = conn.createStatement();
 			statement.executeUpdate(Constantes.getQueryTruncate(producto));
 			System.out.println("Se ejecutó: " + Constantes.getQueryTruncate(producto));
+			if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+				jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: "
+						+ Constantes.getQueryTruncate(producto));
+			} else {
+				jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryTruncate(producto));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}  finally {
+		} finally {
 			try {
-				conn.close();
+				if (null!=statement){
+					statement.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}	
+		}
+		return jTextAreaStatusProcess;
 	}
 
 	@Override
 	public void descargaArchivo(String filename, String query, String cabecera, String producto) {
 
 		Connection conn = null;
+		ResultSet rs = null;
+		Statement stmt = null;
 		FileWriter fw = null;
 
 		try {
-			if(!DIR_CARGA_ARCHIVOS.exists()){
+			if (!DIR_CARGA_ARCHIVOS.exists()) {
 				DIR_CARGA_ARCHIVOS.mkdirs();
 			}
-			if ("OTCAR".equals(producto)){
+			if ("OTCAR".equals(producto)) {
 				conn = ConnectionCuadraturaBD.getConnOCTAR();
-			} else {
+			} else if("SERV_RETIRADOS".equals(producto)){
+				conn = ConnectionCuadraturaBD.getConnServicios();
+			}  else {
 				conn = ConnectionCuadraturaBD.getConnTPlay();
 			}
 			fw = new FileWriter(filename);
 			fw.append(cabecera);
 			fw.append('\n');
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				fw.flush();
 				procesar(fw, rs, producto);
@@ -155,46 +207,73 @@ public class BDManagerImpl implements BDManager {
 			fw.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}  finally {
+		} finally {
 			try {
-				conn.close();
-				fw.close();
+				if (null!= rs){
+					rs.close();
+				}
+				if (null!=stmt){
+					stmt.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
+				if (null != fw){
+					fw.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 	}
 
 	@Override
-	public CountOBJ obtenerCruces(String producto) {
+	public CountOBJ obtenerCruces(String producto, JTextArea jTextAreaStatusProcess) {
 		Connection conn = null;
 		FileOutputStream fileOutputStream = null;
 		CountOBJ contadores = new CountOBJ();
-		PreparedStatement pstmt =  null;
+		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		Statement statement = null;
-		try {		
-			if(!DIR_DESC_ARCHIVOS.exists()){
+		try {
+			if (!DIR_DESC_ARCHIVOS.exists()) {
 				DIR_DESC_ARCHIVOS.mkdirs();
 			}
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
-			for(int i = 0; i < 2;i++){
-				File file = new File(PATH_CRUCE+
-						MessageFormat.format(Constantes.getFileCruce(producto)[i], LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+			for (int i = 0; i < 3; i++) {
+				File file = new File(PATH_CRUCE + MessageFormat.format(Constantes.getFileCruce(producto)[i],
+						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 				fileOutputStream = new FileOutputStream(file);
-				copyManager.copyOut("COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)", fileOutputStream);
-				System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo " + 
-						MessageFormat.format(Constantes.getFileCruce(producto)[i], LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+				copyManager.copyOut(
+						"COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)",
+						fileOutputStream);
+				System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+						+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
+								LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+				if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: "
+							+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+							+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
+									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+				} else {
+					jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]
+							+ " y se entrega en archivo " + MessageFormat.format(Constantes.getFileCruce(producto)[i],
+									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}  finally {
+		} finally {
 			try {
-				conn.close();
-				fileOutputStream.close();
+				if (null!=conn){
+					conn.close();
+				}
+				if (null!=fileOutputStream){
+					fileOutputStream.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (IOException e1) {
@@ -204,70 +283,173 @@ public class BDManagerImpl implements BDManager {
 
 		try {
 			conn = ConnectionCuadraturaBD.getLocalConn();
-			for (int i = 2; i < 5; i++) {
+			for (int i = 3; i < 8; i++) {
 				pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
 				rs = pstmt.executeQuery();
-				if(rs.next()){
-					if(i==2)
+				if (rs.next()) {
+					if (i == 3)
 						contadores.setTotalTplay(rs.getInt(1));
-					else if(i==3)
+					else if (i == 4)
 						contadores.setTotalRed(rs.getInt(1));
+					else if (i == 5)
+						contadores.setTotalAmbos(rs.getInt(1));
+					else if (i == 6)
+						contadores.setDifTplayRed(rs.getInt(1));
 					else
-						contadores.setDiferencia(rs.getInt(1));
+						contadores.setDifRedTplay(rs.getInt(1));
 				}
 			}
-		} catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs.close();
-				pstmt.close();
-				conn.close();
+				if (null!=rs){
+					rs.close();
+				}
+				if (null!=pstmt){
+					pstmt.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		if (producto.indexOf("KENAN")>=0 && producto.indexOf("62")<0){
+		if (producto.indexOf("KENAN") >= 0 && producto.indexOf("62") < 0) {
 			try {
 				conn = ConnectionCuadraturaBD.getLocalConn();
-				for (int i = 5; i < Constantes.getQueryCruce(producto).length; i++) {
+				for (int i = 8; i < Constantes.getQueryCruce(producto).length; i++) {
 					statement = conn.createStatement();
 					statement.executeUpdate(Constantes.getQueryCruce(producto)[i]);
 					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
+					if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"\n"+"Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
+					} else {
+						jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
+					}
 				}
-			}catch (Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				try {
-					conn.close();
-					statement.close();
+					if (null!=statement){
+						statement.close();
+					}
+					if (null!=conn){
+						conn.close();
+					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+		contadores.setjTextAreaStatusProcess(jTextAreaStatusProcess);
 		return contadores;
 	}
 
+	@Override
+	public CountOBJ obtenerCrucesCros(String producto, JTextArea jTextAreaStatusProcess) {
+		Connection conn = null;
+		FileOutputStream fileOutputStream = null;
+		CountOBJ contadores = new CountOBJ();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Statement statement = null;
+		try {
+			if (!DIR_DESC_CROS.exists()) {
+				DIR_DESC_CROS.mkdirs();
+			}
+			conn = ConnectionCuadraturaBD.getLocalConn();
+			CopyManager copyManager = new CopyManager((BaseConnection) conn);
+			for (int i = 0; i < 8; i++) {
+				if (i==0 || i==1) {
+					statement = conn.createStatement();
+					statement.executeUpdate(Constantes.getQueryCruce(producto)[i]);
+					if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"\n"+"Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
+					} else {
+						jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
+					}
+				} else if (i==2 || i==3 || i==4) {
+					File file = new File(PATH_CROS + MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					fileOutputStream = new FileOutputStream(file);
+					copyManager.copyOut(
+							"COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)",
+							fileOutputStream);
+					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+							+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
+						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: "
+								+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+								+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+										LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					} else {
+						jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]
+								+ " y se entrega en archivo " + MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+										LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					}
+				} else {
+					pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
+					rs = pstmt.executeQuery();
+					if (rs.next()) {
+						if (i == 5)
+							contadores.setTotalOk(rs.getInt(1));
+						else if (i == 6)
+							contadores.setTotalRedTplay(rs.getInt(1));
+						else
+							contadores.setTotalKenan(rs.getInt(1));
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (null!=rs){
+					rs.close();
+				}
+				if (null!=pstmt){
+					pstmt.close();
+				}
+				if (null!=statement){
+					statement.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
+				if (null!=fileOutputStream){
+					fileOutputStream.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		contadores.setjTextAreaStatusProcess(jTextAreaStatusProcess);
+		return contadores;	
+	}
+	
 	@Override
 	public void formatear(String archivo, String producto) {
 
 		FormatoArchivo formatoArchivo = new FormatoArchivo();
 
-		if ("KENAN".equals(producto)){
+		if ("KENAN".equals(producto)) {
 			formatoArchivo.formatFileKenan(archivo);
-		}
-		else if ("KENAN_C".equals(producto)){
+		} else if ("KENAN_C".equals(producto)) {
 			formatoArchivo.formatFileCanalesKenan(archivo);
-		}
-		else if ("KALTURA".equals(producto)){
+		} else if ("KALTURA".equals(producto)) {
 			formatoArchivo.formatFileTvBaseKaltura(archivo);
-		}
-		else if ("KALTURA_C".equals(producto)){
+		} else if ("KALTURA_C".equals(producto)) {
 			formatoArchivo.formatFileCanalesKaltura(archivo);
-		}
-		else if ("AAA".equals(producto)){
+		} else if ("AAA".equals(producto)) {
 			formatoArchivo.formatFileInternetAAA(archivo);
+		}  else if ("TODO_KALTURA".equals(producto)) {
+			formatoArchivo.formatGenerico(archivo);
 		}
 
 	}
@@ -276,29 +458,29 @@ public class BDManagerImpl implements BDManager {
 
 		int columnas = rs.getMetaData().getColumnCount();
 
-		if ("INTERNET".equals(producto) && !"".equals(rs.getNString("CODI_TECNICO").trim())){
-			for (int i=1;i<columnas;i++){
-				fw.append(rs.getString(i)+";");
+		if (("INTERNET".equals(producto) && null != rs.getNString("CODI_TECNICO") && !"".equals(rs.getNString("CODI_TECNICO").trim()))||"SERV_RETIRADOS".equals(producto)) {
+			for (int i = 1; i < columnas; i++) {
+				fw.append(rs.getString(i) + ";");
 			}
 			fw.append(rs.getString(columnas));
 			fw.append('\n');
-		} else if ("TLF".equals(producto)){
-			for (int i=1;i<=columnas;i++){
-				fw.append(rs.getString(i)+";");
+		} else if ("TLF".equals(producto)) {
+			for (int i = 1; i <= columnas; i++) {
+				fw.append(rs.getString(i) + ";");
 			}
-			fw.append(rs.getString(2)+"-"+rs.getString(1));
+			fw.append(rs.getString(2) + "-" + rs.getString(1));
 			fw.append('\n');
-		} else if ("TV".equals(producto)){
-			fw.append(rs.getString(1)+"-"+rs.getString(2)+"-"+rs.getString(5)+";");
-			for (int i=1;i<columnas;i++){
-				fw.append(rs.getString(i)+";");
+		} else if ("TV".equals(producto)) {
+			fw.append(rs.getString(1) + "-" + rs.getString(2) + "-" + rs.getString(5) + ";");
+			for (int i = 1; i < columnas; i++) {
+				fw.append(rs.getString(i) + ";");
 			}
 			fw.append(rs.getString(columnas));
 			fw.append('\n');
-		} else if ("OTCAR".equals(producto)){
-			fw.append(rs.getString(2)+"-"+rs.getString(4)+";");
-			for (int i=1;i<columnas;i++){
-				fw.append(rs.getString(i)+";");
+		} else if ("OTCAR".equals(producto)) {
+			fw.append(rs.getString(2) + "-" + rs.getString(4) + ";");
+			for (int i = 1; i < columnas; i++) {
+				fw.append(rs.getString(i) + ";");
 			}
 			fw.append(rs.getString(columnas));
 			fw.append('\n');

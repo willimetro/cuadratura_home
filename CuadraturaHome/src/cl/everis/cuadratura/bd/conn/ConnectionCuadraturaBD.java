@@ -10,7 +10,37 @@ import java.sql.SQLException;
  *
  */
 public class ConnectionCuadraturaBD {
-	
+	/**
+	public static void main(String[] args) {
+		Connection conn = null;
+		ResultSet rs = null;
+		Statement stmt = null;
+		try {
+			conn = getConnServicios();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("select * from servicio_tecnico where serv_gen='3 PLAY FIBRA' and estado='SER' and ROWNUM <= 1");
+			while (rs.next()) {
+				System.out.println(rs.toString());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (null!= rs){
+					rs.close();
+				}
+				if (null!=stmt){
+					stmt.close();
+				}
+				if (null!=conn){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	**/	
 	/**
 	 * 
 	 * @return
@@ -46,6 +76,19 @@ public class ConnectionCuadraturaBD {
 		String connectString = "jdbc:oracle:thin:@//ofmprodb-scan.unix.entelpcs.entelcorp.com:1521/BNNPROD";
 		String user = "CONS3PLAY";
 		String password = "mgs762nbc";
+		Connection con = get(driver, connectString, user, password);
+		return con;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static Connection getConnServicios() {
+		String driver = "oracle.jdbc.driver.OracleDriver";
+		String connectString = "jdbc:oracle:thin:@//192.168.186.114:1525/BSERVICP";
+		String user = "bserviciosp";
+		String password = "bserviciosp";
 		Connection con = get(driver, connectString, user, password);
 		return con;
 	}
