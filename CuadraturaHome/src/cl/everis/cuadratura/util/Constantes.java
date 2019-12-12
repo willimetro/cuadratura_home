@@ -46,7 +46,7 @@ public class Constantes {
 			// RED_NO_3PLAY
 			"SELECT kenan.* FROM facturador_kenan_canal kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
-			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') AND tv_3p.\"RUT\" IS NULL",
+			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE tv_3p.\"RUT\" IS NULL",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM tvcanales_3play canales_3p "
 			+ "WHERE canales_3p.\"DETALLE\" = 'ADICIONAL' AND canales_3p.\"TRYBUY\" = 'NO'",
@@ -108,8 +108,7 @@ public class Constantes {
 			// RED_NO_3PLAY
 			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN internet_3play tplay "
 			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') "
-			+ "AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM internet_3play",
 			// COUNT TOTAL RED
@@ -142,8 +141,7 @@ public class Constantes {
 			// RED_NO_3PLAY
 			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay "
 			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') "
-			+ "AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM tlf_3play",
 			// COUNT TOTAL RED
@@ -226,8 +224,7 @@ public class Constantes {
 			// RED_NO_3PLAY
 			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') "
-			+ "AND tv_3p.\"RUT\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM tvcanales_3play tv_3p WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129')",
 			// COUNT TOTAL RED

@@ -73,9 +73,9 @@ public class ConnectionCuadraturaBD {
 	 */
 	public static Connection getConnTPlay() {
 		String driver = "oracle.jdbc.driver.OracleDriver";
-		String connectString = "jdbc:oracle:thin:@//ofmprodb-scan.unix.entelpcs.entelcorp.com:1521/BNNPROD";
-		String user = "CONS3PLAY";
-		String password = "mgs762nbc";
+		String connectString = "jdbc:oracle:thin:@//172.17.251.37:1521/BNNPROD";
+		String user = "STL_DPINOCHET";
+		String password = "Daniela_Dic.2019";
 		Connection con = get(driver, connectString, user, password);
 		return con;
 	}
