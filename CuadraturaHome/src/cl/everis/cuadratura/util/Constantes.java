@@ -62,7 +62,7 @@ public class Constantes {
 			// COUNT RED_NO_3PLAY
 			"SELECT COUNT(1) "
 			+ "FROM facturador_kenan_canal kenan LEFT OUTER JOIN tvcanales_3play tv_3p ON  tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
-			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') AND tv_3p.\"RUT\" IS NULL",
+			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE tv_3p.\"RUT\" IS NULL",
 			// BORRA TABLA 3PLAY PARA CICLO 62
 			"TRUNCATE canales_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
@@ -122,7 +122,7 @@ public class Constantes {
 			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
 			// COUNT RED_NO_3PLAY
 			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN internet_3play tplay ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
 			// BORRA TABLA 3PLAY PARA CICLO 62
 			"TRUNCATE internet_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
@@ -156,8 +156,7 @@ public class Constantes {
 			// COUNT RED_NO_3PLAY
 			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay "
 			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') "
-			+ "AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
 			// BORRA TABLA 3PLAY PARA CICLO 62			
 			"TRUNCATE tlf_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
@@ -239,8 +238,7 @@ public class Constantes {
 			// COUNT RED_NO_3PLAY
 			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND kenan.\"ESTADO\" IN ('Facturado','Otro','Nuevo') "
-			+ "AND tv_3p.\"RUT\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL",
 			// BORRA TABLA 3PLAY PARA CICLO 62
 			"TRUNCATE tv_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
