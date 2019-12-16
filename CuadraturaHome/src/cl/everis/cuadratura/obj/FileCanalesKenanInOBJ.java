@@ -15,6 +15,7 @@ public class FileCanalesKenanInOBJ extends FileInOBJ {
 	private String rutCliente;
 	private String serviceEnd;
 	private String serviceStart;
+	private String periodoFact;
 
 	/**
 	 * 
@@ -26,9 +27,10 @@ public class FileCanalesKenanInOBJ extends FileInOBJ {
 		this.codigoCanal = lineaArray[2].replaceAll("\"", "");
 		this.cuentaKenan = lineaArray[3].replaceAll("\"", "");
 		this.estado = lineaArray[4].replaceAll("\"", "");
-		this.rutCliente = lineaArray[5].replaceAll("\"", "");
-		this.serviceEnd = lineaArray[6].replaceAll("\"", "");
-		this.serviceStart = lineaArray[7].replaceAll("\"", "");
+		this.estado = lineaArray[5].replaceAll("\"", "");
+		this.rutCliente = lineaArray[6].replaceAll("\"", "");
+		this.serviceEnd = lineaArray[7].replaceAll("\"", "");
+		this.serviceStart = lineaArray[8].replaceAll("\"", "");
 	}
 
 	/**
@@ -157,6 +159,14 @@ public class FileCanalesKenanInOBJ extends FileInOBJ {
 	 */
 	public void setServiceStart(String serviceStart) {
 		this.serviceStart = serviceStart;
+	}
+
+	public String getPeriodoFact() {
+		return periodoFact;
+	}
+
+	public void setPeriodoFact(String periodoFact) {
+		this.periodoFact = periodoFact;
 	}
 
 }

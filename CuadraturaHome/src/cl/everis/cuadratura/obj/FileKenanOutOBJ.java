@@ -10,6 +10,7 @@ public class FileKenanOutOBJ extends FileOutOBJ {
 	private String rutCliente;
 	private String serviceEnd;
 	private String serviceStart;
+	private String periodoFact;
 
 	public String getRutSinDv() {
 		return rutSinDv;
@@ -79,10 +80,18 @@ public class FileKenanOutOBJ extends FileOutOBJ {
 		this.serviceStart = serviceStart;
 	}
 
+	public String getPeriodoFact() {
+		return periodoFact;
+	}
+
+	public void setPeriodoFact(String periodoFact) {
+		this.periodoFact = periodoFact;
+	}
+	
 	@Override
 	public String toString() {
 		return this.rutSinDv + ";" + this.codPlan + ";" + this.cuentaKenan + ";" + this.estado + ";" + this.plan + ";"
-				+ this.rutCliente + ";" + this.serviceEnd + ";" + this.serviceStart;
+				+ this.rutCliente + ";" + this.serviceEnd + ";" + this.serviceStart + ";" + this.periodoFact;
 	}
 
 }

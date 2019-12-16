@@ -13,8 +13,8 @@ public class Correo {
 	public void enviarCorreo(Map<String, CountOBJ> c) {
 		EnviarMail em = new EnviarMailProxy();
 		try {
-//			em.enviarMail("cbtorres@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//					getHtmlCorreo(c), null);
+			em.enviarMail("cbtorres@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
+					getHtmlCorreo(c), null);
 			em.enviarMail("jarenass@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 					getHtmlCorreo(c), null);
 //			em.enviarMail("wugaldeq@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
@@ -29,8 +29,8 @@ public class Correo {
 //					getHtmlCorreo(c), null);
 //			em.enviarMail("RPVergara@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 //					getHtmlCorreo(c), null);
-//			em.enviarMail("pbarra@line.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//					getHtmlCorreo(c), null);
+			em.enviarMail("pbarra@line.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
+					getHtmlCorreo(c), null);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

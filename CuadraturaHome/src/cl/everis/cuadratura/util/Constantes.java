@@ -37,8 +37,9 @@ public class Constantes {
 	private final static String[] QUERYS_CANALES_3P_KENAN ={
 			// 3PLAY_Y_RED
 			"SELECT tv_3p.\"RUT\",tv_3p.\"DV\",tv_3p.\"PRODUCTO\",tv_3p.\"CODI_PRODUCTO\",tv_3p.\"DETALLE\",tv_3p.\"ESTADO\" AS ESTADO_TPLAY, "
-			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\" AS ESTADO_KENAN,kenan.\"CANAL\" FROM tvcanales_3play tv_3p INNER JOIN facturador_kenan_canal kenan "
-			+ "ON  tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO'",
+			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\" AS ESTADO_KENAN, kenan.\"CANAL\", kenan.\"PERIODO_FACT\" "
+			+ "FROM tvcanales_3play tv_3p INNER JOIN facturador_kenan_canal kenan ON  tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
+			+ "WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO'",
 			// 3PLAY_NO_RED
 			"SELECT tv_3p.* FROM tvcanales_3play tv_3p LEFT OUTER JOIN facturador_kenan_canal kenan "
 			+ "ON tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
@@ -46,7 +47,7 @@ public class Constantes {
 			// RED_NO_3PLAY
 			"SELECT kenan.* FROM facturador_kenan_canal kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
-			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE tv_3p.\"RUT\" IS NULL",
+			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE tv_3p.\"RUT\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM tvcanales_3play canales_3p "
 			+ "WHERE canales_3p.\"DETALLE\" = 'ADICIONAL' AND canales_3p.\"TRYBUY\" = 'NO'",
@@ -62,7 +63,7 @@ public class Constantes {
 			// COUNT RED_NO_3PLAY
 			"SELECT COUNT(1) "
 			+ "FROM facturador_kenan_canal kenan LEFT OUTER JOIN tvcanales_3play tv_3p ON  tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
-			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE tv_3p.\"RUT\" IS NULL",
+			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE tv_3p.\"RUT\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')",
 			// BORRA TABLA 3PLAY PARA CICLO 62
 			"TRUNCATE canales_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
@@ -99,8 +100,8 @@ public class Constantes {
 	private final static String[] QUERYS_INTERNET_3P_KENAN ={
 			// 3PLAY_Y_RED
 			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\",tplay.\"NMRO_SOLICITUDACT\", kenan.\"CUENTA_KENAN\", "
-			+ "kenan.\"ESTADO\",kenan.\"PLAN\" FROM internet_3play tplay INNER JOIN facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' "
-			+ "AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
+			+ "kenan.\"ESTADO\",kenan.\"PLAN\", kenan.\"PERIODO_FACT\" FROM internet_3play tplay INNER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
 			// 3PLAY_NO_RED
 			"SELECT tplay.* FROM internet_3play tplay LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
@@ -108,7 +109,7 @@ public class Constantes {
 			// RED_NO_3PLAY
 			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN internet_3play tplay "
 			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM internet_3play",
 			// COUNT TOTAL RED
@@ -122,7 +123,7 @@ public class Constantes {
 			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
 			// COUNT RED_NO_3PLAY
 			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN internet_3play tplay ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')",
 			// BORRA TABLA 3PLAY PARA CICLO 62
 			"TRUNCATE internet_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
@@ -132,16 +133,15 @@ public class Constantes {
 	private final static String[] QUERYS_TLF_3P_KENAN ={
 			// 3PLAY_Y_RED
 			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\",tplay.\"NMRO_SOLICITUDACT\", "
-			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\" FROM tlf_3play tplay INNER JOIN facturador_kenan kenan "
+			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\", kenan.\"PERIODO_FACT\" FROM tlf_3play tplay INNER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
 			// 3PLAY_NO_RED
 			"SELECT tplay.* FROM tlf_3play tplay LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
 			// RED_NO_3PLAY
-			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay "
-			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM tlf_3play",
 			// COUNT TOTAL RED
@@ -154,9 +154,8 @@ public class Constantes {
 			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
 			// COUNT RED_NO_3PLAY
-			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay "
-			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
+			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')",
 			// BORRA TABLA 3PLAY PARA CICLO 62			
 			"TRUNCATE tlf_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
@@ -214,16 +213,16 @@ public class Constantes {
 	private final static String[] QUERYS_TV_3P_KENAN ={
 			// 3PLAY_Y_RED
 			"SELECT tv_3p.\"RUT\",tv_3p.\"DV\",tv_3p.\"PRODUCTO\",tv_3p.\"CODI_PRODUCTO\",tv_3p.\"DETALLE\",tv_3p.\"ESTADO\", "
-			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\" FROM tvcanales_3play tv_3p INNER JOIN facturador_kenan kenan "
+			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\", kenan.\"PERIODO_FACT\" FROM tvcanales_3play tv_3p INNER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129')",
 			// 3PLAY_NO_RED
 			"SELECT tv_3p.* FROM tvcanales_3play tv_3p LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" IS NULL",
 			// RED_NO_3PLAY
-			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
-			+ "ON  tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL",
+			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tvcanales_3play tv_3p ON  tv_3p.\"CODI_PRODUCTO\" IN ('128','129') "
+			+ "AND kenan.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL "
+			+ "AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')",
 			// COUNT TOTAL 3_PLAY
 			"SELECT COUNT(1) FROM tvcanales_3play tv_3p WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129')",
 			// COUNT TOTAL RED
@@ -238,7 +237,7 @@ public class Constantes {
 			// COUNT RED_NO_3PLAY
 			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL",
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')",
 			// BORRA TABLA 3PLAY PARA CICLO 62
 			"TRUNCATE tv_3play_62",
 			// CARGA DATOS SEGUNDA PASADA
