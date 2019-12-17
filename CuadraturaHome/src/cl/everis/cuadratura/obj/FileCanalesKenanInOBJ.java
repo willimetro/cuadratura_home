@@ -27,7 +27,7 @@ public class FileCanalesKenanInOBJ extends FileInOBJ {
 		this.codigoCanal = lineaArray[2].replaceAll("\"", "");
 		this.cuentaKenan = lineaArray[3].replaceAll("\"", "");
 		this.estado = lineaArray[4].replaceAll("\"", "");
-		this.estado = lineaArray[5].replaceAll("\"", "");
+		this.periodoFact = lineaArray[5].replaceAll("\"", "");
 		this.rutCliente = lineaArray[6].replaceAll("\"", "");
 		this.serviceEnd = lineaArray[7].replaceAll("\"", "");
 		this.serviceStart = lineaArray[8].replaceAll("\"", "");
