@@ -15,6 +15,7 @@ public class FileCanalesKenanOutOBJ extends FileOutOBJ {
 	private String serviceEnd;
 	private String serviceStart;
 	private String keyCanal;
+	private String periodoFact;
 
 	/**
 	 * 
@@ -160,10 +161,18 @@ public class FileCanalesKenanOutOBJ extends FileOutOBJ {
 		this.keyCanal = keyCanal;
 	}
 
+	public String getPeriodoFact() {
+		return periodoFact;
+	}
+
+	public void setPeriodoFact(String periodoFact) {
+		this.periodoFact = periodoFact;
+	}
+
 	@Override
 	public String toString() {
 		return this.canal + ";" + this.codigo3Play + ";" + this.codigoCanal + ";" + this.cuentaKenan + ";" + this.estado
-				+ ";" + this.rutCliente + ";" + this.serviceEnd + ";" + this.serviceStart + ";" + this.keyCanal;
+				+ ";" + this.rutCliente + ";" + this.serviceEnd + ";" + this.serviceStart + ";" + this.keyCanal + ";" + this.periodoFact;
 	}
 
 }

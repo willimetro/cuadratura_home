@@ -384,6 +384,7 @@ public class FormatoArchivo {
 			fileKenanOutOBJ.setCuentaKenan(fileKenanInOBJ.getCuentakenan());
 			fileKenanOutOBJ.setEstado(fileKenanInOBJ.getEstado());
 			fileKenanOutOBJ.setPlan(fileKenanInOBJ.getPlan());
+			fileKenanOutOBJ.setPeriodoFact(fileKenanInOBJ.getPeriodoFact());
 			fileKenanOutOBJ.setRutCliente(fileKenanInOBJ.getRutCliente());
 			fileKenanOutOBJ.setServiceEnd(fileKenanInOBJ.getServiceEnd());
 			fileKenanOutOBJ.setServiceStart(fileKenanInOBJ.getServiceStart());
@@ -406,6 +407,7 @@ public class FormatoArchivo {
 			fileCanalesKenanOutOBJ.setCodigoCanal(fileCanalesKenanInOBJ.getCodigoCanal());
 			fileCanalesKenanOutOBJ.setCuentaKenan(fileCanalesKenanInOBJ.getCuentaKenan());
 			fileCanalesKenanOutOBJ.setEstado(fileCanalesKenanInOBJ.getEstado());
+			fileCanalesKenanOutOBJ.setPeriodoFact(fileCanalesKenanInOBJ.getPeriodoFact());
 			fileCanalesKenanOutOBJ.setRutCliente(fileCanalesKenanInOBJ.getRutCliente());
 			fileCanalesKenanOutOBJ.setServiceEnd(fileCanalesKenanInOBJ.getServiceEnd());
 			fileCanalesKenanOutOBJ.setServiceStart(fileCanalesKenanInOBJ.getServiceStart());

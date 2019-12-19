@@ -17,8 +17,12 @@ public class Correo {
 					getHtmlCorreo(c), null);
 			em.enviarMail("jarenass@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 					getHtmlCorreo(c), null);
-//			em.enviarMail("wugaldeq@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//			getHtmlCorreo(c), null);
+			em.enviarMail("wugaldeq@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
+			getHtmlCorreo(c), null);
+			em.enviarMail("pbarra@line.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
+					getHtmlCorreo(c), null);
+			em.enviarMail("felipe.alberto.luna.osorio@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
+					getHtmlCorreo(c), null);
 //			em.enviarMail("helder.branco@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 //					getHtmlCorreo(c), null);
 //			em.enviarMail("CGrao@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
@@ -28,8 +32,6 @@ public class Correo {
 //			em.enviarMail("egjuleff@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 //					getHtmlCorreo(c), null);
 //			em.enviarMail("RPVergara@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//					getHtmlCorreo(c), null);
-//			em.enviarMail("pbarra@line.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
 //					getHtmlCorreo(c), null);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -100,7 +102,7 @@ public class Correo {
 										+ "</tr>" + "</table>"
 								: "")
 				+ "<br>"
-				+ "<h4>3 Play Fibra vs. Facturador Kenan</h4>"
+				+ "<h4>3 Play Fibra vs. Facturador Kenan (En la base de KENAN se incluye \"periodo de facturacion 62\" y estado \"retirado\")</h4>"
 				+ ((null != c.get("TPLAY_KENAN_TV") || null != c.get("TPLAY_KENAN_C")
 						|| null != c.get("TPLAY_KENAN_TLF") || null != c.get("TPLAY_KENAN_INT"))
 								? "<table>" + "<tr>" 
@@ -155,60 +157,60 @@ public class Correo {
 										+ ((null != c.get("TPLAY_KENAN_INT"))
 												? "<td>" + c.get("TPLAY_KENAN_INT").getDifRedTplay() + "</td>" : "")
 										+ "</tr>" + "</table>"
-										+ "<br>"
-										+ "<h4>3 Play Fibra no en Ciclo 61 vs. Facturador Kenan Ciclo 62</h4>"
-										+ "<table>" + "<tr>" 
-										+ "<th>ITEM</th>"
-										+ ((null != c.get("TPLAY_KENAN_TV_62")) ? "<th>TV</th>" : "")
-										+ ((null != c.get("TPLAY_KENAN_C_62")) ? "<th>CANALES</th>" : "")
-										+ ((null != c.get("TPLAY_KENAN_TLF_62")) ? "<th>TELEFONIA</th>" : "")
-										+ ((null != c.get("TPLAY_KENAN_INT_62")) ? "<th>INTERNET</th>" : "") + "<tr/>"
-										+ "<tr>" + "<td>TOTAL 3PLAY NO FACTURADOS</td>"
-										+ ((null != c.get("TPLAY_KENAN_TV_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TV_62").getTotalTplay() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_C_62"))
-												? "<td>" + c.get("TPLAY_KENAN_C_62").getTotalTplay() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getTotalTplay() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_INT_62"))
-												? "<td>" + c.get("TPLAY_KENAN_INT_62").getTotalTplay() + "</td>" : "")
-										+ "</tr>" + "<tr>" + "<td>TOTAL BASE KENAN NO FACTURADOS</td>"
-										+ ((null != c.get("TPLAY_KENAN_TV_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TV_62").getTotalRed() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_C_62"))
-												? "<td>" + c.get("TPLAY_KENAN_C_62").getTotalRed() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getTotalRed() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_INT_62"))
-												? "<td>" + c.get("TPLAY_KENAN_INT_62").getTotalRed() + "</td>" : "")
-										+ "</tr>" + "<tr>" + "<td>TOTAL 3PLAY EN CICLO 62</td>"
-										+ ((null != c.get("TPLAY_KENAN_TV_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TV_62").getTotalAmbos() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_C_62"))
-												? "<td>" + c.get("TPLAY_KENAN_C_62").getTotalAmbos() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getTotalAmbos() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_INT_62"))
-												? "<td>" + c.get("TPLAY_KENAN_INT_62").getTotalAmbos() + "</td>" : "")
-										+ "</tr>" + "<tr>" + "<td>TOTAL 3PLAY NINGUN CICLO</td>"
-										+ ((null != c.get("TPLAY_KENAN_TV_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TV_62").getDifTplayRed() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_C_62"))
-												? "<td>" + c.get("TPLAY_KENAN_C_62").getDifTplayRed() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getDifTplayRed() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_INT_62"))
-												? "<td>" + c.get("TPLAY_KENAN_INT_62").getDifTplayRed() + "</td>" : "")
-										+ "</tr>" + "<tr>" + "<td>TOTAL CICLO 62 NO EN 3PLAY</td>"
-										+ ((null != c.get("TPLAY_KENAN_TV_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TV_62").getDifRedTplay() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_C_62"))
-												? "<td>" + c.get("TPLAY_KENAN_C_62").getDifRedTplay() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
-												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getDifRedTplay() + "</td>" : "")
-										+ ((null != c.get("TPLAY_KENAN_INT_62"))
-												? "<td>" + c.get("TPLAY_KENAN_INT_62").getDifRedTplay() + "</td>" : "")
-										+ "</tr>" +  "</table>"
+//										+ "<br>"
+//										+ "<h4>3 Play Fibra no en Ciclo 61 vs. Facturador Kenan Ciclo 62</h4>"
+//										+ "<table>" + "<tr>" 
+//										+ "<th>ITEM</th>"
+//										+ ((null != c.get("TPLAY_KENAN_TV_62")) ? "<th>TV</th>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_C_62")) ? "<th>CANALES</th>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_TLF_62")) ? "<th>TELEFONIA</th>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_INT_62")) ? "<th>INTERNET</th>" : "") + "<tr/>"
+//										+ "<tr>" + "<td>TOTAL 3PLAY NO FACTURADOS</td>"
+//										+ ((null != c.get("TPLAY_KENAN_TV_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TV_62").getTotalTplay() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_C_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_C_62").getTotalTplay() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getTotalTplay() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_INT_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_INT_62").getTotalTplay() + "</td>" : "")
+//										+ "</tr>" + "<tr>" + "<td>TOTAL BASE KENAN NO FACTURADOS</td>"
+//										+ ((null != c.get("TPLAY_KENAN_TV_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TV_62").getTotalRed() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_C_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_C_62").getTotalRed() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getTotalRed() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_INT_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_INT_62").getTotalRed() + "</td>" : "")
+//										+ "</tr>" + "<tr>" + "<td>TOTAL 3PLAY EN CICLO 62</td>"
+//										+ ((null != c.get("TPLAY_KENAN_TV_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TV_62").getTotalAmbos() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_C_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_C_62").getTotalAmbos() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getTotalAmbos() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_INT_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_INT_62").getTotalAmbos() + "</td>" : "")
+//										+ "</tr>" + "<tr>" + "<td>TOTAL 3PLAY NINGUN CICLO</td>"
+//										+ ((null != c.get("TPLAY_KENAN_TV_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TV_62").getDifTplayRed() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_C_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_C_62").getDifTplayRed() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getDifTplayRed() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_INT_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_INT_62").getDifTplayRed() + "</td>" : "")
+//										+ "</tr>" + "<tr>" + "<td>TOTAL CICLO 62 NO EN 3PLAY</td>"
+//										+ ((null != c.get("TPLAY_KENAN_TV_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TV_62").getDifRedTplay() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_C_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_C_62").getDifRedTplay() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_TLF_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_TLF_62").getDifRedTplay() + "</td>" : "")
+//										+ ((null != c.get("TPLAY_KENAN_INT_62"))
+//												? "<td>" + c.get("TPLAY_KENAN_INT_62").getDifRedTplay() + "</td>" : "")
+//										+ "</tr>" +  "</table>"
 								: "")
 				+ ((null != c.get("INTERNET") && null != c.get("TV") && null != c.get("TLF")
 				&& null != c.get("ADICIONALES"))

@@ -170,7 +170,8 @@ CREATE TABLE public.facturador_kenan (
     "PLAN" character varying(30),
     "RUT_CLIENTE" character varying(15),
     "SERVICE_END" date,
-    "SERVICE_START" date
+    "SERVICE_START" date,
+    "PERIODO_FACT" character varying(2)
 );
 
 
@@ -209,7 +210,8 @@ CREATE TABLE public.facturador_kenan_canal (
     "RUT_CLIENTE" character varying(15),
     "SERVICE_END" date,
     "SERVICE_START" date,
-    "KEY_CANAL" character varying(30)
+    "KEY_CANAL" character varying(30),
+    "PERIODO_FACT" character varying(2)
 );
 
 

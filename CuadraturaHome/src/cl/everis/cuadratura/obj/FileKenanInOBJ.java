@@ -9,15 +9,17 @@ public class FileKenanInOBJ extends FileInOBJ{
 	private String rutCliente;
 	private String serviceEnd;
 	private String serviceStart;
-	
+	private String periodoFact;
+
 	public FileKenanInOBJ(String[] lineaArray) {
 		this.codPlan = lineaArray[0].replaceAll("\"", "");
 		this.cuentakenan = lineaArray[1].replaceAll("\"", "");
 		this.estado = lineaArray[2].replaceAll("\"", "");
-		this.plan = lineaArray[3].replaceAll("\"", "");
-		this.rutCliente = lineaArray[4].replaceAll("\"", "");
-		this.serviceEnd = lineaArray[5].replaceAll("\"", "");
-		this.serviceStart = lineaArray[6].replaceAll("\"", "");
+		this.periodoFact = lineaArray[3].replaceAll("\"", "");
+		this.plan = lineaArray[4].replaceAll("\"", "");
+		this.rutCliente = lineaArray[5].replaceAll("\"", "");
+		this.serviceEnd = lineaArray[6].replaceAll("\"", "");
+		this.serviceStart = lineaArray[7].replaceAll("\"", "");
 	}
 	
 	public String getCodPlan() {
@@ -63,4 +65,11 @@ public class FileKenanInOBJ extends FileInOBJ{
 		this.serviceStart = serviceStart;
 	}
 	
+	public String getPeriodoFact() {
+		return periodoFact;
+	}
+
+	public void setPeriodoFact(String periodoFact) {
+		this.periodoFact = periodoFact;
+	}
 }

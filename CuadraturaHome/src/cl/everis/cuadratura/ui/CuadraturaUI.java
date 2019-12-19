@@ -719,7 +719,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelInternet = new JLabel("Seleccione archivo Internet AAA (Splunk)", SwingConstants.LEFT);
+		pathLabelInternet = new JLabel("Archivo Internet AAA desde Splunk", SwingConstants.LEFT);
 		pathLabelInternet.setEnabled(false);
 		pathLabelInternet.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
@@ -759,7 +759,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelTvPlanesBase = new JLabel("Seleccione archivo Planes Base (Splunk)", SwingConstants.LEFT);
+		pathLabelTvPlanesBase = new JLabel("Archivo Planes Base TV desde Splunk", SwingConstants.LEFT);
 		pathLabelTvPlanesBase.setEnabled(false);
 		pathLabelTvPlanesBase.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
@@ -798,7 +798,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelTvAdicionales = new JLabel("Seleccione archivo Planes Adicionales (Splunk)", SwingConstants.LEFT);
+		pathLabelTvAdicionales = new JLabel("Archivo Canales Adicionales TV desde Splunk", SwingConstants.LEFT);
 		pathLabelTvAdicionales.setEnabled(false);
 		pathLabelTvAdicionales.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
@@ -837,7 +837,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelKenan = new JLabel("Seleccione archivo Kenan (Splunk)", SwingConstants.LEFT);
+		pathLabelKenan = new JLabel("Archivo Planes Base Kenan desde Splunk", SwingConstants.LEFT);
 		pathLabelKenan.setEnabled(false);
 		pathLabelKenan.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
@@ -876,7 +876,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			}
 		});
 
-		pathLabelKenanAdi = new JLabel("Seleccione archivo Kenan Adicionales (Splunk)", SwingConstants.LEFT);
+		pathLabelKenanAdi = new JLabel("Archivo Canales TV Kenan desde Splunk", SwingConstants.LEFT);
 		pathLabelKenanAdi.setEnabled(false);
 		pathLabelKenanAdi.setPreferredSize(new Dimension(261, 16));
 		pathConstrains = new GridBagConstraints();
