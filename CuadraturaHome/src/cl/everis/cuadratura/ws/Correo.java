@@ -7,34 +7,26 @@ import com.epcs.www.integracionit.flujotrabajo.EnviarMail;
 import com.epcs.www.integracionit.flujotrabajo.EnviarMailProxy;
 
 import cl.everis.cuadratura.obj.CountOBJ;
+import cl.everis.cuadratura.util.BodyMail;
 
 public class Correo {
 
-	public void enviarCorreo(Map<String, CountOBJ> c) {
+	public void enviarCorreo(Map<String, CountOBJ> c, String mailsList) {
 		EnviarMail em = new EnviarMailProxy();
 		try {
-			em.enviarMail("cbtorres@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-					getHtmlCorreo(c), null);
-			em.enviarMail("jarenass@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-					getHtmlCorreo(c), null);
-			em.enviarMail("wugaldeq@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-			getHtmlCorreo(c), null);
-			em.enviarMail("pbarra@line.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-					getHtmlCorreo(c), null);
-			em.enviarMail("felipe.alberto.luna.osorio@everis.com", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-					getHtmlCorreo(c), null);
-//			em.enviarMail("helder.branco@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//					getHtmlCorreo(c), null);
-//			em.enviarMail("CGrao@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//					getHtmlCorreo(c), null);
-//			em.enviarMail("daniela.pinochet@sistemassa.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//					getHtmlCorreo(c), null);
-//			em.enviarMail("egjuleff@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//					getHtmlCorreo(c), null);
-//			em.enviarMail("RPVergara@entel.cl", "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
-//					getHtmlCorreo(c), null);
+			String body = getHtmlCorreo(c);
+			BodyMail.iniciarHTML();
+			BodyMail.getHTML(body);
+			BodyMail.cerrarHTML();
+			if (mailsList != null) {
+				String[] listMails = mailsList.split(";");
+				for (String mail: listMails) {
+					em.enviarMail(mail, "cuadratura.entelfijo@entel.cl", "Cruces \"Mi Entel Fijo\"",
+							body, null);
+				}
+			}
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 

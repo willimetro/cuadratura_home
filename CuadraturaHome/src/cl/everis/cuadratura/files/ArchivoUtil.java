@@ -11,18 +11,8 @@ import java.util.Map;
 import cl.everis.cuadratura.obj.FileCorteCanales;
 import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 
-/**
- * 
- * @author wugaldeq
- *
- */
 public class ArchivoUtil {
 
-	/**
-	 * 
-	 * @param archivo
-	 * @return
-	 */
 	public Map<String, FileCorteCanales> getCanales(String archivo) {
 		File canales = null;
 		FileReader fr = null;
@@ -83,11 +73,6 @@ public class ArchivoUtil {
 		return mapCanales;
 	}
 	
-	/**
-	 * 
-	 * @param archivo
-	 * @return
-	 */
 	public List<String> getRutsCorteTV(String archivo) {
 		File ruts = null;
 		FileReader fr = null;

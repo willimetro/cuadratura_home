@@ -585,16 +585,7 @@ public class Constantes {
 			+ "and v.tipo_termino = 'Terminado' and v.nro_comercial = (select max(f.nro_comercial) from MDP_OXC_VENTA F where f.rut_cliente = v.rut_cliente "
 			+ "and f.tipo_termino = 'Terminado' and f.estado_oxc = 40) and v.estado_oxc = 40) as codi_tecnico, c.nrut_cliente, c.drut_cliente, c.desc_glosaprod, c.nmro_solicitudact "
 			+ "from MDP_NEG_CLIENTESACTIVOS C where c.vlor_estadocomp = 1 and c.desc_tiposerv = 'INTERNET' and c.desc_catego = 'PLAN BASE'";
-	/**
-	private final static String QUERY_INT = "select d.codi_tecnico, c.nrut_cliente, c.drut_cliente, c.desc_glosaprod, c.nmro_solicitudact "
-			+ "from MDP_NEG_CLIENTESACTIVOS C, RMA_NEG_DATOSOTC D "
-			+ "where C.nmro_solicitudact = D.corr_solicitud "
-			+ "and D.CORR_TIPOSERVICIO = 3 "
-			+ "and c.vlor_estadocomp = 1 "
-			+ "and c.desc_tiposerv = 'INTERNET' "
-			+ "and d.codi_tecnico is not null "
-			+ "and desc_catego = 'PLAN BASE'";
-	**/
+
 	private final static String QUERY_OCTAR = "SELECT o.REQUEST_ID, o.RUT, o.DV, r.VALOR_DEFECTO "
 			+ "FROM SP_OXT o INNER JOIN SP_CS_ATRIBUTO_RECURSO r ON r.REQUEST_ID_OXT = o.REQUEST_ID "
 			+ "WHERE r.NOMBRE_ATRIBUTO = 'Ani asociado' "

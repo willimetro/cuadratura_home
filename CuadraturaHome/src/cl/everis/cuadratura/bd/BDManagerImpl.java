@@ -27,11 +27,6 @@ import cl.everis.cuadratura.files.FormatoArchivo;
 import cl.everis.cuadratura.obj.CountOBJ;
 import cl.everis.cuadratura.util.Constantes;
 
-/**
- * 
- * @author jarenass
- *
- */
 public class BDManagerImpl implements BDManager {
 
 	private final static String PATH_ARCHIVOS = System.getProperty("user.home") + "\\Desktop\\cuadratura\\CSVs\\";
@@ -46,31 +41,16 @@ public class BDManagerImpl implements BDManager {
 
 	@Override
 	public JTextArea descargarCSV(String opcion, JTextArea jTextAreaStatusProcess) {
-
-		// descargar solo aquellos archivos que podemos obtener directamente en
-		// BDs
 		System.out.println("Inició proceso de descarga para producto: " + opcion);
-		descargaArchivo(
-				PATH_ARCHIVOS + MessageFormat.format(Constantes.getFile(opcion),
-						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))),
+		descargaArchivo(PATH_ARCHIVOS + MessageFormat.format(Constantes.getFile(opcion),
+				LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))),
 				Constantes.getQueryDescarga(opcion), Constantes.getCabecera(opcion), opcion);
-		System.out.println("Descargó archivo "
-				+ MessageFormat.format(Constantes.getFile(opcion),
-						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
-				+ " en la ruta: " + PATH_ARCHIVOS);
-		if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
-			jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Descargó archivo "
-					+ MessageFormat.format(Constantes.getFile(opcion),
-							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
-					+ " en la ruta: " + PATH_ARCHIVOS);
-		} else {
-			jTextAreaStatusProcess.setText("Descargó archivo "
-					+ MessageFormat.format(Constantes.getFile(opcion),
-							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
-					+ " en la ruta: " + PATH_ARCHIVOS);
-		}
+		System.out.println("Descargó archivo "+ MessageFormat.format(Constantes.getFile(opcion),
+						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))+ " en la ruta: " + PATH_ARCHIVOS);
+		jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "Descargó archivo "
+				+ MessageFormat.format(Constantes.getFile(opcion), LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
+				+ " en la ruta: " + PATH_ARCHIVOS+ "\n");
 		return jTextAreaStatusProcess;
-
 	}
 
 	@Override
@@ -99,22 +79,13 @@ public class BDManagerImpl implements BDManager {
 			CopyManager mgr = new CopyManager(pgcon);
 			fileName = Constantes.getFile(producto);
 			sql = Constantes.getQueryCarga(producto);
-			if (producto != "KENAN_62") {
-				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS + MessageFormat.format(fileName,
-						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))))));
-			} else {
-				in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS + fileName)));
-			}
+			in = new BufferedReader(new FileReader(new File(PATH_ARCHIVOS + MessageFormat.format(fileName,
+					LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))))));
 			long rowsaffected = mgr.copyIn(sql, in);
 			System.out.println("Se ejecutó: " + sql + " con el archivo: "
 					+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
-			if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
-				jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: " + sql + " con el archivo: "
-						+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
-			} else {
-				jTextAreaStatusProcess.setText("Se ejecutó: " + sql + " con el archivo: "
-						+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros");
-			}
+			jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "Se ejecutó: " + sql + " con el archivo: "
+					+ MessageFormat.format(fileName,LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))) + " y se copiaron " + rowsaffected + " registros"+ "\n");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -153,12 +124,7 @@ public class BDManagerImpl implements BDManager {
 			statement = conn.createStatement();
 			statement.executeUpdate(Constantes.getQueryTruncate(producto));
 			System.out.println("Se ejecutó: " + Constantes.getQueryTruncate(producto));
-			if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
-				jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: "
-						+ Constantes.getQueryTruncate(producto));
-			} else {
-				jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryTruncate(producto));
-			}
+			jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "Se ejecutó: "+ Constantes.getQueryTruncate(producto)+ "\n");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -178,12 +144,10 @@ public class BDManagerImpl implements BDManager {
 
 	@Override
 	public void descargaArchivo(String filename, String query, String cabecera, String producto) {
-
 		Connection conn = null;
 		ResultSet rs = null;
 		Statement stmt = null;
 		FileWriter fw = null;
-
 		try {
 			if (!DIR_CARGA_ARCHIVOS.exists()) {
 				DIR_CARGA_ARCHIVOS.mkdirs();
@@ -236,7 +200,6 @@ public class BDManagerImpl implements BDManager {
 		CountOBJ contadores = new CountOBJ();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		Statement statement = null;
 		try {
 			if (!DIR_DESC_ARCHIVOS.exists()) {
 				DIR_DESC_ARCHIVOS.mkdirs();
@@ -253,16 +216,10 @@ public class BDManagerImpl implements BDManager {
 				System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
 						+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
 								LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
-				if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
-					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: "
-							+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
-							+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
-									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
-				} else {
-					jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]
-							+ " y se entrega en archivo " + MessageFormat.format(Constantes.getFileCruce(producto)[i],
-									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
-				}
+				jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "Se ejecutó: "
+						+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+						+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
+								LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))+ "\n");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -316,34 +273,6 @@ public class BDManagerImpl implements BDManager {
 				e.printStackTrace();
 			}
 		}
-		if (producto.indexOf("KENAN") >= 0 && producto.indexOf("62") < 0) {
-			try {
-				conn = ConnectionCuadraturaBD.getLocalConn();
-				for (int i = 8; i < Constantes.getQueryCruce(producto).length; i++) {
-					statement = conn.createStatement();
-					statement.executeUpdate(Constantes.getQueryCruce(producto)[i]);
-					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
-					if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
-						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"\n"+"Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
-					} else {
-						jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					if (null!=statement){
-						statement.close();
-					}
-					if (null!=conn){
-						conn.close();
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 		contadores.setjTextAreaStatusProcess(jTextAreaStatusProcess);
 		return contadores;
 	}
@@ -366,11 +295,7 @@ public class BDManagerImpl implements BDManager {
 				if (i==0 || i==1) {
 					statement = conn.createStatement();
 					statement.executeUpdate(Constantes.getQueryCruce(producto)[i]);
-					if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
-						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"\n"+"Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
-					} else {
-						jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]);
-					}
+					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"Se ejecutó: " + Constantes.getQueryCruce(producto)[i]+"\n");
 				} else if (i==2 || i==3 || i==4) {
 					File file = new File(PATH_CROS + MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
 							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
@@ -381,16 +306,11 @@ public class BDManagerImpl implements BDManager {
 					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
 							+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
 									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
-					if (!jTextAreaStatusProcess.getText().equalsIgnoreCase("")) {
-						jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "\n" + "Se ejecutó: "
-								+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
-								+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
-										LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
-					} else {
-						jTextAreaStatusProcess.setText("Se ejecutó: " + Constantes.getQueryCruce(producto)[i]
-								+ " y se entrega en archivo " + MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
-										LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
-					}
+					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "Se ejecutó: "
+							+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+							+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
+							 + "\n");
 				} else {
 					pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
 					rs = pstmt.executeQuery();

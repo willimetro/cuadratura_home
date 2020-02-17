@@ -29,11 +29,6 @@ import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 import cl.everis.cuadratura.obj.RespValidacionesOBJ;
 import cl.everis.cuadratura.util.LogEliminacion;
 
-/**
- * 
- * @author wugaldeq
- *
- */
 public class DesactivarCanales {
 
 	private final static String QUERY_HOUSE_HOLD_ID =  "SELECT tk.\"HOUSE_HOLD_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"= ? "
@@ -55,16 +50,7 @@ public class DesactivarCanales {
 	private DesactivarVasYCanalPremiumLocator desactivarVasYCanalPremiumLocator;
 	private DesactivarVasYCanalPremiumPortType desactivarVasYCanalPremium;
 	private DesactivarVasYCanalPremiumBindingStub binding;
-	/**	private final static String QUERY = "select d.codi_servicio "
-			+ "from MDP_NEG_CLIENTESACTIVOS C, RMA_NEG_DATOSOTC D " + "where C.nmro_solicitudact = D.corr_solicitud "
-			+ "and D.CORR_TIPOSERVICIO = 2 " + "and c.vlor_estadocomp = 1 " + "and c.desc_tiposerv = 'TELEVISION' "
-			+ "and desc_catego = 'PLAN BASE' " + "and NRUT_CLIENTE = ?";**/
 
-	/**
-	 * 
-	 * @param fileCorteCanalesRow
-	 * @return
-	 */
 	public ActivarDesactivarCanalesResponseOBJ activarCanalPremium(FileCorteCanalesRow fileCorteCanalesRow) {
 
 		ActivarVasYCanalPremiumRequestType type = new ActivarVasYCanalPremiumRequestType();
@@ -94,11 +80,6 @@ public class DesactivarCanales {
 			}
 			bindingStub.setTimeout(10000);
 			ActivarVasYCanalPremiumResponseType resp = bindingStub.activarVasYCanalPremium(type);
-			/**
-			ActivarVasYCanalPremiumResponseType resp = new ActivarVasYCanalPremiumResponseType();
-			ResponseType rs = new ResponseType(new HeaderOutType("0000", "PRUEBA EXITOSA", "", ""));
-			resp.setResponse(rs);
-			**/
 			activarCanalesResponseOBJ = new ActivarDesactivarCanalesResponseOBJ();
 			activarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			activarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
@@ -116,7 +97,7 @@ public class DesactivarCanales {
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: SERVICEEXCEPTION;DESCRIPCION: SERVICIO CON ERROR");
 			e1.printStackTrace();
-		}/****/ catch (DesactivarVasYCanalPremiumFaultType e) {
+		} catch (DesactivarVasYCanalPremiumFaultType e) {
 			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
@@ -126,7 +107,7 @@ public class DesactivarCanales {
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: REMOTEEXCEPTION;DESCRIPCION: ERROR REMOTO");
 			e.printStackTrace();
-		}/****/ catch (Exception e) {
+		} catch (Exception e) {
 			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
@@ -136,11 +117,6 @@ public class DesactivarCanales {
 		return activarCanalesResponseOBJ;
 	}
 
-	/**
-	 * 
-	 * @param fileCorteCanalesRow
-	 * @return
-	 */
 	public ActivarDesactivarCanalesResponseOBJ desactivarCanalPremium(FileCorteCanalesRow fileCorteCanalesRow) {
 
 		DesactivarVasYCanalPremiumRequestType type = new DesactivarVasYCanalPremiumRequestType();
@@ -167,12 +143,6 @@ public class DesactivarCanales {
 			}
 			binding.setTimeout(10000);
 			DesactivarVasYCanalPremiumResponseType resp = binding.desactivarVasYCanalPremium(type);
-			/**
-			DesactivarVasYCanalPremiumResponseType resp = new DesactivarVasYCanalPremiumResponseType();
-			com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.ResponseType rs = new com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.ResponseType(
-					new com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.HeaderOutType("0000", "PRUEBA_EXITOSA", "", ""));
-			resp.setResponse(rs);
-			**/
 			desactivarCanalesResponseOBJ = new ActivarDesactivarCanalesResponseOBJ();
 			desactivarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			desactivarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
@@ -194,7 +164,7 @@ public class DesactivarCanales {
 			desactivarCanalesResponseOBJ.setCodResponse("SERVICEEXCEPTION");
 			desactivarCanalesResponseOBJ.setDescripcion("SERVICIO CON ERROR");
 			e1.printStackTrace();
-		}/****/ catch (DesactivarVasYCanalPremiumFaultType e) {
+		} catch (DesactivarVasYCanalPremiumFaultType e) {
 			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
@@ -208,7 +178,7 @@ public class DesactivarCanales {
 			desactivarCanalesResponseOBJ.setCodResponse("REMOTEEXCEPTION");
 			desactivarCanalesResponseOBJ.setDescripcion("ERROR REMOTO");
 			e.printStackTrace();
-		}/****/ catch (Exception e) {
+		} catch (Exception e) {
 			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
@@ -220,11 +190,6 @@ public class DesactivarCanales {
 		return desactivarCanalesResponseOBJ;
 	}
 
-	/**
-	 * 
-	 * @param fileCorteCanalesRow
-	 * @return
-	 */
 	public FileCorteCanalesRow getCodServicioCanalesPremium(FileCorteCanalesRow fileCorteCanalesRow) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -256,11 +221,6 @@ public class DesactivarCanales {
 		return fileCorteCanalesRow;
 	}
 
-	/**
-	 * 
-	 * @param reg
-	 * @return
-	 */
 	public RespValidacionesOBJ validaFacturado(FileCorteCanalesRow reg) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -305,11 +265,6 @@ public class DesactivarCanales {
 		return validToDelete;
 	}
 
-	/**
-	 * 
-	 * @param reg
-	 * @return
-	 */
 	public RespValidacionesOBJ validaCDF(FileCorteCanalesRow reg) {
 		Connection conn = null;
 		PreparedStatement pstmt1 = null;
