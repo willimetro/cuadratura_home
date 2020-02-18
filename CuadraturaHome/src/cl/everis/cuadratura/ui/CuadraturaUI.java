@@ -56,7 +56,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private final static String[] CRUCES_TPLAY = { "TPLAY_KALTURA", "TPLAY_KALTURA_C", "TPLAY_KENAN_TV",
 			"TPLAY_KENAN_TLF", "TPLAY_KENAN_INT", "TPLAY_KENAN_C", "TPLAY_AAA", "TPLAY_OTCAR" };
 	private final static String[] CRUCES_CROS = { "INTERNET", "TV", "TLF", "ADICIONALES" };
-	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN"/**, "KENAN_62"**/, "KENAN_C",
+	private final static String[] PRODUCTOS_TPLAY = { "INTERNET", "TV", "TLF", "OTCAR", "KENAN", "KENAN_C",
 			"KALTURA", "KALTURA_C", "AAA", "SERV_RETIRADOS"};
 	private JFrame mainFrame = null;
 	// CheckBox
@@ -69,6 +69,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	JCheckBox chTresPlayKenanTVBase = new JCheckBox("Kenan TV BASE");
 	JCheckBox chTresPlayKenanTVAdi = new JCheckBox("Kenan TV Adicionales");
 	JCheckBox chTresPlayKenanTel = new JCheckBox("Kenan Telefonía");
+	JCheckBox chSoloCruces = new JCheckBox("Sólo Realizar Cruces");
 
 	// Botones para buscar los archivos (FileChooser)
 	JButton showFileDialogKenanAdiButton = new JButton("Buscar");
@@ -135,12 +136,12 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		jTabbedPane.addTab("3 Play", tresPlay);
 		jTabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-		JComponent cortePlanesTV = makeTextPanelCortePlanesTV("Panel #2");
-		jTabbedPane.addTab("Corte Planes TV", cortePlanesTV);
-		jTabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
-		JComponent corteCanalesTV = makeTextPanelCorteBloqueo("Panel #3");
+		JComponent corteCanalesTV = makeTextPanelCorteBloqueo("Panel #2");
 		jTabbedPane.addTab("Corte Canales TV", corteCanalesTV);
+		jTabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+		
+		JComponent cortePlanesTV = makeTextPanelCortePlanesTV("Panel #3");
+		jTabbedPane.addTab("Corte Planes TV", cortePlanesTV);
 		jTabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
 		mainFrame.add(jTabbedPane, BorderLayout.CENTER);
@@ -217,24 +218,51 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				chTresPlayKenanTVAdi.setEnabled(!toSet);
 				chTresPlayKenanTel.setSelected(toSet);
 				chTresPlayKenanTel.setEnabled(!toSet);
-				showFileDialogKenanAdiButton.setEnabled(toSet);
-				showFileDialogKenanButton.setEnabled(toSet);
-				showFileDialogTvAdiButton.setEnabled(toSet);
-				showFileDialogTvBaseButton.setEnabled(toSet);
-				showFileDialogTvAllButton.setEnabled(toSet);
-				showFileDialogInternetButton.setEnabled(toSet);
+				showFileDialogKenanAdiButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				showFileDialogKenanButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				showFileDialogTvAdiButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				showFileDialogTvBaseButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				showFileDialogTvAllButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				showFileDialogInternetButton.setEnabled(toSet&&!chSoloCruces.isSelected());
 				iniciarBtn.setEnabled(toSet);
 			}
 		});
 
+		chSoloCruces.setMnemonic(KeyEvent.VK_C);
+		chSoloCruces.setSelected(false);
+		chSoloCruces.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(chSoloCruces.isSelected()) {
+					showFileDialogKenanAdiButton.setEnabled(false);
+					showFileDialogKenanButton.setEnabled(false);
+					showFileDialogTvAdiButton.setEnabled(false);
+					showFileDialogTvBaseButton.setEnabled(false);
+					showFileDialogTvAllButton.setEnabled(false);
+					showFileDialogInternetButton.setEnabled(false);
+				} else {
+					showFileDialogKenanAdiButton.setEnabled(chTresPlayKenanTVAdi.isSelected());
+					showFileDialogKenanButton.setEnabled(chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()||chTresPlayKenanTel.isSelected());
+					showFileDialogTvAdiButton.setEnabled(chTresPlayKalturaAdi.isSelected());
+					showFileDialogTvBaseButton.setEnabled(chTresPlayKalturaBase.isSelected());
+					showFileDialogTvAllButton.setEnabled(chTresPlayKalturaAdi.isSelected()||chTresPlayKalturaBase.isSelected());
+					showFileDialogInternetButton.setEnabled(chTresPlayAAA.isSelected());
+				}
+			}
+		});
+		
 		chTresPlayAAA.setMnemonic(KeyEvent.VK_C);
 		chTresPlayAAA.setSelected(false);
 		chTresPlayAAA.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayAAA.isSelected();
-				showFileDialogInternetButton.setEnabled(toSet);
-				iniciarBtn.setEnabled(toSet);
+				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
+						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
+						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
+						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
+				showFileDialogInternetButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				iniciarBtn.setEnabled(toSetBtn);
 			}
 		});
 
@@ -244,9 +272,13 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKalturaBase.isSelected();
-				showFileDialogTvBaseButton.setEnabled(toSet);
-				showFileDialogTvAllButton.setEnabled(toSet);
-				iniciarBtn.setEnabled(toSet);
+				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
+						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
+						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
+						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
+				showFileDialogTvBaseButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				showFileDialogTvAllButton.setEnabled((toSet||chTresPlayKalturaAdi.isSelected())&&!chSoloCruces.isSelected());
+				iniciarBtn.setEnabled(toSetBtn);
 			}
 		});
 
@@ -256,9 +288,13 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKalturaAdi.isSelected();
-				showFileDialogTvAdiButton.setEnabled(toSet);
-				showFileDialogTvAllButton.setEnabled(toSet);
-				iniciarBtn.setEnabled(toSet);
+				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
+						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
+						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
+						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
+				showFileDialogTvAdiButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				showFileDialogTvAllButton.setEnabled((toSet||chTresPlayKalturaBase.isSelected())&&!chSoloCruces.isSelected());
+				iniciarBtn.setEnabled(toSetBtn);
 			}
 		});
 
@@ -267,7 +303,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		chTresPlayOTCARTel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				iniciarBtn.setEnabled(chTresPlayOTCARTel.isSelected());
+				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
+						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
+						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
+						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
+				iniciarBtn.setEnabled(toSetBtn);
 			}
 		});
 
@@ -277,8 +317,12 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKenanInter.isSelected();
-				showFileDialogKenanButton.setEnabled(toSet);
-				iniciarBtn.setEnabled(toSet);
+				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
+						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
+						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
+						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
+				showFileDialogKenanButton.setEnabled((toSet||chTresPlayKenanTVBase.isSelected()||chTresPlayKenanTel.isSelected())&&!chSoloCruces.isSelected());
+				iniciarBtn.setEnabled(toSetBtn);
 			}
 		});
 
@@ -288,8 +332,12 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKenanTVBase.isSelected();
-				showFileDialogKenanButton.setEnabled(toSet);
-				iniciarBtn.setEnabled(toSet);
+				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
+						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
+						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
+						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
+				showFileDialogKenanButton.setEnabled((toSet||chTresPlayKenanInter.isSelected()||chTresPlayKenanTel.isSelected())&&!chSoloCruces.isSelected());
+				iniciarBtn.setEnabled(toSetBtn);
 			}
 		});
 
@@ -299,8 +347,12 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKenanTVAdi.isSelected();
-				showFileDialogKenanAdiButton.setEnabled(toSet);
-				iniciarBtn.setEnabled(toSet);
+				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
+						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
+						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
+						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
+				showFileDialogKenanAdiButton.setEnabled(toSet&&!chSoloCruces.isSelected());
+				iniciarBtn.setEnabled(toSetBtn);
 			}
 		});
 
@@ -310,8 +362,12 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKenanTel.isSelected();
-				showFileDialogKenanButton.setEnabled(toSet);
-				iniciarBtn.setEnabled(toSet);
+				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
+						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
+						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
+						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
+				showFileDialogKenanButton.setEnabled((toSet||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected())&&!chSoloCruces.isSelected());
+				iniciarBtn.setEnabled(toSetBtn);
 			}
 		});
 
@@ -325,6 +381,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		panelCheck.add(chTresPlayKenanTVBase);
 		panelCheck.add(chTresPlayKenanTVAdi);
 		panelCheck.add(chTresPlayKenanTel);
+		panelCheck.add(chSoloCruces);
 	}
 
 	protected JComponent makeTextPanelCorteBloqueo(String text) {
@@ -692,89 +749,106 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			if (!chTodos.isSelected()) {
 					/* INTERNET AAA */
 				if (chTresPlayAAA.isSelected()) {
-					textAreaTplay.setText(bdManager.descargarCSV("INTERNET",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.descargarCSV("SERV_RETIRADOS",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("AAA", fileDialogInternet.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("INTERNET", null,textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("SERV_RETIRADOS", null,textAreaTplay).getText());
+					if(!chSoloCruces.isSelected()) {
+						textAreaTplay.setText(bdManager.descargarCSV("INTERNET",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.descargarCSV("SERV_RETIRADOS",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("AAA", fileDialogInternet.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("INTERNET", null,textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("SERV_RETIRADOS", null,textAreaTplay).getText());
+					}
 					CountOBJ obj = bdManager.obtenerCruces("TPLAY_AAA",textAreaTplay);
 					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_AAA", obj);
 					/* TV BASE KALTURA */
 				} else if (chTresPlayKalturaBase.isSelected()) {
-					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("TODO_KALTURA", fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("KALTURA", fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());// BD
+					if(!chSoloCruces.isSelected()) {
+						textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("TODO_KALTURA", fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("KALTURA", fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					}
 					CountOBJ obj = bdManager.obtenerCruces("TPLAY_KALTURA",textAreaTplay);
 					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_KALTURA", obj);
 					/* CANALES ADICIONALES KALTURA */
 				} else if (chTresPlayKalturaAdi.isSelected()) {
-					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("TODO_KALTURA", fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("KALTURA_C", fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					if(!chSoloCruces.isSelected()) {
+						textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("TODO_KALTURA", fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("KALTURA_C", fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					}
 					CountOBJ obj = bdManager.obtenerCruces("TPLAY_KALTURA_C",textAreaTplay);
 					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_KALTURA_C", obj);
 					/* TELEFONIA OTCAR */
 				} else if (chTresPlayOTCARTel.isSelected()) {
-					textAreaTplay.setText(bdManager.descargarCSV("TLF",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.descargarCSV("OTCAR",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("TLF", null,textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("OTCAR", null,textAreaTplay).getText());
+					if(!chSoloCruces.isSelected()) {
+						textAreaTplay.setText(bdManager.descargarCSV("TLF",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.descargarCSV("OTCAR",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("TLF", null,textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("OTCAR", null,textAreaTplay).getText());
+					}
 					CountOBJ obj = bdManager.obtenerCruces("TPLAY_OTCAR",textAreaTplay);
 					textAreaTplay.setText(obj.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_OTCAR", obj);
 					/* INTERNET KENAN */
 				} else if (chTresPlayKenanInter.isSelected()) {
-					textAreaTplay.setText(bdManager.descargarCSV("INTERNET",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("INTERNET", null,textAreaTplay).getText());
+					if(!chSoloCruces.isSelected()) {
+						textAreaTplay.setText(bdManager.descargarCSV("INTERNET",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("INTERNET", null,textAreaTplay).getText());
+					}
 					CountOBJ obj1 = bdManager.obtenerCruces("TPLAY_KENAN_INT",textAreaTplay);
 					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_KENAN_INT", obj1);
 				} else if (chTresPlayKenanTVBase.isSelected()) {
-					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					if(!chSoloCruces.isSelected()) {
+						textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					}
 					CountOBJ obj1 = bdManager.obtenerCruces("TPLAY_KENAN_TV",textAreaTplay);
 					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_KENAN_TV", obj1);
 				} else if (chTresPlayKenanTVAdi.isSelected()) {
-					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("KENAN_C", fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					if(!chSoloCruces.isSelected()) {
+						textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("KENAN_C", fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					}
 					CountOBJ obj1 = bdManager.obtenerCruces("TPLAY_KENAN_C",textAreaTplay);
 					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_KENAN_C", obj1);
 				} else if (chTresPlayKenanTel.isSelected()) {
-					textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					if(!chSoloCruces.isSelected()) {
+						textAreaTplay.setText(bdManager.descargarCSV("TV",textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("KENAN", fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						textAreaTplay.setText(bdManager.actualiza("TV", null,textAreaTplay).getText());
+					}
 					CountOBJ obj1 = bdManager.obtenerCruces("TPLAY_KENAN_TLF",textAreaTplay);
 					textAreaTplay.setText(obj1.getjTextAreaStatusProcess().getText());
 					mapResult.put("TPLAY_KENAN_TLF", obj1);
 				}
 
 			} else {
-				for (String s : PRODUCTOS_TPLAY) {
-
-					if ("KENAN".equals(s)) {
-						textAreaTplay.setText(bdManager.actualiza(s, fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					} else if ("KENAN_C".equals(s)) {
-						textAreaTplay.setText(bdManager.actualiza(s, fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					} else if ("KALTURA".equals(s)) {
-						textAreaTplay.setText(bdManager.actualiza(s, fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-						textAreaTplay.setText(bdManager.actualiza("TODO_KALTURA", fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					} else if ("KALTURA_C".equals(s)) {
-						textAreaTplay.setText(bdManager.actualiza(s, fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					} else if ("AAA".equals(s)) {
-						textAreaTplay.setText(bdManager.actualiza(s, fileDialogInternet.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
-					}else {
-						textAreaTplay.setText(bdManager.descargarCSV(s,textAreaTplay).getText());
-						textAreaTplay.setText(bdManager.actualiza(s, null,textAreaTplay).getText());
+				if(!chSoloCruces.isSelected()) {
+					for (String s : PRODUCTOS_TPLAY) {
+						if ("KENAN".equals(s)) {
+							textAreaTplay.setText(bdManager.actualiza(s, fileDialogKenan.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						} else if ("KENAN_C".equals(s)) {
+							textAreaTplay.setText(bdManager.actualiza(s, fileDialogKenanAdi.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						} else if ("KALTURA".equals(s)) {
+							textAreaTplay.setText(bdManager.actualiza(s, fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+							textAreaTplay.setText(bdManager.actualiza("TODO_KALTURA", fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						} else if ("KALTURA_C".equals(s)) {
+							textAreaTplay.setText(bdManager.actualiza(s, fileDialogTvAdicionales.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						} else if ("AAA".equals(s)) {
+							textAreaTplay.setText(bdManager.actualiza(s, fileDialogInternet.getSelectedFile().getAbsolutePath(),textAreaTplay).getText());
+						}else {
+							textAreaTplay.setText(bdManager.descargarCSV(s,textAreaTplay).getText());
+							textAreaTplay.setText(bdManager.actualiza(s, null,textAreaTplay).getText());
+						}
 					}
 				}
 				for (String s : CRUCES_TPLAY) {
