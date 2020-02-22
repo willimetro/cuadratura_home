@@ -153,47 +153,85 @@ public class Correo {
 				+ ((null != c.get("INTERNET") && null != c.get("TV") && null != c.get("TLF")
 				&& null != c.get("ADICIONALES"))
 						? "<br>"
-								+ "<h4>(3 Play Fibra vs. Plataformas Tecnicas) vs. Kenan</h4>"
+								+ "<h4> 3 Play Fibra vs. Plataformas Tecnicas  vs. Kenan</h4>"
 								+ "<p>Este Cruce consiste en lo siguiente:<br>"
-								+ "<b>OK/OK:</b> Cantidad de productos que se encuentran en (3 play VS. Red) y Kenan, es decir en las tres plataformas<br>"
-								+ "<b>OK/NOK:</b> Cantidad de productos que se encuentran en (3 play VS. Red) y no en Kenan, es decir en las dos primeras plataformas<br>"
-								+ "<b>NOK/OK:</b> Cantidad de productos que se encuentran en Kenan y no en el cruce (3 play VS. Red), es decir, implica que puede no estar<br>"
-								+ "en 3 Play, o en la plataforma Tecnica o en ambas</p>"
+								+ "<b>OK/OK/OK:</b> Cantidad de productos que se encuentran en 3 play, en la Red y Kenan<br>"
+								+ "<b>OK/NOK/OK:</b> Cantidad de productos que se encuentran en 3 play y en Kenan pero no en la red<br>"
+								+ "<b>NOK/OK/OK:</b> Cantidad de productos que se encuentran en Kenan y en la red pero no en 3 play<br>"
+								+ "<b>OK/OK/NOK:</b> Cantidad de productos que se encuentran en 3 play y en la Red pero no en Kenan<br>"
+								+ "<b>OK/NOK/NOK:</b> Cantidad de productos que solo se encuentran en 3 play<br>"
+								+ "<b>NOK/OK/NOK:</b> Cantidad de productos que solo se encuentran en la Red<br>"
+								+ "<b>NOK/NOK/OK:</b> Cantidad de productos que solo se encuentran en Kenan<br>"
 								+ "<table>" + "<tr>"
-								+ "<th>  3PLAY Y RED / KENAN  </th>"
+								+ "<th>  3PLAY / RED / KENAN  </th>"
 								+ "<th> BASE TV </th>"
 								+ "<th> CANALES TV </th>"
 								+ "<th> TELEFONIA </th>"
 								+ "<th> INTERNET </th>"
 								+ "<tr>"
-								+ "<td> OK/OK </td>"
+								+ "<td> OK/OK/OK </td>"
 								+ ((null != c.get("TV"))
-										? "<td>" + c.get("TV").getTotalOk() + "</td>" : "")
+										? "<td>" + c.get("TV").getOkOkOk() + "</td>" : "")
 								+ ((null != c.get("ADICIONALES"))
-										? "<td>" + c.get("ADICIONALES").getTotalOk() + "</td>" : "")
+										? "<td>" + c.get("ADICIONALES").getOkOkOk() + "</td>" : "")
 								+ ((null != c.get("TLF"))
-										? "<td>" + c.get("TLF").getTotalOk() + "</td>" : "")
+										? "<td>" + c.get("TLF").getOkOkOk() + "</td>" : "")
 								+ ((null != c.get("INTERNET"))
-										? "<td>" + c.get("INTERNET").getTotalOk() + "</td>"
-										: "")
-								+ "</tr>" + "<tr>" + "<td> OK/NOK </td>"
+										? "<td>" + c.get("INTERNET").getOkOkOk() + "</td>" : "")
+								+ "</tr>" + "<tr>" + "<td> OK/NOK/OK </td>"
 								+ ((null != c.get("TV"))
-										? "<td>" + c.get("TV").getTotalRedTplay()+ "</td>" : "")
+										? "<td>" + c.get("TV").getOkNokOk()+ "</td>" : "")
 								+ ((null != c.get("ADICIONALES"))
-										? "<td>" + c.get("ADICIONALES").getTotalRedTplay() + "</td>" : "")
+										? "<td>" + c.get("ADICIONALES").getOkNokOk() + "</td>" : "")
 								+ ((null != c.get("TLF"))
-										? "<td>" + c.get("TLF").getTotalRedTplay() + "</td>" : "")
+										? "<td>" + c.get("TLF").getOkNokOk() + "</td>" : "")
 								+ ((null != c.get("INTERNET"))
-										? "<td>" + c.get("INTERNET").getTotalRedTplay() + "</td>" : "")
-								+ "</tr>" + "<tr>" + "<td> NOK/OK </td>"
+										? "<td>" + c.get("INTERNET").getOkNokOk() + "</td>" : "")
+								+ "</tr>" + "<tr>" + "<td> NOK/OK/OK </td>"
 								+ ((null != c.get("TV"))
-										? "<td>" + c.get("TV").getTotalKenan() + "</td>" : "")
+										? "<td>" + c.get("TV").getNokOkOk() + "</td>" : "")
 								+ ((null != c.get("ADICIONALES"))
-										? "<td>" + c.get("ADICIONALES").getTotalKenan() + "</td>" : "")
+										? "<td>" + c.get("ADICIONALES").getNokOkOk() + "</td>" : "")
 								+ ((null != c.get("TLF"))
-										? "<td>" + c.get("TLF").getTotalKenan() + "</td>" : "")
+										? "<td>" + c.get("TLF").getNokOkOk() + "</td>" : "")
 								+ ((null != c.get("INTERNET"))
-										? "<td>" + c.get("INTERNET").getTotalKenan() + "</td>" : "")
+										? "<td> -- </td>" : "")
+								+ "</tr>" + "<tr>" + "<td> OK/OK/NOK </td>"
+								+ ((null != c.get("TV"))
+										? "<td>" + c.get("TV").getOkOKNok() + "</td>" : "")
+								+ ((null != c.get("ADICIONALES"))
+										? "<td>" + c.get("ADICIONALES").getOkOKNok() + "</td>" : "")
+								+ ((null != c.get("TLF"))
+										? "<td>" + c.get("TLF").getOkOKNok() + "</td>" : "")
+								+ ((null != c.get("INTERNET"))
+										? "<td>" + c.get("INTERNET").getOkOKNok() + "</td>" : "")
+								+ "</tr>" + "<tr>" + "<td> OK/NOK/NOK </td>"
+								+ ((null != c.get("TV"))
+										? "<td>" + c.get("TV").getOkNokNok() + "</td>" : "")
+								+ ((null != c.get("ADICIONALES"))
+										? "<td>" + c.get("ADICIONALES").getOkNokNok() + "</td>" : "")
+								+ ((null != c.get("TLF"))
+										? "<td>" + c.get("TLF").getOkNokNok() + "</td>" : "")
+								+ ((null != c.get("INTERNET"))
+										? "<td>" + c.get("INTERNET").getOkNokNok() + "</td>" : "")
+								+ "</tr>" + "<tr>" + "<td> NOK/OK/NOK </td>"
+								+ ((null != c.get("TV"))
+										? "<td>" + c.get("TV").getNokOkNok() + "</td>" : "")
+								+ ((null != c.get("ADICIONALES"))
+										? "<td>" + c.get("ADICIONALES").getNokOkNok() + "</td>" : "")
+								+ ((null != c.get("TLF"))
+										? "<td>" + c.get("TLF").getNokOkNok() + "</td>" : "")
+								+ ((null != c.get("INTERNET"))
+										? "<td> -- </td>" : "")
+								+ "</tr>" + "<tr>" + "<td> NOK/NOK/OK </td>"
+								+ ((null != c.get("TV"))
+										? "<td>" + c.get("TV").getNokNokOk() + "</td>" : "")
+								+ ((null != c.get("ADICIONALES"))
+										? "<td>" + c.get("ADICIONALES").getNokNokOk() + "</td>" : "")
+								+ ((null != c.get("TLF"))
+										? "<td>" + c.get("TLF").getNokNokOk() + "</td>" : "")
+								+ ((null != c.get("INTERNET"))
+										? "<td> -- </td>" : "")
 								+ "</tr>" + "</table>"
 						: "")
 				+ "</body>" + "</html>";

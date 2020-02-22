@@ -223,132 +223,290 @@ public class Constantes {
 	private final static String[] QUERYS_CROS_CANALES ={
 			// BORRA TABLA 3PLAY_RED CANALES
 			"TRUNCATE canales_3play_red",
+			// BORRA TABLA 3PLAY_NORED CANALES
+			"TRUNCATE canales_3play_nored",
+			// BORRA TABLA RED_NO3PLAY CANALES
+			"TRUNCATE canales_kaltura_no3play",
 			// INSERTA DATOS 3PLAY_Y_RED CANALES
 			"INSERT INTO canales_3play_red (SELECT canales_3p.* FROM tvcanales_3play canales_3p INNER JOIN canales_kaltura c_kaltura ON  "
 			+ "canales_3p.\"KEY_CANAL\" = c_kaltura.\"KEY_CANAL\" WHERE canales_3p.\"ESTADO\" = 'ACTIVO' "
 			+ "AND canales_3p.\"DETALLE\" = 'ADICIONAL')",
-			// 3PLAYRED_Y_KENAN CANALES
+			// INSERTA DATOS 3PLAY_NORED CANALES
+			"INSERT INTO canales_3play_nored (SELECT canales_3p.* FROM tvcanales_3play canales_3p LEFT OUTER JOIN canales_kaltura c_kaltura "
+			+ "ON  canales_3p.\"KEY_CANAL\" = c_kaltura.\"KEY_CANAL\" "
+			+ "WHERE canales_3p.\"DETALLE\" = 'ADICIONAL' AND canales_3p.\"TRYBUY\" = 'NO' "
+			+ "AND c_kaltura.\"KEY_CANAL\" IS NULL)",
+			// INSERTA DATOS RED_NO3PLAY CANALES
+			"INSERT INTO canales_kaltura_no3play (SELECT c_kaltura.* FROM canales_kaltura c_kaltura LEFT OUTER JOIN tvcanales_3play canales_3p "
+			+ "ON  canales_3p.\"DETALLE\" = 'ADICIONAL' AND c_kaltura.\"KEY_CANAL\" = canales_3p.\"KEY_CANAL\" "
+			+ "WHERE canales_3p.\"KEY_CANAL\" IS NULL)",
+			// 3PLAYRED_Y_KENAN CANALES	OK OK OK
 			"SELECT tv_3p.\"RUT\",tv_3p.\"DV\",tv_3p.\"PRODUCTO\",tv_3p.\"CODI_PRODUCTO\",tv_3p.\"DETALLE\",tv_3p.\"ESTADO\" "
 			+ "AS ESTADO_TPLAY,kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\" AS ESTADO_KENAN,kenan.\"CANAL\" "
 			+ "FROM canales_3play_red tv_3p INNER JOIN facturador_kenan_canal kenan ON "
 			+ "tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
 			+ "WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO'",
-			// 3PLAYRED_NO_KENAN CANALES
+			// 3PLAY_NORED_Y_KENAN CANALES OK NOK OK
+			"SELECT tv_3p.\"RUT\",tv_3p.\"DV\",tv_3p.\"PRODUCTO\",tv_3p.\"CODI_PRODUCTO\",tv_3p.\"DETALLE\",tv_3p.\"ESTADO\" "
+			+ "AS ESTADO_TPLAY,kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\" AS ESTADO_KENAN,kenan.\"CANAL\" "
+			+ "FROM canales_3play_nored tv_3p INNER JOIN facturador_kenan_canal kenan ON "
+			+ "tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
+			+ "WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO'",
+			// RED_NO3PLAY_Y_KENAN CANALES NOK OK OK
+			"SELECT ckal.\"MODULE_ID\",ckal.\"MODULE_NAME\",ckal.\"PLAN_DEPORTES\", kenan.* FROM canales_kaltura_no3play ckal "
+			+ "INNER JOIN facturador_kenan_canal kenan ON ckal.\"KEY_CANAL\" = kenan.\"KEY_CANAL\"",
+			// 3PLAYRED_NO_KENAN CANALES OK OK NOK
 			"SELECT tv_3p.* FROM canales_3play_red tv_3p LEFT OUTER JOIN facturador_kenan_canal kenan "
 			+ "ON  tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
 			+ "WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
 			+ "AND kenan.\"KEY_CANAL\" IS NULL",
-			// KENAN_NO_3PLAYRED CANALES
-			"SELECT kenan.* FROM facturador_kenan_canal kenan LEFT OUTER JOIN canales_3play_red tv_3p "
+			// 3PLAY_NORED_NO_KENAN CANALES OK NOK NOK
+			"SELECT tv_3p.* FROM canales_3play_nored tv_3p LEFT OUTER JOIN facturador_kenan_canal kenan "
+			+ "ON tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
+			+ "AND kenan.\"KEY_CANAL\" IS NULL",
+			// RED_NO3PLAY_NO_KENAN CANALES	NOK OK NOK
+			"SELECT ckal.* FROM canales_kaltura_no3play ckal LEFT OUTER JOIN facturador_kenan_canal kenan ON ckal.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
+			+ "WHERE kenan.\"KEY_CANAL\" IS NULL",
+			// KENAN_NO_3PLAY_NO_RED CANALES NOK NOK OK
+			"SELECT kn.* FROM (SELECT kenan.* FROM facturador_kenan_canal kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
-			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" "
-			+ "WHERE tv_3p.\"RUT\" IS NULL",
-			// COUNT 3PLAYRED_Y_KENAN CANALES
+			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE tv_3p.\"RUT\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')) as kn "
+			+ "LEFT OUTER JOIN canales_kaltura c_kaltura ON  kn.\"KEY_CANAL\" = c_kaltura.\"KEY_CANAL\" WHERE c_kaltura.\"KEY_CANAL\" IS NULL",
+			// COUNT 3PLAYRED_Y_KENAN CANALES OK OK OK
 			"SELECT COUNT(1) FROM canales_3play_red tv_3p INNER JOIN facturador_kenan_canal kenan "
 			+ "ON tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
 			+ "WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO'",
-			// COUNT 3PLAYRED_NO_KENAN CANALES
+			// COUNT 3PLAY_NORED_Y_KENAN CANALES OK NOK OK
+			"SELECT COUNT(1) FROM canales_3play_nored tv_3p INNER JOIN facturador_kenan_canal kenan "
+			+ "ON tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
+			+ "WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO'",
+			// COUNT RED_NO3PLAY_Y_KENAN CANALES NOK OK OK
+			"SELECT COUNT(1) FROM canales_kaltura_no3play ckal INNER JOIN facturador_kenan_canal kenan "
+			+ "ON ckal.\"KEY_CANAL\" = kenan.\"KEY_CANAL\"",
+			// COUNT 3PLAYRED_NO_KENAN CANALES OK OK NOK
 			"SELECT COUNT(1) FROM canales_3play_red tv_3p LEFT OUTER JOIN facturador_kenan_canal kenan ON "
 			+ "tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' "
 			+ "AND tv_3p.\"TRYBUY\" = 'NO' AND kenan.\"KEY_CANAL\" IS NULL",
-			// COUNT KENAN_NO_3PLAYRED CANALES
-			"SELECT COUNT(1) "
-			+ "FROM facturador_kenan_canal kenan LEFT OUTER JOIN canales_3play_red tv_3p "
+			// COUNT 3PLAY_NORED_NO_KENAN CANALES OK NOK NOK
+			"SELECT COUNT(1) FROM canales_3play_nored tv_3p LEFT OUTER JOIN facturador_kenan_canal kenan "
+			+ "ON tv_3p.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" WHERE tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
+			+ "AND kenan.\"KEY_CANAL\" IS NULL",
+			// COUNT RED_NO3PLAY_NO_KENAN CANALES	NOK OK NOK
+			"SELECT COUNT(1) FROM canales_kaltura_no3play ckal LEFT OUTER JOIN facturador_kenan_canal kenan ON ckal.\"KEY_CANAL\" = kenan.\"KEY_CANAL\" "
+			+ "WHERE kenan.\"KEY_CANAL\" IS NULL",
+			// COUNT KENAN_NO_3PLAY_NO_RED CANALES NOK NOK OK
+			"SELECT COUNT(1) FROM (SELECT kenan.* FROM facturador_kenan_canal kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"DETALLE\" = 'ADICIONAL' AND tv_3p.\"TRYBUY\" = 'NO' "
-			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" "
-			+ "WHERE tv_3p.\"RUT\" IS NULL"};
+			+ "AND kenan.\"KEY_CANAL\" = tv_3p.\"KEY_CANAL\" WHERE tv_3p.\"RUT\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')) as kn "
+			+ "LEFT OUTER JOIN canales_kaltura c_kaltura ON  kn.\"KEY_CANAL\" = c_kaltura.\"KEY_CANAL\" WHERE c_kaltura.\"KEY_CANAL\" IS NULL"};
 	private final static String[] QUERYS_CROS_INTERNET ={
 			// BORRA TABLA 3PLAY_RED INTERNET
 			"TRUNCATE internet_3play_red",
+			// BORRA TABLA 3PLAY_NORED INTERNET
+			"TRUNCATE internet_3play_nored",
+			// BORRA TABLA RED_NO3PLAY INTERNET
+			"NA",
 			// INSERTA DATOS 3PLAY_Y_RED INTERNET
 			"INSERT INTO internet_3play_red (SELECT tplay.* FROM internet_3play tplay "
-			+ "INNER JOIN internet_aaa aaa ON  tplay.\"CODI_TECNICO\" = aaa.\"UID\")",
-			// 3PLAYRED_Y_KENAN INTERNET
+			+ "INNER JOIN internet_aaa aaa ON tplay.\"CODI_TECNICO\" = aaa.\"UID\")",
+			// INSERTA DATOS TABLA 3PLAY_NORED INTERNET
+			"INSERT INTO internet_3play_nored (SELECT tplay.* FROM internet_3play tplay LEFT OUTER JOIN internet_aaa aaa "
+			+ "ON  tplay.\"CODI_TECNICO\" = aaa.\"UID\" WHERE aaa.\"UID\" IS NULL)",
+			// INSERTA DATOS TABLA RED_NO3PLAY INTERNET
+			"NA",
+			// 3PLAYRED_Y_KENAN INTERNET OK OK OK
 			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\",tplay.\"NMRO_SOLICITUDACT\", "
 			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\" FROM internet_3play_red tplay INNER JOIN "
 			+ "facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' "
 			+ "AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
-			// 3PLAYRED_NO_KENAN INTERNET
+			// 3PLAY_NORED_Y_KENAN INTERNET OK NOK OK
+			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\",tplay.\"NMRO_SOLICITUDACT\", "
+			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\" FROM internet_3play_nored tplay INNER JOIN "
+			+ "facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' "
+			+ "AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
+			// RED_NO3PLAY_Y_KENAN INTERNET NOK OK OK
+			"NA",
+			// 3PLAYRED_NO_KENAN INTERNET OK OK NOK
 			"SELECT tplay.* FROM internet_3play_red tplay LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
-			// KENAN_NO_3PLAYRED INTERNET
-			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN internet_3play_red tplay "
-			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" IS NULL",
-			// COUNT 3PLAYRED_Y_KENAN INTERNET
+			// 3PLAY_NORED_NO_KENAN INTERNET OK NOK NOK
+			"SELECT tplay.* FROM internet_3play_nored tplay LEFT OUTER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// RED_NO3PLAY_NO_KENAN INTERNET NOK OK NOK
+			"NA",
+			// KENAN_NO_3PLAY_NO_RED INTERNET NOK NOK OK
+			"NA",
+			// COUNT 3PLAYRED_Y_KENAN INTERNET OK OK OK
 			"SELECT COUNT(1) FROM internet_3play_red tplay INNER JOIN "
 			+ "facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' "
 			+ "AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
-			// COUNT 3PLAYRED_NO_KENAN INTERNET
+			// COUNT 3PLAY_NORED_Y_KENAN INTERNET OK NOK OK
+			"SELECT COUNT(1) FROM internet_3play_nored tplay INNER JOIN "
+			+ "facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' "
+			+ "AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
+			// COUNT RED_NO3PLAY_Y_KENAN INTERNET NOK OK OK
+			"NA",
+			// COUNT 3PLAYRED_NO_KENAN INTERNET OK OK NOK
 			"SELECT COUNT(1) FROM internet_3play_red tplay LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
-			// COUNT KENAN_NO_3PLAYRED INTERNET
-			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN internet_3play_red tplay "
-			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" IS NULL"};
+			// COUNT 3PLAY_NORED_NO_KENAN INTERNET OK NOK NOK
+			"SELECT COUNT(1) FROM internet_3play_nored tplay LEFT OUTER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN BANDA ANCHA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// COUNT RED_NO3PLAY_NO_KENAN INTERNET NOK OK NOK
+			"NA",
+			// COUNT KENAN_NO_3PLAY_NO_RED INTERNET NOK NOK OK
+			"NA"};
 	private final static String[] QUERYS_CROS_TLF ={
 			// BORRA TABLA 3PLAY_RED TLF
 			"TRUNCATE tlf_3play_red",
+			// BORRA TABLA 3PLAY_NORED TLF
+			"TRUNCATE tlf_3play_nored",
+			// BORRA TABLA RED_NO3PLAY TLF
+			"TRUNCATE tlf_otcar_no3play",
 			// INSERTA DATOS 3PLAY_Y_RED TLF
 			"INSERT INTO tlf_3play_red (SELECT tplay.* FROM tlf_3play tplay "
-			+ "INNER JOIN tlf_otcar otcar ON  tplay.\"KEY_ANI\" = otcar.\"KEY_ANI\")",	
-			// 3PLAYRED_Y_KENAN TLF
+			+ "INNER JOIN tlf_otcar otcar ON  tplay.\"KEY_ANI\" = otcar.\"KEY_ANI\")",
+			// INSERTA DATOS 3PLAY_NORED TLF
+			"INSERT INTO tlf_3play_nored (SELECT tplay.* FROM tlf_3play tplay LEFT OUTER JOIN tlf_otcar otcar "
+			+ "ON  tplay.\"KEY_ANI\" = otcar.\"KEY_ANI\" WHERE otcar.\"KEY_ANI\" IS NULL)",
+			// INSERTA DATOS RED_NO3PLAY TLF
+			"INSERT INTO tlf_otcar_no3play (SELECT otcar.* FROM tlf_otcar otcar LEFT OUTER JOIN tlf_3play tplay "
+			+ "ON  otcar.\"KEY_ANI\" = tplay.\"KEY_ANI\" WHERE tplay.\"KEY_ANI\" IS NULL)",
+			// 3PLAYRED_Y_KENAN TLF OK OK OK
 			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\",tplay.\"NMRO_SOLICITUDACT\", "
 			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\" FROM tlf_3play_red tplay INNER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
-			// 3PLAYRED_NO_KENAN TLF
+			// 3PLAY_NORED_Y_KENAN TLF OK NOK OK
+			"SELECT tplay.\"NRUT_CLIENTE\",tplay.\"DRUT_CLIENTE\",tplay.\"CODI_TECNICO\",tplay.\"NMRO_SOLICITUDACT\", "
+			+ "kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\" FROM tlf_3play_nored tplay INNER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
+			// RED_NO3PLAY_Y_KENAN TLF NOK OK OK
+			"SELECT otcar.\"ANI\", otcar.\"REQUEST_ID\", kenan.* FROM tlf_otcar_no3play otcar INNER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND otcar.\"RUT_CLIENT\" = kenan.\"KEY_RUT_SIN_DV\"",
+			// 3PLAYRED_NO_KENAN TLF OK OK NOK
 			"SELECT tplay.* FROM tlf_3play_red tplay LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
-			// KENAN_NO_3PLAYRED TLF
-			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play_red tplay "
-			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND  tplay.\"NRUT_CLIENTE\" IS NULL",
-			// COUNT 3PLAYRED_Y_KENAN CANALES
+			// 3PLAY_NORED_NO_KENAN  TLF OK NOK NOK
+			"SELECT tplay.* FROM tlf_3play_nored tplay LEFT OUTER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// RED_NO3PLAY_NO_KENAN  TLF NOK OK NOK
+			"SELECT otcar.* FROM tlf_otcar_no3play otcar LEFT OUTER JOIN facturador_kenan kenan ON kenan.\"PLAN\" = 'PLAN TELEFONIA' "
+			+ "AND otcar.\"RUT_CLIENT\" = kenan.\"KEY_RUT_SIN_DV\" WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// KENAN_NO_3PLAY_NO_RED TLF NOK NOK OK
+			"SELECT kn.* FROM (SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')) as kn "
+			+ "LEFT OUTER JOIN tlf_otcar otcar ON  kn.\"KEY_RUT_SIN_DV\" = otcar.\"RUT_CLIENT\" WHERE otcar.\"RUT_CLIENT\" IS NULL",
+			// COUNT 3PLAYRED_Y_KENAN TLF OK OK OK
 			"SELECT COUNT(1) FROM tlf_3play_red tplay INNER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
-			// COUNT 3PLAYRED_NO_KENAN CANALES
+			// COUNT 3PLAY_NORED_Y_KENAN TLF OK NOK OK
+			"SELECT COUNT(1) FROM tlf_3play_nored tplay INNER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\"",
+			// COUNT RED_NO3PLAY_Y_KENAN TLF NOK OK OK
+			"SELECT COUNT(1) FROM tlf_otcar_no3play otcar INNER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND otcar.\"RUT_CLIENT\" = kenan.\"KEY_RUT_SIN_DV\"",
+			// COUNT 3PLAYRED_NO_KENAN TLF OK OK NOK
 			"SELECT COUNT(1) FROM tlf_3play_red tplay LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
-			// COUNT KENAN_NO_3PLAYRED CANALES
-			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play_red tplay "
-			+ "ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND  tplay.\"NRUT_CLIENTE\" IS NULL"};
+			// COUNT 3PLAY_NORED_NO_KENAN  TLF OK NOK NOK
+			"SELECT COUNT(1) FROM tlf_3play_nored tplay LEFT OUTER JOIN facturador_kenan kenan "
+			+ "ON  kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// COUNT RED_NO3PLAY_NO_KENAN  TLF NOK OK NOK
+			"SELECT COUNT(1) FROM tlf_otcar_no3play otcar LEFT OUTER JOIN facturador_kenan kenan ON kenan.\"PLAN\" = 'PLAN TELEFONIA' "
+			+ "AND otcar.\"RUT_CLIENT\" = kenan.\"KEY_RUT_SIN_DV\" WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// COUNT KENAN_NO_3PLAY_NO_RED TLF NOK NOK OK
+			"SELECT COUNT(1) FROM (SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tlf_3play tplay ON  kenan.\"KEY_RUT_SIN_DV\" = tplay.\"NRUT_CLIENTE\" "
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEFONIA' AND tplay.\"NRUT_CLIENTE\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')) as kn "
+			+ "LEFT OUTER JOIN tlf_otcar otcar ON  kn.\"KEY_RUT_SIN_DV\" = otcar.\"RUT_CLIENT\" WHERE otcar.\"RUT_CLIENT\" IS NULL"};
 	private final static String[] QUERYS_CROS_TV ={		
 			// BORRA TABLA 3PLAY_RED TV
 			"TRUNCATE tv_3play_red",
+			// BORRA TABLA 3PLAY_NORED TV
+			"TRUNCATE tv_3play_nored",
+			// BORRA TABLA RED_NO3PLAY TV
+			"TRUNCATE tv_kaltura_no3play",
 			// INSERTA DATOS 3PLAY_Y_RED TV
 			"INSERT INTO tv_3play_red (SELECT tv_3p.* FROM tvcanales_3play tv_3p "
 			+ "INNER JOIN tv_kaltura tv_kal ON  tv_3p.\"RUT\" = tv_kal.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND tv_3p.\"ESTADO\" = 'ACTIVO')",
-			// 3PLAYRED_Y_KENAN TV
+			// INSERTA DATOS 3PLAY_NORED TV
+			"INSERT INTO tv_3play_nored (SELECT tv_3p.* FROM tvcanales_3play tv_3p LEFT OUTER JOIN tv_kaltura tv_kal "
+			+ "ON tv_3p.\"RUT\" = tv_kal.\"KEY_RUT_SIN_DV\" WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129') "
+			+ "AND tv_kal.\"KEY_RUT_SIN_DV\" IS NULL)",
+			// INSERTA DATOS RED_NO3PLAY TV
+			"INSERT INTO tv_kaltura_no3play (SELECT tv_kal.* FROM tv_kaltura tv_kal LEFT OUTER JOIN tvcanales_3play tv_3p "
+			+ "ON  tv_kal.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" AND tv_3p.\"CODI_PRODUCTO\" IN ('128','129') "
+			+ "WHERE tv_3p.\"RUT\" IS NULL)",
+			// 3PLAYRED_Y_KENAN TV OK OK OK
 			"SELECT tv_3p.\"RUT\",tv_3p.\"DV\",tv_3p.\"PRODUCTO\",tv_3p.\"CODI_PRODUCTO\",tv_3p.\"DETALLE\","
 			+ "tv_3p.\"ESTADO\", kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\" FROM tv_3play_red tv_3p "
 			+ "INNER JOIN facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN TELEVISION' "
 			+ "AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129')",
-			// 3PLAYRED_NO_KENAN TV
+			// 3PLAY_NORED_Y_KENAN TV OK NOK OK
+			"SELECT tv_3p.\"RUT\",tv_3p.\"DV\",tv_3p.\"PRODUCTO\",tv_3p.\"CODI_PRODUCTO\",tv_3p.\"DETALLE\","
+			+ "tv_3p.\"ESTADO\", kenan.\"CUENTA_KENAN\",kenan.\"ESTADO\",kenan.\"PLAN\" FROM tv_3play_nored tv_3p "
+			+ "INNER JOIN facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN TELEVISION' "
+			+ "AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129')",
+			// RED_NO3PLAY_Y_KENAN TV NOK OK OK
+			"SELECT tkal.\"MODULE_ID\",tkal.\"SUSPENTION_STATE\", kenan.* FROM tv_kaltura_no3play tkal "
+			+ "INNER JOIN facturador_kenan kenan ON kenan.\"PLAN\" = 'PLAN TELEVISION' AND "
+			+ "tkal.\"KEY_RUT_SIN_DV\" = kenan.\"KEY_RUT_SIN_DV\"",
+			// 3PLAYRED_NO_KENAN TV OK OK NOK
 			"SELECT tv_3p.* FROM tv_3play_red tv_3p LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" IS NULL",
-			// KENAN_NO_3PLAYRED TV
-			"SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tv_3play_red tv_3p "
+			// 3PLAY_NORED_NO_KENAN TV OK NOK NOK
+			"SELECT tv_3p.* FROM tv_3play_nored tv_3p LEFT OUTER JOIN facturador_kenan kenan "
+			+ "ON kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// RED_NO3PLAY_NO_KENAN TV NOK OK NOK
+			"SELECT tkal.* FROM tv_kaltura_no3play tkal LEFT OUTER JOIN facturador_kenan kenan ON "
+			+ "kenan.\"PLAN\" = 'PLAN TELEVISION' AND tkal.\"KEY_RUT_SIN_DV\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// KENAN_NO_3PLAY_NO_RED TV NOK NOK OK
+			"SELECT kn.* FROM (SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL",
-			// COUNT 3PLAYRED_Y_KENAN TV
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')) "
+			+ "as kn LEFT OUTER JOIN tv_kaltura tv_kal ON  kn.\"KEY_RUT_SIN_DV\" = tv_kal.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE tv_kal.\"KEY_RUT_SIN_DV\" IS NULL",
+			// COUNT 3PLAYRED_Y_KENAN TV OK OK OK
 			"SELECT COUNT(1) FROM tv_3play_red tv_3p "
 			+ "INNER JOIN facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN TELEVISION' "
 			+ "AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129')",
-			// COUNT 3PLAYRED_NO_KENAN CANALES
+			// COUNT 3PLAY_NORED_Y_KENAN TV OK NOK OK
+			"SELECT COUNT(1) FROM tv_3play_nored tv_3p "
+			+ "INNER JOIN facturador_kenan kenan ON  kenan.\"PLAN\" = 'PLAN TELEVISION' "
+			+ "AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129')",
+			// COUNT RED_NO3PLAY_Y_KENAN TV NOK OK OK
+			"SELECT COUNT(1) FROM tv_kaltura_no3play tkal "
+			+ "INNER JOIN facturador_kenan kenan ON kenan.\"PLAN\" = 'PLAN TELEVISION' AND "
+			+ "tkal.\"KEY_RUT_SIN_DV\" = kenan.\"KEY_RUT_SIN_DV\"",
+			// COUNT 3PLAYRED_NO_KENAN TV OK OK NOK
 			"SELECT COUNT(1) FROM tv_3play_red tv_3p LEFT OUTER JOIN facturador_kenan kenan "
 			+ "ON kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" "
 			+ "WHERE tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" IS NULL",
-			// COUNT KENAN_NO_3PLAYRED CANALES
-			"SELECT COUNT(1) FROM facturador_kenan kenan LEFT OUTER JOIN tv_3play_red tv_3p "
+			// COUNT 3PLAY_NORED TV OK NOK NOK
+			"SELECT COUNT(1) FROM tv_3play_nored tv_3p LEFT OUTER JOIN facturador_kenan kenan "
+			+ "ON kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// COUNT RED_NO3PLAY TV NOK OK NOK
+			"SELECT COUNT(1) FROM tv_kaltura_no3play tkal LEFT OUTER JOIN facturador_kenan kenan ON "
+			+ "kenan.\"PLAN\" = 'PLAN TELEVISION' AND tkal.\"KEY_RUT_SIN_DV\" = kenan.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE kenan.\"KEY_RUT_SIN_DV\" IS NULL",
+			// COUNT KENAN_NO_3PLAY_NO_RED TV NOK NOK OK
+			"SELECT COUNT(1) FROM (SELECT kenan.* FROM facturador_kenan kenan LEFT OUTER JOIN tvcanales_3play tv_3p "
 			+ "ON  tv_3p.\"CODI_PRODUCTO\" IN ('128','129') AND kenan.\"KEY_RUT_SIN_DV\" = tv_3p.\"RUT\" "
-			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL"};
+			+ "WHERE kenan.\"PLAN\" = 'PLAN TELEVISION' AND tv_3p.\"RUT\" IS NULL AND kenan.\"ESTADO\" IN ('Facturado','Nuevo','Otro')) "
+			+ "as kn LEFT OUTER JOIN tv_kaltura tv_kal ON  kn.\"KEY_RUT_SIN_DV\" = tv_kal.\"KEY_RUT_SIN_DV\" "
+			+ "WHERE tv_kal.\"KEY_RUT_SIN_DV\" IS NULL"};
 	
 	private final static String[] FILES_CANALES_3P_KALTURA ={"canales_tplay_kaltura_{0}.csv","canales_tplay_no_kaltura_{0}.csv","canales_kaltura_no_tplay_{0}.csv"};
 	private final static String[] FILES_CANALES_3P_KENAN ={"canales_tplay_kenan_{0}.csv","canales_tplay_no_kenan_{0}.csv","canales_kenan_no_tplay_{0}.csv"};
@@ -358,10 +516,14 @@ public class Constantes {
 	private final static String[] FILES_TLF_3P_OTCAR ={"tlf_tplay_octar_{0}.csv","tlf_tplay_no_octar_{0}.csv","tlf_octar_no_tplay_{0}.csv"};
 	private final static String[] FILES_TV_3P_KALTURA ={"tv_tplay_kaltura_{0}.csv","tv_tplay_no_kaltura_{0}.csv","tv_kaltura_no_tplay_{0}.csv"};
 	private final static String[] FILES_TV_3P_KENAN ={"tv_tplay_kenan_{0}.csv","tv_tplay_no_kenan_{0}.csv","tv_kenan_no_tplay_{0}.csv"};
-	private final static String[] FILES_CROS_INTERNET = {"internet_tplayred_kenan_{0}.csv","internet_tplayred_nokenan_{0}.csv","internet_kenan_no_tplayred_{0}.csv"};
-	private final static String[] FILES_CROS_TV = {"tv_tplayred_kenan_{0}.csv","tv_tplayred_nokenan_{0}.csv","tv_kenan_no_tplayred_{0}.csv"};
-	private final static String[] FILES_CROS_TLF = {"tlf_tplayred_kenan_{0}.csv","tlf_tplayred_nokenan_{0}.csv","tlf_kenan_no_tplayred_{0}.csv"};
-	private final static String[] FILES_CROS_CANALES = {"canales_tplayred_kenan_{0}.csv","canales_tplayred_nokenan_{0}.csv","canales_kenan_no_tplayred_{0}.csv"};
+	private final static String[] FILES_CROS_INTERNET = {"int_tplayred_kenan_{0}.csv","int_tplay_nored_kenan_{0}.csv","int_kenan_no_tplayred_{0}.csv",
+			"int_tplayred_nokenan_{0}.csv","int_tplay_nored_nokenan_{0}.csv","int_red_notplay_nokenan_{0}.csv","int_kenan_notplay_nored_{0}.csv"};
+	private final static String[] FILES_CROS_TV = {"tv_tplayred_kenan_{0}.csv","tv_tplay_nored_kenan_{0}.csv","tv_kenan_no_tplayred_{0}.csv",
+			"tv_tplayred_nokenan_{0}.csv","tv_tplay_nored_nokenan_{0}.csv","tv_red_notplay_nokenan_{0}.csv","tv_kenan_notplay_nored_{0}.csv"};
+	private final static String[] FILES_CROS_TLF = {"tlf_tplayred_kenan_{0}.csv","tlf_tplay_nored_kenan_{0}.csv","tlf_kenan_no_tplayred_{0}.csv",
+			"tlf_tplayred_nokenan_{0}.csv","tlf_tplay_nored_nokenan_{0}.csv","tlf_red_notplay_nokenan_{0}.csv","tlf_kenan_notplay_nored_{0}.csv"};
+	private final static String[] FILES_CROS_CANALES = {"adi_tplayred_kenan_{0}.csv","adi_tplay_nored_kenan_{0}.csv","adi_kenan_no_tplayred_{0}.csv",
+			"adi_tplayred_nokenan_{0}.csv","adi_tplay_nored_nokenan_{0}.csv","adi_red_notplay_nokenan_{0}.csv","adi_kenan_notplay_nored_{0}.csv"};
 	
 	private final static String CARGA_TLF ="copy tlf_3play FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_INT ="copy internet_3play FROM stdin DELIMITER ';' CSV header";
@@ -404,7 +566,6 @@ public class Constantes {
 	private final static String FILE_AAA ="internet_aaa_{0}.csv";
 	private final static String FILE_TODO_KAL ="todo_kaltura_{0}.csv";
 	private final static String FILE_SERVRET ="servicios_retirados_{0}.csv";
-	
 	
 	private final static String QUERY_TV_CANALES = "SELECT RUT,"
 			+ "DV,"

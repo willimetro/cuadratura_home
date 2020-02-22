@@ -206,20 +206,37 @@ public class BDManagerImpl implements BDManager {
 			}
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
-			for (int i = 0; i < 3; i++) {
-				File file = new File(PATH_CRUCE + MessageFormat.format(Constantes.getFileCruce(producto)[i],
-						LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
-				fileOutputStream = new FileOutputStream(file);
-				copyManager.copyOut(
-						"COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)",
-						fileOutputStream);
-				System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
-						+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
-								LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
-				jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "Se ejecutó: "
-						+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
-						+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
-								LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))+ "\n");
+			for (int i = 0; i < 8; i++) {
+				if (i<3) {
+					File file = new File(PATH_CRUCE + MessageFormat.format(Constantes.getFileCruce(producto)[i],
+							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					fileOutputStream = new FileOutputStream(file);
+					copyManager.copyOut(
+							"COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)",
+							fileOutputStream);
+					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+							+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
+									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
+					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "Se ejecutó: "
+							+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
+							+ MessageFormat.format(Constantes.getFileCruce(producto)[i],
+									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))+ "\n");
+				} else {
+					pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
+					rs = pstmt.executeQuery();
+					if (rs.next()) {
+						if (i == 3)
+							contadores.setTotalTplay(rs.getInt(1));
+						else if (i == 4)
+							contadores.setTotalRed(rs.getInt(1));
+						else if (i == 5)
+							contadores.setTotalAmbos(rs.getInt(1));
+						else if (i == 6)
+							contadores.setDifTplayRed(rs.getInt(1));
+						else
+							contadores.setDifRedTplay(rs.getInt(1));
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -231,46 +248,16 @@ public class BDManagerImpl implements BDManager {
 				if (null!=fileOutputStream){
 					fileOutputStream.close();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-
-		try {
-			conn = ConnectionCuadraturaBD.getLocalConn();
-			for (int i = 3; i < 8; i++) {
-				pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
-				rs = pstmt.executeQuery();
-				if (rs.next()) {
-					if (i == 3)
-						contadores.setTotalTplay(rs.getInt(1));
-					else if (i == 4)
-						contadores.setTotalRed(rs.getInt(1));
-					else if (i == 5)
-						contadores.setTotalAmbos(rs.getInt(1));
-					else if (i == 6)
-						contadores.setDifTplayRed(rs.getInt(1));
-					else
-						contadores.setDifRedTplay(rs.getInt(1));
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
 				if (null!=rs){
 					rs.close();
 				}
 				if (null!=pstmt){
 					pstmt.close();
 				}
-				if (null!=conn){
-					conn.close();
-				}
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
 		}
 		contadores.setjTextAreaStatusProcess(jTextAreaStatusProcess);
@@ -291,36 +278,45 @@ public class BDManagerImpl implements BDManager {
 			}
 			conn = ConnectionCuadraturaBD.getLocalConn();
 			CopyManager copyManager = new CopyManager((BaseConnection) conn);
-			for (int i = 0; i < 8; i++) {
-				if (i==0 || i==1) {
+			for (int i = 0; i < 20; i++) {
+				if ((i<=5 && !"INTERNET".equals(producto)) || (i<5 && i!=2 && "INTERNET".equals(producto))) {
 					statement = conn.createStatement();
 					statement.executeUpdate(Constantes.getQueryCruce(producto)[i]);
 					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText()+"Se ejecutó: " + Constantes.getQueryCruce(producto)[i]+"\n");
-				} else if (i==2 || i==3 || i==4) {
-					File file = new File(PATH_CROS + MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+				} else if ((i>5 && i<=12 && !"INTERNET".equals(producto)) || ((i>5 && i<=10 && i!=8 && "INTERNET".equals(producto)))) {
+					File file = new File(PATH_CROS + MessageFormat.format(Constantes.getFileCruce(producto)[i-6],
 							LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 					fileOutputStream = new FileOutputStream(file);
 					copyManager.copyOut(
 							"COPY (" + Constantes.getQueryCruce(producto)[i] + ") TO STDOUT WITH (FORMAT CSV, HEADER)",
 							fileOutputStream);
 					System.out.println("Se ejecutó: " + Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
-							+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+							+ MessageFormat.format(Constantes.getFileCruce(producto)[i-6],
 									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"))));
 					jTextAreaStatusProcess.setText(jTextAreaStatusProcess.getText() + "Se ejecutó: "
 							+ Constantes.getQueryCruce(producto)[i] + " y se entrega en archivo "
-							+ MessageFormat.format(Constantes.getFileCruce(producto)[i-2],
+							+ MessageFormat.format(Constantes.getFileCruce(producto)[i-6],
 									LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
 							 + "\n");
-				} else {
+				} else if ((i>12 && !"INTERNET".equals(producto)) || ((i>12 && i<=17 && i!=15 && "INTERNET".equals(producto)))) {
 					pstmt = conn.prepareStatement(Constantes.getQueryCruce(producto)[i]);
 					rs = pstmt.executeQuery();
 					if (rs.next()) {
-						if (i == 5)
-							contadores.setTotalOk(rs.getInt(1));
-						else if (i == 6)
-							contadores.setTotalRedTplay(rs.getInt(1));
-						else
-							contadores.setTotalKenan(rs.getInt(1));
+						if (i == 13) {
+							contadores.setOkOkOk(rs.getInt(1));
+						} else if (i == 14) {
+							contadores.setOkNokOk(rs.getInt(1));
+						} else if (i == 15) {
+							contadores.setNokOkOk(rs.getInt(1));
+						} else if (i == 16) {
+							contadores.setOkOKNok(rs.getInt(1));
+						} else if (i == 17) {
+							contadores.setOkNokNok(rs.getInt(1));
+						} else if (i == 18) {
+							contadores.setNokOkNok(rs.getInt(1));
+						} else if (i == 19) {
+							contadores.setNokNokOk(rs.getInt(1));
+						}
 					}
 				}
 			}

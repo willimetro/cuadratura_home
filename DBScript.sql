@@ -5,7 +5,7 @@
 -- Dumped from database version 12.1
 -- Dumped by pg_dump version 12.1
 
--- Started on 2020-02-17 18:35:52
+-- Started on 2020-02-21 23:03:48
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,7 +20,7 @@ SET row_security = off;
 
 DROP DATABASE cuadratura_hogar;
 --
--- TOC entry 2887 (class 1262 OID 16394)
+-- TOC entry 2922 (class 1262 OID 16394)
 -- Name: cuadratura_hogar; Type: DATABASE; Schema: -; Owner: admin_hogar
 --
 
@@ -63,6 +63,25 @@ CREATE TABLE public.bdservicios_retirados (
 ALTER TABLE public.bdservicios_retirados OWNER TO admin_hogar;
 
 --
+-- TOC entry 220 (class 1259 OID 25325)
+-- Name: canales_3play_nored; Type: TABLE; Schema: public; Owner: admin_hogar
+--
+
+CREATE TABLE public.canales_3play_nored (
+    "KEY_CANAL" character varying(30),
+    "RUT" character varying(15),
+    "DV" character varying(2),
+    "DETALLE" character varying(10),
+    "PRODUCTO" character varying(30),
+    "CODI_PRODUCTO" character varying(10),
+    "TRYBUY" character varying(4),
+    "ESTADO" character varying(30)
+);
+
+
+ALTER TABLE public.canales_3play_nored OWNER TO admin_hogar;
+
+--
 -- TOC entry 213 (class 1259 OID 16467)
 -- Name: canales_3play_red; Type: TABLE; Schema: public; Owner: admin_hogar
 --
@@ -97,6 +116,23 @@ CREATE TABLE public.canales_kaltura (
 
 
 ALTER TABLE public.canales_kaltura OWNER TO admin_hogar;
+
+--
+-- TOC entry 219 (class 1259 OID 25322)
+-- Name: canales_kaltura_no3play; Type: TABLE; Schema: public; Owner: admin_hogar
+--
+
+CREATE TABLE public.canales_kaltura_no3play (
+    "KEY_CANAL" character varying(30),
+    "DOMAIN_EXTERNAL_ID" character varying(50),
+    "MODULE_ID" character varying(10),
+    "MODULE_NAME" character varying(30),
+    "PLAN_DEPORTES" character varying(20),
+    "ID_CUENTA_TV_3PLAY" character varying(15)
+);
+
+
+ALTER TABLE public.canales_kaltura_no3play OWNER TO admin_hogar;
 
 --
 -- TOC entry 204 (class 1259 OID 16413)
@@ -156,6 +192,22 @@ CREATE TABLE public.internet_3play (
 ALTER TABLE public.internet_3play OWNER TO admin_hogar;
 
 --
+-- TOC entry 221 (class 1259 OID 25328)
+-- Name: internet_3play_nored; Type: TABLE; Schema: public; Owner: admin_hogar
+--
+
+CREATE TABLE public.internet_3play_nored (
+    "CODI_TECNICO" character varying(30),
+    "NRUT_CLIENTE" character varying(15),
+    "DRUT_CLIENTE" character varying(5),
+    "DESC_GLOSAPROD" character varying(30),
+    "NMRO_SOLICITUDACT" character varying(10)
+);
+
+
+ALTER TABLE public.internet_3play_nored OWNER TO admin_hogar;
+
+--
 -- TOC entry 215 (class 1259 OID 16474)
 -- Name: internet_3play_red; Type: TABLE; Schema: public; Owner: admin_hogar
 --
@@ -202,6 +254,23 @@ CREATE TABLE public.tlf_3play (
 ALTER TABLE public.tlf_3play OWNER TO admin_hogar;
 
 --
+-- TOC entry 222 (class 1259 OID 25331)
+-- Name: tlf_3play_nored; Type: TABLE; Schema: public; Owner: admin_hogar
+--
+
+CREATE TABLE public.tlf_3play_nored (
+    "CODI_TECNICO" character varying(30),
+    "NRUT_CLIENTE" character varying(15),
+    "DRUT_CLIENTE" character varying(5),
+    "DESC_GLOSAPROD" character varying(30),
+    "NMRO_SOLICITUDACT" character varying(10),
+    "KEY_ANI" character varying(30)
+);
+
+
+ALTER TABLE public.tlf_3play_nored OWNER TO admin_hogar;
+
+--
 -- TOC entry 216 (class 1259 OID 16477)
 -- Name: tlf_3play_red; Type: TABLE; Schema: public; Owner: admin_hogar
 --
@@ -235,6 +304,22 @@ CREATE TABLE public.tlf_otcar (
 ALTER TABLE public.tlf_otcar OWNER TO admin_hogar;
 
 --
+-- TOC entry 217 (class 1259 OID 25316)
+-- Name: tlf_otcar_no3play; Type: TABLE; Schema: public; Owner: admin_hogar
+--
+
+CREATE TABLE public.tlf_otcar_no3play (
+    "KEY_ANI" character varying(30),
+    "REQUEST_ID" character varying(20),
+    "RUT_CLIENT" character varying(15),
+    "DV_CLIENT" character varying(4),
+    "ANI" character varying(15)
+);
+
+
+ALTER TABLE public.tlf_otcar_no3play OWNER TO admin_hogar;
+
+--
 -- TOC entry 210 (class 1259 OID 16443)
 -- Name: todo_kaltura; Type: TABLE; Schema: public; Owner: admin_hogar
 --
@@ -250,6 +335,25 @@ CREATE TABLE public.todo_kaltura (
 
 
 ALTER TABLE public.todo_kaltura OWNER TO admin_hogar;
+
+--
+-- TOC entry 223 (class 1259 OID 25334)
+-- Name: tv_3play_nored; Type: TABLE; Schema: public; Owner: admin_hogar
+--
+
+CREATE TABLE public.tv_3play_nored (
+    "KEY_CANAL" character varying(30),
+    "RUT" character varying(15),
+    "DV" character varying(2),
+    "DETALLE" character varying(10),
+    "PRODUCTO" character varying(30),
+    "CODI_PRODUCTO" character varying(10),
+    "TRYBUY" character varying(4),
+    "ESTADO" character varying(30)
+);
+
+
+ALTER TABLE public.tv_3play_nored OWNER TO admin_hogar;
 
 --
 -- TOC entry 214 (class 1259 OID 16470)
@@ -287,6 +391,24 @@ CREATE TABLE public.tv_kaltura (
 
 
 ALTER TABLE public.tv_kaltura OWNER TO admin_hogar;
+
+--
+-- TOC entry 218 (class 1259 OID 25319)
+-- Name: tv_kaltura_no3play; Type: TABLE; Schema: public; Owner: admin_hogar
+--
+
+CREATE TABLE public.tv_kaltura_no3play (
+    "KEY_RUT_SIN_DV" character varying(30),
+    "DOMAIN_EXTERNAL_ID" character varying(30),
+    "MODULE_ID" character varying(10),
+    "MODULE_NAME" character varying(30),
+    "VALIDA_RUT" character varying(15),
+    "DOMAIN_ID" character varying(15),
+    "SUSPENTION_STATE" character varying(20)
+);
+
+
+ALTER TABLE public.tv_kaltura_no3play OWNER TO admin_hogar;
 
 --
 -- TOC entry 212 (class 1259 OID 16461)

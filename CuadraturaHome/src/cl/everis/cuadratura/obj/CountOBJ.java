@@ -9,35 +9,71 @@ public class CountOBJ {
 	private int totalAmbos;
 	private int difTplayRed;
 	private int difRedTplay;
-	private int totalOk;
-	private int totalRedTplay;
-	private int totalKenan;
+	private int okOkOk;
+	private int okNokOk;
+	private int nokOkOk;
+	private int okOKNok;
+	private int okNokNok;
+	private int nokOkNok;
+	private int nokNokOk;
 	private JTextArea jTextAreaStatusProcess;
 	
-	public int getTotalOk() {
-		return totalOk;
+	public int getOkOkOk() {
+		return okOkOk;
 	}
 
-	public void setTotalOk(int totalOk) {
-		this.totalOk = totalOk;
+	public void setOkOkOk(int totalOk) {
+		this.okOkOk = totalOk;
 	}
 
-	public int getTotalRedTplay() {
-		return totalRedTplay;
+	public int getOkNokOk() {
+		return okNokOk;
 	}
 
-	public void setTotalRedTplay(int totalRedTplay) {
-		this.totalRedTplay = totalRedTplay;
+	public void setOkNokOk(int totalRedTplay) {
+		this.okNokOk = totalRedTplay;
 	}
 
-	public int getTotalKenan() {
-		return totalKenan;
+	public int getNokOkOk() {
+		return nokOkOk;
 	}
 
-	public void setTotalKenan(int totalKenan) {
-		this.totalKenan = totalKenan;
+	public void setNokOkOk(int totalKenan) {
+		this.nokOkOk = totalKenan;
 	}
 	
+	public int getOkOKNok() {
+		return okOKNok;
+	}
+
+	public void setOkOKNok(int okOKNok) {
+		this.okOKNok = okOKNok;
+	}
+
+	public int getOkNokNok() {
+		return okNokNok;
+	}
+
+	public void setOkNokNok(int okNokNok) {
+		this.okNokNok = okNokNok;
+	}
+
+	public int getNokOkNok() {
+		return nokOkNok;
+	}
+
+	public void setNokOkNok(int nokOkNok) {
+		this.nokOkNok = nokOkNok;
+	}
+
+	public int getNokNokOk() {
+		return nokNokOk;
+	}
+
+	public void setNokNokOk(int nokNokOk) {
+		this.nokNokOk = nokNokOk;
+	}
+
 	public JTextArea getjTextAreaStatusProcess() {
 		return jTextAreaStatusProcess;
 	}

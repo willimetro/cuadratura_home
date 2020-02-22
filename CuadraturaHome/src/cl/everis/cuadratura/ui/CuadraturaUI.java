@@ -70,18 +70,17 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	JCheckBox chTresPlayKenanTVAdi = new JCheckBox("Kenan TV Adicionales");
 	JCheckBox chTresPlayKenanTel = new JCheckBox("Kenan Telefonía");
 	JCheckBox chSoloCruces = new JCheckBox("Sólo Realizar Cruces");
-
-	// Botones para buscar los archivos (FileChooser)
+	// Botones para buscar los archivos (FileChooser cruces)
 	JButton showFileDialogKenanAdiButton = new JButton("Buscar");
 	JButton showFileDialogKenanButton = new JButton("Buscar");
 	JButton showFileDialogTvAdiButton = new JButton("Buscar");
 	JButton showFileDialogTvAllButton = new JButton("Buscar");
 	JButton showFileDialogTvBaseButton = new JButton("Buscar");
 	JButton showFileDialogInternetButton = new JButton("Buscar");
-
+	// Botones para buscar los archivos (FileChooser cortes)
 	JButton showFileDialogCorteCanalesAdiButton = new JButton("Buscar");
 	JButton showFileDialogCortePlanesTVButton = new JButton("Buscar");
-
+	// labels para mostrar rutas seleccionadas e informaciones
 	private JLabel pathLabelTvPlanesBase;
 	private JLabel pathLabelAllTv;
 	private JLabel pathLabelInternet;
@@ -89,6 +88,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private JLabel pathLabelKenan;
 	private JLabel pathLabelKenanAdi;
 	private JLabel pathLabelCorteCanales;
+	private JLabel labelInfoCanales;
+	private JLabel labelInfoCorteTV;
+	// choosers y constrains para dialogos de seleccion de cruces y cortes
 	private GridBagConstraints showFileDialogConstrains;
 	final JFileChooser fileDialogTvPlanesBase = new JFileChooser();
 	final JFileChooser fileDialogTodoTvKaltura = new JFileChooser();
@@ -96,22 +98,19 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	final JFileChooser fileDialogTvAdicionales = new JFileChooser();
 	final JFileChooser fileDialogKenan = new JFileChooser();
 	final JFileChooser fileDialogKenanAdi = new JFileChooser();
-
 	final JFileChooser fileDialogCorteCanalesAdi = new JFileChooser();
 	final JFileChooser fileDialogCortePlanesTV = new JFileChooser();
-	private GridBagConstraints pathConstrains;
-
+	private GridBagConstraints pathConstrains; 
+	// BD manager para llamados a incios de procesos de cortes cruces cargas y descargas
 	private BDManager bdManager = new BDManagerImpl();
-
+	// flag para indicar la accion a ejecutar
 	private String flagAction = "";
-
+	// boten de procesos de cruce y cortes
 	JButton iniciarBtn = new JButton("Iniciar");
 	JButton cargarDatosBtn = new JButton("Cargar Datos");
 	JButton cargarDatosTVBtn = new JButton("Cargar Ruts");
 	JButton cortarBtn = new JButton("Cortar");
 	JButton cortarPlanesBtn = new JButton("Cortar");
-	private JLabel labelInfoCanales;
-	private JLabel labelInfoCorteTV;
 	//Text Area
 	private JTextArea textAreaTplay;
 	private JTextArea textAreaCorte;
@@ -120,13 +119,16 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	private JProgressBar statusProcessTplay;
 	private JProgressBar statusProcessTV;
 	private JProgressBar statusProcessCorte;
-
+	// otros
 	private JList<String> listaCanales = null;
 	private JList<String> listaRuts = null;
 	Map<String, FileCorteCanales> mapCanales = null;
 	List<String> listaSeleccionada = null;
 	List<String> listaAllRuts = null;
 	List<String> listaRutsCorte = null;
+	// filtro pra los chooser
+	private FileNameExtensionFilter filtro = null;
+	// booleaans para habilitar boton de inicio de cruce
 
 	public CuadraturaUI() {
 		mainFrame = new JFrame("Cuadratura Home");
@@ -224,7 +226,11 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				showFileDialogTvBaseButton.setEnabled(toSet&&!chSoloCruces.isSelected());
 				showFileDialogTvAllButton.setEnabled(toSet&&!chSoloCruces.isSelected());
 				showFileDialogInternetButton.setEnabled(toSet&&!chSoloCruces.isSelected());
-				iniciarBtn.setEnabled(toSet);
+				if (toSet && !chSoloCruces.isSelected()) {
+					iniciarBtn.setEnabled(validaInicioCruce());
+				} else {
+					iniciarBtn.setEnabled(toSet && chSoloCruces.isSelected());
+				}
 			}
 		});
 
@@ -233,6 +239,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		chSoloCruces.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				boolean isAnySelect = isAnySelect();
 				if(chSoloCruces.isSelected()) {
 					showFileDialogKenanAdiButton.setEnabled(false);
 					showFileDialogKenanButton.setEnabled(false);
@@ -240,6 +247,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 					showFileDialogTvBaseButton.setEnabled(false);
 					showFileDialogTvAllButton.setEnabled(false);
 					showFileDialogInternetButton.setEnabled(false);
+					iniciarBtn.setEnabled(isAnySelect);
 				} else {
 					showFileDialogKenanAdiButton.setEnabled(chTresPlayKenanTVAdi.isSelected());
 					showFileDialogKenanButton.setEnabled(chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()||chTresPlayKenanTel.isSelected());
@@ -247,6 +255,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 					showFileDialogTvBaseButton.setEnabled(chTresPlayKalturaBase.isSelected());
 					showFileDialogTvAllButton.setEnabled(chTresPlayKalturaAdi.isSelected()||chTresPlayKalturaBase.isSelected());
 					showFileDialogInternetButton.setEnabled(chTresPlayAAA.isSelected());
+					iniciarBtn.setEnabled(isAnySelect&&validaInicioCruce());
 				}
 			}
 		});
@@ -257,12 +266,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayAAA.isSelected();
-				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
-						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
-						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
-						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
 				showFileDialogInternetButton.setEnabled(toSet&&!chSoloCruces.isSelected());
-				iniciarBtn.setEnabled(toSetBtn);
+				setIfAnySelect();
 			}
 		});
 
@@ -272,13 +277,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKalturaBase.isSelected();
-				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
-						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
-						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
-						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
 				showFileDialogTvBaseButton.setEnabled(toSet&&!chSoloCruces.isSelected());
 				showFileDialogTvAllButton.setEnabled((toSet||chTresPlayKalturaAdi.isSelected())&&!chSoloCruces.isSelected());
-				iniciarBtn.setEnabled(toSetBtn);
+				setIfAnySelect();
 			}
 		});
 
@@ -288,13 +289,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKalturaAdi.isSelected();
-				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
-						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
-						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
-						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
 				showFileDialogTvAdiButton.setEnabled(toSet&&!chSoloCruces.isSelected());
 				showFileDialogTvAllButton.setEnabled((toSet||chTresPlayKalturaBase.isSelected())&&!chSoloCruces.isSelected());
-				iniciarBtn.setEnabled(toSetBtn);
+				setIfAnySelect();
 			}
 		});
 
@@ -303,11 +300,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		chTresPlayOTCARTel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
-						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
-						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
-						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
-				iniciarBtn.setEnabled(toSetBtn);
+				setIfAnySelect();
 			}
 		});
 
@@ -317,12 +310,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKenanInter.isSelected();
-				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
-						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
-						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
-						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
 				showFileDialogKenanButton.setEnabled((toSet||chTresPlayKenanTVBase.isSelected()||chTresPlayKenanTel.isSelected())&&!chSoloCruces.isSelected());
-				iniciarBtn.setEnabled(toSetBtn);
+				setIfAnySelect();
 			}
 		});
 
@@ -332,12 +321,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKenanTVBase.isSelected();
-				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
-						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
-						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
-						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
-				showFileDialogKenanButton.setEnabled((toSet||chTresPlayKenanInter.isSelected()||chTresPlayKenanTel.isSelected())&&!chSoloCruces.isSelected());
-				iniciarBtn.setEnabled(toSetBtn);
+				showFileDialogKenanButton.setEnabled((toSet||chTresPlayKenanInter.isSelected()
+						||chTresPlayKenanTel.isSelected())&&!chSoloCruces.isSelected());
+				setIfAnySelect();
 			}
 		});
 
@@ -347,12 +333,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKenanTVAdi.isSelected();
-				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
-						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
-						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
-						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
 				showFileDialogKenanAdiButton.setEnabled(toSet&&!chSoloCruces.isSelected());
-				iniciarBtn.setEnabled(toSetBtn);
+				setIfAnySelect();
 			}
 		});
 
@@ -362,12 +344,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean toSet = chTresPlayKenanTel.isSelected();
-				boolean toSetBtn = chTresPlayAAA.isSelected()||chTresPlayKalturaBase.isSelected()
-						||chTresPlayKalturaAdi.isSelected()||chTresPlayOTCARTel.isSelected()
-						||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected()
-						||chTresPlayKenanTVAdi.isSelected()||chTresPlayKenanTel.isSelected();
-				showFileDialogKenanButton.setEnabled((toSet||chTresPlayKenanInter.isSelected()||chTresPlayKenanTVBase.isSelected())&&!chSoloCruces.isSelected());
-				iniciarBtn.setEnabled(toSetBtn);
+				showFileDialogKenanButton.setEnabled((toSet||chTresPlayKenanInter.isSelected()
+						||chTresPlayKenanTVBase.isSelected())&&!chSoloCruces.isSelected());
+				setIfAnySelect();
 			}
 		});
 
@@ -553,7 +532,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void showFileChooserCorteCanales(JPanel panelChooser) {
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
+		
 		fileDialogCorteCanalesAdi.setFileFilter(filtro);
 		showFileDialogCorteCanalesAdiButton.setEnabled(true);
 		showFileDialogCorteCanalesAdiButton.addActionListener(new ActionListener() {
@@ -576,7 +555,6 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void showFileChooserCortePlanesTV(JPanel panelChooser) {
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		fileDialogCortePlanesTV.setFileFilter(filtro);
 		showFileDialogCortePlanesTVButton.setEnabled(true);
 		showFileDialogCortePlanesTVButton.addActionListener(new ActionListener() {
@@ -599,7 +577,6 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void showFileChooser3playIntenet(JPanel panelChooser) {
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		fileDialogInternet.setFileFilter(filtro);
 		showFileDialogInternetButton.setEnabled(false);
 		showFileDialogInternetButton.addActionListener(new ActionListener() {
@@ -608,6 +585,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				int returnVal = fileDialogInternet.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					pathLabelInternet.setText(fileDialogInternet.getSelectedFile().getAbsolutePath());
+					iniciarBtn.setEnabled(validaInicioCruce());
 				}
 			}
 		});
@@ -621,7 +599,6 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void showFileChooser3playTvPlanesBase(JPanel panelChooser) {
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogTvBaseButton.setEnabled(false);
 		fileDialogTvPlanesBase.setFileFilter(filtro);
 		showFileDialogTvBaseButton.addActionListener(new ActionListener() {
@@ -630,6 +607,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				int returnVal = fileDialogTvPlanesBase.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					pathLabelTvPlanesBase.setText(fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath());
+					iniciarBtn.setEnabled(validaInicioCruce());
 				}
 			}
 		});
@@ -642,7 +620,6 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void showFileChooser3playTvAdicionales(JPanel panelChooser) {
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogTvAdiButton.setEnabled(false);
 		fileDialogTvAdicionales.setFileFilter(filtro);
 		showFileDialogTvAdiButton.addActionListener(new ActionListener() {
@@ -651,6 +628,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				int returnVal = fileDialogTvAdicionales.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					pathLabelTvAdicionales.setText(fileDialogTvAdicionales.getSelectedFile().getAbsolutePath());
+					iniciarBtn.setEnabled(validaInicioCruce());
 				}
 			}
 		});
@@ -663,7 +641,6 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void showFileChooser3playKenan(JPanel panelChooser) {
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogKenanButton.setEnabled(false);
 		fileDialogKenan.setFileFilter(filtro);
 		showFileDialogKenanButton.addActionListener(new ActionListener() {
@@ -672,6 +649,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				int returnVal = fileDialogKenan.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					pathLabelKenan.setText(fileDialogKenan.getSelectedFile().getAbsolutePath());
+					iniciarBtn.setEnabled(validaInicioCruce());
 				}
 			}
 		});
@@ -684,7 +662,6 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void showFileChooser3playKenanAdi(JPanel panelChooser) {
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogKenanAdiButton.setEnabled(false);
 		fileDialogKenanAdi.setFileFilter(filtro);
 		showFileDialogKenanAdiButton.addActionListener(new ActionListener() {
@@ -693,6 +670,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				int returnVal = fileDialogKenanAdi.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					pathLabelKenanAdi.setText(fileDialogKenanAdi.getSelectedFile().getAbsolutePath());
+					iniciarBtn.setEnabled(validaInicioCruce());
 				}
 			}
 		});
@@ -705,7 +683,6 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void showFileChooser3playTvAll(JPanel panelChooser) {
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogTvAllButton.setEnabled(false);
 		fileDialogTodoTvKaltura.setFileFilter(filtro);
 		showFileDialogTvAllButton.addActionListener(new ActionListener() {
@@ -714,6 +691,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 				int returnVal = fileDialogTodoTvKaltura.showOpenDialog(mainFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					pathLabelAllTv.setText(fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath());
+					iniciarBtn.setEnabled(validaInicioCruce());
 				}
 			}
 		});
@@ -725,6 +703,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	}
 
 	private void setConstrains() {
+		filtro = new FileNameExtensionFilter("*.CSV", "csv");
 		showFileDialogConstrains = new GridBagConstraints();
 		showFileDialogConstrains.insets = new Insets(0, 0, 0, 5);
 		showFileDialogConstrains.gridx = 3;
@@ -1015,4 +994,39 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		int porcentaje = (int) ((indice / total) * 100);
 		return porcentaje;
 	}
+
+	protected boolean isAnySelect() {
+		boolean isAnySelect = chTresPlayKenanTVAdi.isSelected()|| chTresPlayKenanInter.isSelected()
+				||chTresPlayKenanTVBase.isSelected()||chTresPlayKenanTel.isSelected()
+				||chTresPlayKalturaAdi.isSelected()||chTresPlayKalturaBase.isSelected()
+				||chTresPlayAAA.isSelected();
+		return isAnySelect;
+	}
+
+	protected void setIfAnySelect() {
+		boolean isAnySelect = isAnySelect();
+		if (isAnySelect && !chSoloCruces.isSelected()) {
+			iniciarBtn.setEnabled(validaInicioCruce());
+		} else {
+			iniciarBtn.setEnabled(isAnySelect && chSoloCruces.isSelected());
+		}
+	}
+	
+	protected boolean validaInicioCruce() {
+		boolean aaa = (chTresPlayAAA.isSelected() && null != fileDialogInternet.getSelectedFile() 
+				&& !fileDialogInternet.getSelectedFile().getAbsolutePath().isEmpty())||!chTresPlayAAA.isSelected();
+		boolean bkal = (chTresPlayKalturaBase.isSelected() && null != fileDialogTvPlanesBase.getSelectedFile() 
+				&& !fileDialogTvPlanesBase.getSelectedFile().getAbsolutePath().isEmpty())||!chTresPlayKalturaBase.isSelected();
+		boolean ckal = (chTresPlayKalturaAdi.isSelected() && null != fileDialogTvAdicionales.getSelectedFile() 
+				&& !fileDialogTvAdicionales.getSelectedFile().getAbsolutePath().isEmpty())||!chTresPlayKalturaAdi.isSelected();
+		boolean tkal = ((chTresPlayKalturaAdi.isSelected()||chTresPlayKalturaBase.isSelected()) && null != fileDialogTodoTvKaltura.getSelectedFile() 
+				&& !fileDialogTodoTvKaltura.getSelectedFile().getAbsolutePath().isEmpty())||!(chTresPlayKalturaAdi.isSelected()||chTresPlayKalturaBase.isSelected());
+		boolean bken = ((chTresPlayKenanTVBase.isSelected()||chTresPlayKenanTel.isSelected()||chTresPlayKenanInter.isSelected())
+				&& null != fileDialogKenan.getSelectedFile()&& !fileDialogKenan.getSelectedFile().getAbsolutePath().isEmpty())
+				||!(chTresPlayKenanTVBase.isSelected()||chTresPlayKenanTel.isSelected()||chTresPlayKenanInter.isSelected());
+		boolean cken = chTresPlayKenanTVAdi.isSelected() && null != fileDialogKenanAdi.getSelectedFile() 
+				&& !fileDialogKenanAdi.getSelectedFile().getAbsolutePath().isEmpty()||!chTresPlayKenanTVAdi.isSelected();
+		return (aaa && bkal && ckal && tkal && bken && cken);
+	}
+	
 }
