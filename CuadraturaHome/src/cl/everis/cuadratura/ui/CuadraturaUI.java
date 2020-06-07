@@ -70,6 +70,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 	JCheckBox chTresPlayKenanTVAdi = new JCheckBox("Kenan TV Adicionales");
 	JCheckBox chTresPlayKenanTel = new JCheckBox("Kenan Telefonía");
 	JCheckBox chSoloCruces = new JCheckBox("Sólo Realizar Cruces");
+	JCheckBox chPlanesBase = new JCheckBox("Es Solo Corte Planes Base");
 	// Botones para buscar los archivos (FileChooser cruces)
 	JButton showFileDialogKenanAdiButton = new JButton("Buscar");
 	JButton showFileDialogKenanButton = new JButton("Buscar");
@@ -374,6 +375,9 @@ public class CuadraturaUI implements Runnable, ActionListener {
 		cargarDatosBtn.setEnabled(false);
 		cargarDatosBtn.addActionListener(this);
 		panelChooser.add(cargarDatosBtn);
+		chPlanesBase.setMnemonic(KeyEvent.VK_C);
+		chPlanesBase.setSelected(false);
+		panelChooser.add(chPlanesBase);
 		JPanel panelFileCargado = new JPanel();
 		panelFileCargado.setLayout(new BoxLayout(panelFileCargado, BoxLayout.Y_AXIS));
 		listaCanales = new JList<String>();
@@ -887,7 +891,7 @@ public class CuadraturaUI implements Runnable, ActionListener {
 									+ objDeleteCDF.getResp().getDescripcion()
 									+ "\n");
 						}
-					} else {
+					} else if (!("20745".equals(codigo)||"20746".equals(codigo))) {
 						facturado = desactivarCanales.validaFacturado(fileCorteCanalesRow);
 						if (!facturado.isToDelete()){
 							textAreaCorte.setText(textAreaCorte.getText() + 
@@ -897,8 +901,8 @@ public class CuadraturaUI implements Runnable, ActionListener {
 									+ "\n");
 						}
 					}
-					if (facturado.isToDelete() || objDeleteCDF.isToDelete()){
-						fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow);
+					if (facturado.isToDelete() || objDeleteCDF.isToDelete() || chPlanesBase.isSelected()){
+						fileCorteCanalesRow = desactivarCanales.getCodServicioCanalesPremium(fileCorteCanalesRow, chPlanesBase.isSelected());
 						ActivarDesactivarCanalesResponseOBJ canalesResponseOBJ = desactivarCanales
 								.desactivarCanalPremium(fileCorteCanalesRow);
 						textAreaCorte.setText(textAreaCorte.getText() + 

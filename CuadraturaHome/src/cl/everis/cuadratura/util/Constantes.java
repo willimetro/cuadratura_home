@@ -516,14 +516,14 @@ public class Constantes {
 	private final static String[] FILES_TLF_3P_OTCAR ={"tlf_tplay_octar_{0}.csv","tlf_tplay_no_octar_{0}.csv","tlf_octar_no_tplay_{0}.csv"};
 	private final static String[] FILES_TV_3P_KALTURA ={"tv_tplay_kaltura_{0}.csv","tv_tplay_no_kaltura_{0}.csv","tv_kaltura_no_tplay_{0}.csv"};
 	private final static String[] FILES_TV_3P_KENAN ={"tv_tplay_kenan_{0}.csv","tv_tplay_no_kenan_{0}.csv","tv_kenan_no_tplay_{0}.csv"};
-	private final static String[] FILES_CROS_INTERNET = {"int_tplayred_kenan_{0}.csv","int_tplay_nored_kenan_{0}.csv","int_kenan_no_tplayred_{0}.csv",
-			"int_tplayred_nokenan_{0}.csv","int_tplay_nored_nokenan_{0}.csv","int_red_notplay_nokenan_{0}.csv","int_kenan_notplay_nored_{0}.csv"};
-	private final static String[] FILES_CROS_TV = {"tv_tplayred_kenan_{0}.csv","tv_tplay_nored_kenan_{0}.csv","tv_kenan_no_tplayred_{0}.csv",
-			"tv_tplayred_nokenan_{0}.csv","tv_tplay_nored_nokenan_{0}.csv","tv_red_notplay_nokenan_{0}.csv","tv_kenan_notplay_nored_{0}.csv"};
-	private final static String[] FILES_CROS_TLF = {"tlf_tplayred_kenan_{0}.csv","tlf_tplay_nored_kenan_{0}.csv","tlf_kenan_no_tplayred_{0}.csv",
-			"tlf_tplayred_nokenan_{0}.csv","tlf_tplay_nored_nokenan_{0}.csv","tlf_red_notplay_nokenan_{0}.csv","tlf_kenan_notplay_nored_{0}.csv"};
-	private final static String[] FILES_CROS_CANALES = {"adi_tplayred_kenan_{0}.csv","adi_tplay_nored_kenan_{0}.csv","adi_kenan_no_tplayred_{0}.csv",
-			"adi_tplayred_nokenan_{0}.csv","adi_tplay_nored_nokenan_{0}.csv","adi_red_notplay_nokenan_{0}.csv","adi_kenan_notplay_nored_{0}.csv"};
+	private final static String[] FILES_CROS_INTERNET = {"int_tplay_red_kenan_{0}.csv","int_tplay_nored_kenan_{0}.csv","int_kenan_notplay_red_{0}.csv",
+			"int_tplay_red_nokenan_{0}.csv","int_tplay_nored_nokenan_{0}.csv","int_red_notplay_nokenan_{0}.csv","int_kenan_notplay_nored_{0}.csv"};
+	private final static String[] FILES_CROS_TV = {"tv_tplay_red_kenan_{0}.csv","tv_tplay_nored_kenan_{0}.csv","tv_kenan_notplay_red_{0}.csv",
+			"tv_tplay_red_nokenan_{0}.csv","tv_tplay_nored_nokenan_{0}.csv","tv_red_notplay_nokenan_{0}.csv","tv_kenan_notplay_nored_{0}.csv"};
+	private final static String[] FILES_CROS_TLF = {"tlf_tplay_red_kenan_{0}.csv","tlf_tplay_nored_kenan_{0}.csv","tlf_kenan_notplay_red_{0}.csv",
+			"tlf_tplay_red_nokenan_{0}.csv","tlf_tplay_nored_nokenan_{0}.csv","tlf_red_notplay_nokenan_{0}.csv","tlf_kenan_notplay_nored_{0}.csv"};
+	private final static String[] FILES_CROS_CANALES = {"adi_tplay_red_kenan_{0}.csv","adi_tplay_nored_kenan_{0}.csv","adi_kenan_notplay_red_{0}.csv",
+			"adi_tplay_red_nokenan_{0}.csv","adi_tplay_nored_nokenan_{0}.csv","adi_red_notplay_nokenan_{0}.csv","adi_kenan_notplay_nored_{0}.csv"};
 	
 	private final static String CARGA_TLF ="copy tlf_3play FROM stdin DELIMITER ';' CSV header";
 	private final static String CARGA_INT ="copy internet_3play FROM stdin DELIMITER ';' CSV header";

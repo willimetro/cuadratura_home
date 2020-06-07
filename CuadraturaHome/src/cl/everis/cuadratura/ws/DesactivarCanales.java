@@ -34,6 +34,9 @@ public class DesactivarCanales {
 	private final static String QUERY_HOUSE_HOLD_ID =  "SELECT tk.\"HOUSE_HOLD_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"= ? "
 			+ "AND tk.\"MODULE_ID\" = ?";
 	
+	private final static String QUERY_HOUSE_HOLD_ID_PB =  "SELECT tk.\"HOUSE_HOLD_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"= ? "
+			+ "LIMIT 1";
+	
 	private final static String QUERY_EXISTE =  "SELECT COUNT(*) FROM todo_kaltura tk WHERE tk.\"RUT\"= ? AND tk.\"MODULE_ID\" = ?";
 
 	private final static String QUERY_VALIDA_KENAN = "select * from facturador_kenan_canal fcan where fcan.\"ESTADO\" in ('Facturado','Nuevo') "
@@ -190,16 +193,21 @@ public class DesactivarCanales {
 		return desactivarCanalesResponseOBJ;
 	}
 
-	public FileCorteCanalesRow getCodServicioCanalesPremium(FileCorteCanalesRow fileCorteCanalesRow) {
+	public FileCorteCanalesRow getCodServicioCanalesPremium(FileCorteCanalesRow fileCorteCanalesRow, Boolean querySelector) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		conn = ConnectionCuadraturaBD.getLocalConn();
 		try {
-			pstmt = conn.prepareStatement(QUERY_HOUSE_HOLD_ID);
-			pstmt.setString(1, fileCorteCanalesRow.getRutConDv());
-			pstmt.setString(2, fileCorteCanalesRow.getCodCanal());
+			if (querySelector) {
+				pstmt = conn.prepareStatement(QUERY_HOUSE_HOLD_ID_PB);
+				pstmt.setString(1, fileCorteCanalesRow.getRutConDv());
+			} else {
+				pstmt = conn.prepareStatement(QUERY_HOUSE_HOLD_ID);
+				pstmt.setString(1, fileCorteCanalesRow.getRutConDv());
+				pstmt.setString(2, fileCorteCanalesRow.getCodCanal());
+			}
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				fileCorteCanalesRow.setCodiServicio(rs.getString("HOUSE_HOLD_ID"));
@@ -328,7 +336,7 @@ public class DesactivarCanales {
 			} else {		
 				if(null==codiKen){
 					//				CASO EN QUE NO SE ENCUENTRA EN KENAN Y ES DISTINTO EN 3PLAY - ELIMINAR EN KAL E INDICAR REGULARIZAR 3 PLAY
-					reg = getCodServicioCanalesPremium(reg);
+					reg = getCodServicioCanalesPremium(reg, false);
 					resp = desactivarCanalPremium(reg);
 					if (!"0000".equals(resp.getCodResponse())){
 						LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
@@ -351,7 +359,7 @@ public class DesactivarCanales {
 					}
 				} else if(null!=codiKal && !codiKal.equals(codiKen)){
 					//				CASO EN QUE TIENE DISTINTO CDF EN KALTURA QUE EN KENAN Y 3PLAY - ELIMINAR INCORRECTO Y CREAR CORRECTO
-					reg = getCodServicioCanalesPremium(reg);
+					reg = getCodServicioCanalesPremium(reg, false);
 					resp = desactivarCanalPremium(reg);
 					String codiEliminacion = resp.getCodResponse();
 					if (!"0000".equals(codiEliminacion)){
