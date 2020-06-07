@@ -1,0 +1,106 @@
+------------------------------------------------------------------------- INTERNET AAA (RANGO DE BUSQUEDA 60MIN)
+index=aaa sourcetype=dboracle* host="ldapcnt.vascore.vas.entelpcs.cl"
+| search group="datos_ippub_400M_50M"
+OR group="datos_250M_30M"
+OR group="datos_ipprv_150M_20M"
+OR group="DATOS_500M_50M"
+OR group="datos_400M_50M"
+OR group="datos_ipprv_400M_50M"
+OR group="datos_100M_20M_bloqueo"
+OR group="datos_600M_100M"
+OR group="datos_400M_50M_bloqueo"
+OR group="datos_ippub_600M_100M"
+OR group="datos_ipprv_600M_100M"
+OR group="datos_ippub_150M_20M"
+OR group="datos_200/30 Mbps_bloqueo"
+OR group="datos_ipprv_1000M_400M"
+OR group="datos_500M_50M_bloqueo"
+OR group="datos_250M_30M_bloqueo"
+OR group="datos_200M_30M"
+OR group="datos_100M_20M"
+OR group="datos_150M_20M"
+OR group="datos_300M_50M"
+OR group="datos_200M_30M_bloqueo"
+OR group="datos_150M_20M_bloqueo"
+OR group="datos_300M_50M_bloqueo"
+OR group="datos_1000M_400M"
+OR group="datos_1000M_400M_bloqueo"
+| table group uid
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+------------------------------------------------------------------------- PLANES BASE Y ADICIONALES KENAN (RANGO DE BUSQUEDA 24hrs)
+
+// PLANES
+
+| dbxquery query="SELECT amap.external_id AS RUT_CLIENTE, emf.account_no AS CUENTA_KENAN, emf.SERVICE_START, emf.SERVICE_END, DECODE (emf.EQUIP_STATUS, -1, 'Nuevo', 0, 'Facturado', 1, 'Retirado', 'Otro') AS ESTADO, emf.equip_type_code AS CODIGO_PLAN, etcv.DISPLAY_VALUE  AS PLAN, cmf.bill_period AS PERIODO_FACT FROM emf, cmf, external_id_acct_map amap, equip_type_code_values etcv WHERE cmf.bill_period in (61,62) AND emf.account_no = cmf.account_no AND cmf.account_no = amap.account_no AND emf.equip_type_code = etcv.equip_type_code AND amap.external_id_type = 12 AND (emf.service_end IS NULL OR emf.service_end >= sysdate) and emf.equip_type_code in (1700, 1800, 1900);" connection="ephchile"
+
+// ADICIONALES TV
+
+| dbxquery query="SELECT amap.external_id AS RUT_CLIENTE, emf.account_no AS CUENTA_KENAN, emf.SERVICE_START, emf.SERVICE_END, DECODE (emf.EQUIP_STATUS, -1, 'Nuevo', 0, 'Facturado', 1, 'Retirado', 'Otro') AS ESTADO, emf.equip_type_code AS CODIGO_CANAL, decode (emf.equip_type_code, 656,20748,655,20749,648,20750,649,20751,652,20752,651,20753,654,20797,653,20798) as CODIGO_3PLAY,etcv.DISPLAY_VALUE  AS CANAL, cmf.bill_period AS PERIODO_FACT FROM emf, cmf, external_id_acct_map amap, equip_type_code_values etcv  WHERE cmf.bill_period in (61,62) AND emf.account_no = cmf.account_no AND cmf.account_no = amap.account_no AND emf.equip_type_code = etcv.equip_type_code AND amap.external_id_type = 12 AND (emf.service_end IS NULL OR emf.service_end >= sysdate)AND emf.equip_type_code IN (648, 649, 650, 651, 652, 653, 654, 655, 656, 660, 661);" connection="ephchile"
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+------------------------------------------------------------------------- PLANES BASE KALTURA  (RANGO DE BUSQUEDA 24hrs)
+
+index=kaltura sourcetype=kaltura_Subscription
+| where in (module_id, 20745, 20746)
+| eval valida_rut=if(like(domain_external_id, "%-%"), "Valido", "NoValido")
+| eval household_id = domain_id
+| join type=inner household_id
+[search index=kaltura sourcetype=kaltura_Users
+| table household_id suspention_state]
+| table domain_external_id module_id module_name valida_rut domain_id suspention_state
+| dedup domain_external_id
+| search valida_rut = "Valido"
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+------------------------------------------------------------------------- KALTURA ADICIONALES TV (RANGO DE BUSQUEDA 24hrs)
+
+index=kaltura sourcetype=kaltura_Subscription
+| where not in(module_id, 20743, 20745, 20746, 20807, 20744)
+| where like(domain_external_id, "%-%")
+| eval valida_kaltura = domain_external_id."-".module_id 
+| eval valida_kaltura= upper(valida_kaltura)
+| dedup valida_kaltura
+| join type=left domain_external_id
+[search index=kaltura sourcetype=kaltura_Subscription
+| search module_id="20746"
+| rename module_id AS "module_id_tv"
+| rename module_name AS "module_name_tv"
+| table  domain_external_id module_id_tv module_name_tv]
+| eval valida_plan_dep = if(module_id = 20749 AND isnotnull(module_name_tv), "PoseDeportes", "NoPoseeDeportes")
+| table valida_kaltura domain_external_id module_id module_name valida_plan_dep
+| eval Rut_Cliente = domain_external_id
+| join type=left Rut_Cliente
+[search index=summary_sistemas tipo="Id_Tecnico_Tv_3Play"]
+| table valida_kaltura domain_external_id module_id module_name valida_plan_dep ID_CUENTA_TV_3PLAY |  search valida_plan_dep="NoPoseeDeportes"
+| where isnotnull(ID_CUENTA_TV_3PLAY)
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+------------------------------------------------------------------------- BASE TODOS LOS SERVICIOS KALTURA (RANGO DE BUSQUEDA 24hrs)
+
+index=kaltura sourcetype=kaltura_Subscription
+| where like(domain_external_id, "%-%")
+| eval valida_kaltura = domain_external_id."-".module_id 
+| eval valida_kaltura= upper(valida_kaltura)
+| dedup valida_kaltura
+| join type=left domain_external_id
+[search index=kaltura sourcetype=kaltura_Subscription
+| search module_id="20746"
+| rename module_id AS "module_id_tv"
+| rename module_name AS "module_name_tv"
+| table  domain_external_id module_id_tv module_name_tv]
+| eval valida_plan_dep = if(module_id = 20749 AND isnotnull(module_name_tv), "PoseDeportes", "NoPoseeDeportes")
+| eval household_id=domain_id
+| join type=inner household_id
+[search index=kaltura sourcetype=kaltura_Household]
+| where isnotnull(domain_external_id)
+| where isnotnull(external_id)
+| table valida_kaltura domain_external_id module_id module_name valida_plan_dep external_id

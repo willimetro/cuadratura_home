@@ -2,11 +2,6 @@ package cl.everis.cuadratura.obj;
 
 import javax.swing.JTextArea;
 
-/**
- * 
- * @author wugaldeq
- *
- */
 public class CountOBJ {
 
 	private int totalTplay;
@@ -14,151 +9,115 @@ public class CountOBJ {
 	private int totalAmbos;
 	private int difTplayRed;
 	private int difRedTplay;
-	private int totalOk;
-	private int totalRedTplay;
-	private int totalKenan;
+	private int okOkOk;
+	private int okNokOk;
+	private int nokOkOk;
+	private int okOKNok;
+	private int okNokNok;
+	private int nokOkNok;
+	private int nokNokOk;
 	private JTextArea jTextAreaStatusProcess;
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public int getTotalOk() {
-		return totalOk;
+	public int getOkOkOk() {
+		return okOkOk;
 	}
 
-	/**
-	 * 
-	 * @param totalOk
-	 */
-	public void setTotalOk(int totalOk) {
-		this.totalOk = totalOk;
+	public void setOkOkOk(int totalOk) {
+		this.okOkOk = totalOk;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public int getTotalRedTplay() {
-		return totalRedTplay;
+	public int getOkNokOk() {
+		return okNokOk;
 	}
 
-	/**
-	 * 
-	 * @param totalRedTplay
-	 */
-	public void setTotalRedTplay(int totalRedTplay) {
-		this.totalRedTplay = totalRedTplay;
+	public void setOkNokOk(int totalRedTplay) {
+		this.okNokOk = totalRedTplay;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public int getTotalKenan() {
-		return totalKenan;
+	public int getNokOkOk() {
+		return nokOkOk;
 	}
 
-	/**
-	 * 
-	 * @param totalKenan
-	 */
-	public void setTotalKenan(int totalKenan) {
-		this.totalKenan = totalKenan;
+	public void setNokOkOk(int totalKenan) {
+		this.nokOkOk = totalKenan;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
+	public int getOkOKNok() {
+		return okOKNok;
+	}
+
+	public void setOkOKNok(int okOKNok) {
+		this.okOKNok = okOKNok;
+	}
+
+	public int getOkNokNok() {
+		return okNokNok;
+	}
+
+	public void setOkNokNok(int okNokNok) {
+		this.okNokNok = okNokNok;
+	}
+
+	public int getNokOkNok() {
+		return nokOkNok;
+	}
+
+	public void setNokOkNok(int nokOkNok) {
+		this.nokOkNok = nokOkNok;
+	}
+
+	public int getNokNokOk() {
+		return nokNokOk;
+	}
+
+	public void setNokNokOk(int nokNokOk) {
+		this.nokNokOk = nokNokOk;
+	}
+
 	public JTextArea getjTextAreaStatusProcess() {
 		return jTextAreaStatusProcess;
 	}
 
-	/**
-	 * 
-	 * @param jTextAreaStatusProcess
-	 */
 	public void setjTextAreaStatusProcess(JTextArea jTextAreaStatusProcess) {
 		this.jTextAreaStatusProcess = jTextAreaStatusProcess;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public int getTotalRed() {
 		return totalRed;
 	}
 
-	/**
-	 * 
-	 * @param totalRed
-	 */
 	public void setTotalRed(int totalRed) {
 		this.totalRed = totalRed;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public int getTotalTplay() {
 		return totalTplay;
 	}
 
-	/**
-	 * 
-	 * @param totalTplay
-	 */
 	public void setTotalTplay(int totalTplay) {
 		this.totalTplay = totalTplay;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public int getDifRedTplay() {
 		return difRedTplay;
 	}
 
-	/**
-	 * 
-	 * @param redNoTplay
-	 */
 	public void setDifRedTplay(int redNoTplay) {
 		this.difRedTplay = redNoTplay;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public int getTotalAmbos() {
 		return totalAmbos;
 	}
 
-	/**
-	 * 
-	 * @param totalAmbos
-	 */
 	public void setTotalAmbos(int totalAmbos) {
 		this.totalAmbos = totalAmbos;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public int getDifTplayRed() {
 		return difTplayRed;
 	}
 
-	/**
-	 * 
-	 * @param difTplayRed
-	 */
 	public void setDifTplayRed(int difTplayRed) {
 		this.difTplayRed = difTplayRed;
 	}

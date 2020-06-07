@@ -25,11 +25,6 @@ import cl.everis.cuadratura.obj.ActivarDesactivarCanalesResponseOBJ;
 import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 import cl.everis.cuadratura.util.LogEliminacion;
 
-/**
- * 
- * @author jarenass
- *
- */
 public class DesactivarTodoTV {
 
 	private final static String QUERY_VALIDA_KENAN = "SELECT kn.\"ESTADO\" FROM facturador_kenan kn "
@@ -38,11 +33,7 @@ public class DesactivarTodoTV {
 	private DesactivarVasYCanalPremiumLocator desactivarVasYCanalPremiumLocator;
 	private DesactivarVasYCanalPremiumPortType desactivarVasYCanalPremium;
 	private DesactivarVasYCanalPremiumBindingStub bindingStub;
-	/**
-	 * 
-	 * @param fileCorteCanalesRow
-	 * @return
-	 */
+
 	public ActivarDesactivarCanalesResponseOBJ desactivarModulo(FileCorteCanalesRow fileCorteCanalesRow) {
 
 		DesactivarVasYCanalPremiumRequestType type = new DesactivarVasYCanalPremiumRequestType();
@@ -71,11 +62,6 @@ public class DesactivarTodoTV {
 			}
 			bindingStub.setTimeout(10000);
 			DesactivarVasYCanalPremiumResponseType resp = bindingStub.desactivarVasYCanalPremium(type);
-			/**
-			DesactivarVasYCanalPremiumResponseType resp = new ActivarVasYCanalPremiumResponseType();
-			ResponseType rs = new ResponseType(new HeaderOutType("0000", "PRUEBA EXITOSA", "", ""));
-			resp.setResponse(rs);
-			**/
 			desactivarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			desactivarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
 			LogEliminacion
@@ -96,7 +82,7 @@ public class DesactivarTodoTV {
 			desactivarCanalesResponseOBJ.setCodResponse("SERVICEEXCEPTION");
 			desactivarCanalesResponseOBJ.setDescripcion("SERVICIO CON ERROR");
 			e1.printStackTrace();
-		} /****/catch (DesactivarVasYCanalPremiumFaultType e) {
+		} catch (DesactivarVasYCanalPremiumFaultType e) {
 			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
@@ -110,7 +96,7 @@ public class DesactivarTodoTV {
 			desactivarCanalesResponseOBJ.setCodResponse("REMOTEEXCEPTION");
 			desactivarCanalesResponseOBJ.setDescripcion("ERROR REMOTO");
 			e.printStackTrace();
-		} /****/catch (Exception e) {
+		} catch (Exception e) {
 			LogEliminacion.escribirTrazaTv(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
@@ -122,11 +108,6 @@ public class DesactivarTodoTV {
 		return desactivarCanalesResponseOBJ;
 	}
 
-	/**
-	 * 
-	 * @param rut
-	 * @return
-	 */
 	public List<FileCorteCanalesRow> validaFacturado(String rut) {
 		Connection conn = null;
 		PreparedStatement pstmt1 = null;

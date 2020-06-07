@@ -29,15 +29,13 @@ import cl.everis.cuadratura.obj.FileCorteCanalesRow;
 import cl.everis.cuadratura.obj.RespValidacionesOBJ;
 import cl.everis.cuadratura.util.LogEliminacion;
 
-/**
- * 
- * @author wugaldeq
- *
- */
 public class DesactivarCanales {
 
 	private final static String QUERY_HOUSE_HOLD_ID =  "SELECT tk.\"HOUSE_HOLD_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"= ? "
 			+ "AND tk.\"MODULE_ID\" = ?";
+	
+	private final static String QUERY_HOUSE_HOLD_ID_PB =  "SELECT tk.\"HOUSE_HOLD_ID\" FROM todo_kaltura tk WHERE tk.\"RUT\"= ? "
+			+ "LIMIT 1";
 	
 	private final static String QUERY_EXISTE =  "SELECT COUNT(*) FROM todo_kaltura tk WHERE tk.\"RUT\"= ? AND tk.\"MODULE_ID\" = ?";
 
@@ -55,16 +53,7 @@ public class DesactivarCanales {
 	private DesactivarVasYCanalPremiumLocator desactivarVasYCanalPremiumLocator;
 	private DesactivarVasYCanalPremiumPortType desactivarVasYCanalPremium;
 	private DesactivarVasYCanalPremiumBindingStub binding;
-	/**	private final static String QUERY = "select d.codi_servicio "
-			+ "from MDP_NEG_CLIENTESACTIVOS C, RMA_NEG_DATOSOTC D " + "where C.nmro_solicitudact = D.corr_solicitud "
-			+ "and D.CORR_TIPOSERVICIO = 2 " + "and c.vlor_estadocomp = 1 " + "and c.desc_tiposerv = 'TELEVISION' "
-			+ "and desc_catego = 'PLAN BASE' " + "and NRUT_CLIENTE = ?";**/
 
-	/**
-	 * 
-	 * @param fileCorteCanalesRow
-	 * @return
-	 */
 	public ActivarDesactivarCanalesResponseOBJ activarCanalPremium(FileCorteCanalesRow fileCorteCanalesRow) {
 
 		ActivarVasYCanalPremiumRequestType type = new ActivarVasYCanalPremiumRequestType();
@@ -94,11 +83,6 @@ public class DesactivarCanales {
 			}
 			bindingStub.setTimeout(10000);
 			ActivarVasYCanalPremiumResponseType resp = bindingStub.activarVasYCanalPremium(type);
-			/**
-			ActivarVasYCanalPremiumResponseType resp = new ActivarVasYCanalPremiumResponseType();
-			ResponseType rs = new ResponseType(new HeaderOutType("0000", "PRUEBA EXITOSA", "", ""));
-			resp.setResponse(rs);
-			**/
 			activarCanalesResponseOBJ = new ActivarDesactivarCanalesResponseOBJ();
 			activarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			activarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
@@ -116,7 +100,7 @@ public class DesactivarCanales {
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: SERVICEEXCEPTION;DESCRIPCION: SERVICIO CON ERROR");
 			e1.printStackTrace();
-		}/****/ catch (DesactivarVasYCanalPremiumFaultType e) {
+		} catch (DesactivarVasYCanalPremiumFaultType e) {
 			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
@@ -126,7 +110,7 @@ public class DesactivarCanales {
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: REMOTEEXCEPTION;DESCRIPCION: ERROR REMOTO");
 			e.printStackTrace();
-		}/****/ catch (Exception e) {
+		} catch (Exception e) {
 			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
@@ -136,11 +120,6 @@ public class DesactivarCanales {
 		return activarCanalesResponseOBJ;
 	}
 
-	/**
-	 * 
-	 * @param fileCorteCanalesRow
-	 * @return
-	 */
 	public ActivarDesactivarCanalesResponseOBJ desactivarCanalPremium(FileCorteCanalesRow fileCorteCanalesRow) {
 
 		DesactivarVasYCanalPremiumRequestType type = new DesactivarVasYCanalPremiumRequestType();
@@ -167,12 +146,6 @@ public class DesactivarCanales {
 			}
 			binding.setTimeout(10000);
 			DesactivarVasYCanalPremiumResponseType resp = binding.desactivarVasYCanalPremium(type);
-			/**
-			DesactivarVasYCanalPremiumResponseType resp = new DesactivarVasYCanalPremiumResponseType();
-			com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.ResponseType rs = new com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.ResponseType(
-					new com.esa.www.Provision.OrderingServ.N.DesactivarVasYCanalPremium.response.HeaderOutType("0000", "PRUEBA_EXITOSA", "", ""));
-			resp.setResponse(rs);
-			**/
 			desactivarCanalesResponseOBJ = new ActivarDesactivarCanalesResponseOBJ();
 			desactivarCanalesResponseOBJ.setCodResponse(resp.getResponse().getHeaderOut().getCodigo());
 			desactivarCanalesResponseOBJ.setDescripcion(resp.getResponse().getHeaderOut().getDescripcion());
@@ -194,7 +167,7 @@ public class DesactivarCanales {
 			desactivarCanalesResponseOBJ.setCodResponse("SERVICEEXCEPTION");
 			desactivarCanalesResponseOBJ.setDescripcion("SERVICIO CON ERROR");
 			e1.printStackTrace();
-		}/****/ catch (DesactivarVasYCanalPremiumFaultType e) {
+		} catch (DesactivarVasYCanalPremiumFaultType e) {
 			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: DESACTIVARCANALESPREMIUMTYPE;DESCRIPCION: SERVICIO CON ERROR");
@@ -208,7 +181,7 @@ public class DesactivarCanales {
 			desactivarCanalesResponseOBJ.setCodResponse("REMOTEEXCEPTION");
 			desactivarCanalesResponseOBJ.setDescripcion("ERROR REMOTO");
 			e.printStackTrace();
-		}/****/ catch (Exception e) {
+		} catch (Exception e) {
 			LogEliminacion.escribirTrazaCanales(
 					"ERROR;" + fileCorteCanalesRow.getRutConDv() + ";" + fileCorteCanalesRow.getCodCanal()
 					+ ";CODIGO_RESPONSE: ERROR GENERAL;DESCRIPCION: ERROR GENERAL");
@@ -220,21 +193,21 @@ public class DesactivarCanales {
 		return desactivarCanalesResponseOBJ;
 	}
 
-	/**
-	 * 
-	 * @param fileCorteCanalesRow
-	 * @return
-	 */
-	public FileCorteCanalesRow getCodServicioCanalesPremium(FileCorteCanalesRow fileCorteCanalesRow) {
+	public FileCorteCanalesRow getCodServicioCanalesPremium(FileCorteCanalesRow fileCorteCanalesRow, Boolean querySelector) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		conn = ConnectionCuadraturaBD.getLocalConn();
 		try {
-			pstmt = conn.prepareStatement(QUERY_HOUSE_HOLD_ID);
-			pstmt.setString(1, fileCorteCanalesRow.getRutConDv());
-			pstmt.setString(2, fileCorteCanalesRow.getCodCanal());
+			if (querySelector) {
+				pstmt = conn.prepareStatement(QUERY_HOUSE_HOLD_ID_PB);
+				pstmt.setString(1, fileCorteCanalesRow.getRutConDv());
+			} else {
+				pstmt = conn.prepareStatement(QUERY_HOUSE_HOLD_ID);
+				pstmt.setString(1, fileCorteCanalesRow.getRutConDv());
+				pstmt.setString(2, fileCorteCanalesRow.getCodCanal());
+			}
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				fileCorteCanalesRow.setCodiServicio(rs.getString("HOUSE_HOLD_ID"));
@@ -256,11 +229,6 @@ public class DesactivarCanales {
 		return fileCorteCanalesRow;
 	}
 
-	/**
-	 * 
-	 * @param reg
-	 * @return
-	 */
 	public RespValidacionesOBJ validaFacturado(FileCorteCanalesRow reg) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -305,11 +273,6 @@ public class DesactivarCanales {
 		return validToDelete;
 	}
 
-	/**
-	 * 
-	 * @param reg
-	 * @return
-	 */
 	public RespValidacionesOBJ validaCDF(FileCorteCanalesRow reg) {
 		Connection conn = null;
 		PreparedStatement pstmt1 = null;
@@ -373,7 +336,7 @@ public class DesactivarCanales {
 			} else {		
 				if(null==codiKen){
 					//				CASO EN QUE NO SE ENCUENTRA EN KENAN Y ES DISTINTO EN 3PLAY - ELIMINAR EN KAL E INDICAR REGULARIZAR 3 PLAY
-					reg = getCodServicioCanalesPremium(reg);
+					reg = getCodServicioCanalesPremium(reg, false);
 					resp = desactivarCanalPremium(reg);
 					if (!"0000".equals(resp.getCodResponse())){
 						LogEliminacion.escribirTrazaCanales("INFO;" + reg.getRutConDv() + ";"
@@ -396,7 +359,7 @@ public class DesactivarCanales {
 					}
 				} else if(null!=codiKal && !codiKal.equals(codiKen)){
 					//				CASO EN QUE TIENE DISTINTO CDF EN KALTURA QUE EN KENAN Y 3PLAY - ELIMINAR INCORRECTO Y CREAR CORRECTO
-					reg = getCodServicioCanalesPremium(reg);
+					reg = getCodServicioCanalesPremium(reg, false);
 					resp = desactivarCanalPremium(reg);
 					String codiEliminacion = resp.getCodResponse();
 					if (!"0000".equals(codiEliminacion)){

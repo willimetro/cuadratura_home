@@ -5,17 +5,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import cl.everis.cuadratura.ui.CuadraturaUI;
 
-/**
- * 
- * @author wugaldeq
- *
- */
 public class CuadraturaMain {
 
-	/**
-	 * 
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
