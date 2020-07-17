@@ -31,20 +31,16 @@ OR group="datos_1000M_400M_bloqueo"
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 ------------------------------------------------------------------------- PLANES BASE Y ADICIONALES KENAN (RANGO DE BUSQUEDA 24hrs)
-
 // PLANES
-
-| dbxquery query="SELECT amap.external_id AS RUT_CLIENTE, emf.account_no AS CUENTA_KENAN, emf.SERVICE_START, emf.SERVICE_END, DECODE (emf.EQUIP_STATUS, -1, 'Nuevo', 0, 'Facturado', 1, 'Retirado', 'Otro') AS ESTADO, emf.equip_type_code AS CODIGO_PLAN, etcv.DISPLAY_VALUE  AS PLAN, cmf.bill_period AS PERIODO_FACT FROM emf, cmf, external_id_acct_map amap, equip_type_code_values etcv WHERE cmf.bill_period in (61,62) AND emf.account_no = cmf.account_no AND cmf.account_no = amap.account_no AND emf.equip_type_code = etcv.equip_type_code AND amap.external_id_type = 12 AND (emf.service_end IS NULL OR emf.service_end >= sysdate) and emf.equip_type_code in (1700, 1800, 1900);" connection="ephchile"
+| dbxquery query="SELECT emf.equip_type_code AS CODIGO_PLAN, emf.account_no AS CUENTA_KENAN, DECODE (emf.EQUIP_STATUS, -1, 'Nuevo', 0, 'Facturado', 1, 'Retirado', 'Otro') AS ESTADO, cmf.bill_period AS PERIODO_FACT, etcv.DISPLAY_VALUE  AS PLAN, amap.external_id AS RUT_CLIENTE, emf.SERVICE_END, emf.SERVICE_START FROM emf, cmf, external_id_acct_map amap, equip_type_code_values etcv WHERE cmf.bill_period in (61,62) AND emf.account_no = cmf.account_no AND cmf.account_no = amap.account_no AND emf.equip_type_code = etcv.equip_type_code AND amap.external_id_type = 12 AND (emf.service_end IS NULL OR emf.service_end >= sysdate) and emf.equip_type_code in (1700, 1800, 1900);" connection="ephchile"
 
 // ADICIONALES TV
-
-| dbxquery query="SELECT amap.external_id AS RUT_CLIENTE, emf.account_no AS CUENTA_KENAN, emf.SERVICE_START, emf.SERVICE_END, DECODE (emf.EQUIP_STATUS, -1, 'Nuevo', 0, 'Facturado', 1, 'Retirado', 'Otro') AS ESTADO, emf.equip_type_code AS CODIGO_CANAL, decode (emf.equip_type_code, 656,20748,655,20749,648,20750,649,20751,652,20752,651,20753,654,20797,653,20798) as CODIGO_3PLAY,etcv.DISPLAY_VALUE  AS CANAL, cmf.bill_period AS PERIODO_FACT FROM emf, cmf, external_id_acct_map amap, equip_type_code_values etcv  WHERE cmf.bill_period in (61,62) AND emf.account_no = cmf.account_no AND cmf.account_no = amap.account_no AND emf.equip_type_code = etcv.equip_type_code AND amap.external_id_type = 12 AND (emf.service_end IS NULL OR emf.service_end >= sysdate)AND emf.equip_type_code IN (648, 649, 650, 651, 652, 653, 654, 655, 656, 660, 661);" connection="ephchile"
+| dbxquery query="SELECT etcv.DISPLAY_VALUE  AS CANAL, decode (emf.equip_type_code, 656,20748,655,20749,648,20750,649,20751,652,20752,651,20753,654,20797,653,20798) as CODIGO_3PLAY, emf.equip_type_code AS CODIGO_CANAL, emf.account_no AS CUENTA_KENAN, DECODE (emf.EQUIP_STATUS, -1, 'Nuevo', 0, 'Facturado', 1, 'Retirado', 'Otro') AS ESTADO, cmf.bill_period AS PERIODO_FACT, amap.external_id AS RUT_CLIENTE, emf.SERVICE_END, emf.SERVICE_START FROM emf, cmf, external_id_acct_map amap, equip_type_code_values etcv  WHERE cmf.bill_period in (61,62) AND emf.account_no = cmf.account_no AND cmf.account_no = amap.account_no AND emf.equip_type_code = etcv.equip_type_code AND amap.external_id_type = 12 AND (emf.service_end IS NULL OR emf.service_end >= sysdate)AND emf.equip_type_code IN (648, 649, 650, 651, 652, 653, 654, 655, 656, 660, 661);" connection="ephchile"
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 ------------------------------------------------------------------------- PLANES BASE KALTURA  (RANGO DE BUSQUEDA 24hrs)
-
 index=kaltura sourcetype=kaltura_Subscription
 | where in (module_id, 20745, 20746)
 | eval valida_rut=if(like(domain_external_id, "%-%"), "Valido", "NoValido")
@@ -60,7 +56,6 @@ index=kaltura sourcetype=kaltura_Subscription
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 ------------------------------------------------------------------------- KALTURA ADICIONALES TV (RANGO DE BUSQUEDA 24hrs)
-
 index=kaltura sourcetype=kaltura_Subscription
 | where not in(module_id, 20743, 20745, 20746, 20807, 20744)
 | where like(domain_external_id, "%-%")
@@ -85,7 +80,6 @@ index=kaltura sourcetype=kaltura_Subscription
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 ------------------------------------------------------------------------- BASE TODOS LOS SERVICIOS KALTURA (RANGO DE BUSQUEDA 24hrs)
-
 index=kaltura sourcetype=kaltura_Subscription
 | where like(domain_external_id, "%-%")
 | eval valida_kaltura = domain_external_id."-".module_id 
